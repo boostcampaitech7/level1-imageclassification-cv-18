@@ -6,6 +6,7 @@ import tqdm
 import argparse
 import pandas as pd
 import logging
+import time
 
 
 from torch.utils.data import DataLoader
@@ -281,4 +282,8 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
+    start_time = time.time()
     train()
+    end_time = time.time()
+
+    print(f" End : {(end_time - start_time)/60} min")
