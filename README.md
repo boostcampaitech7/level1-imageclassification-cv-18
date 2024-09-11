@@ -1,5 +1,24 @@
 # 최강 18조 화이팅!
 
+```bash
+data/
+│
+├── sample_submission.csv
+├── test.csv
+├── train.csv
+│
+├── test/
+│   ├── 0.JPEG
+│   ├── 1.JPEG
+│   ├── 2.JPEG
+│   ├── ...
+│
+├── train/
+│   ├── n01443537/
+│   ├── n01484850/
+│   ├── ... 
+```
+
 ## 사용된 데이터셋 정보
 
 - **데이터셋 이름**: Sketch Data (ImageNet Sketch)
