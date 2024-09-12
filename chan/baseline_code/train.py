@@ -57,7 +57,7 @@ class Trainer:
         self.scheduler = scheduler # 학습률 스케줄러
         self.loss_fn = loss_fn  # 손실 함수
         self.epochs = epochs  # 총 훈련 에폭 수
-        self.result_path = weight_path  # 모델 저장 경로
+        self.weight_path = weight_path  # 모델 저장 경로
         self.log_path = log_path # 로그 저장 경로
         self.tensorboard_path = tensorboard_path # 로그 저장 경로
         self.best_models = [] # 가장 좋은 상위 3개 모델의 정보를 저장할 리스트
@@ -65,10 +65,10 @@ class Trainer:
 
     def save_model(self, epoch, loss):
         # 모델 저장 경로 설정
-        os.makedirs(self.result_path, exist_ok=True)
+        os.makedirs(self.weight_path, exist_ok=True)
 
         # 현재 에폭 모델 저장
-        current_model_path = os.path.join(self.result_path, f'model_epoch_{epoch}_loss_{loss:.4f}.pt')
+        current_model_path = os.path.join(self.weight_path, f'model_epoch_{epoch}_loss_{loss:.4f}.pt')
         torch.save(self.model.state_dict(), current_model_path)
 
         # 최상위 3개 모델 관리
@@ -82,7 +82,7 @@ class Trainer:
         # 가장 낮은 손실의 모델 저장
         if loss < self.lowest_loss:
             self.lowest_loss = loss
-            best_model_path = os.path.join(self.result_path, 'best_model.pt')
+            best_model_path = os.path.join(self.weight_path, 'best_model.pt')
             torch.save(self.model.state_dict(), best_model_path)
             print(f"Save {epoch}epoch result. Loss = {loss:.4f}")
 
@@ -248,7 +248,7 @@ def train():
     scheduler=scheduler,
     loss_fn=loss_fn,
     epochs=args.epochs,
-    result_path= weight_dir,
+    weight_path= weight_dir,
     log_path= logfile,
     tensorboard_path= tensorboard_dir
     )
