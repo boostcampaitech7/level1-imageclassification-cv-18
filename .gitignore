@@ -1,4 +1,4 @@
 .DS_Store
 data/
 data.tar.gz
-/data/ephemeral/home/jiwan/level1-imageclassification-cv-18/jiwan/alubum_fine_tuning/Experiments
+./jiwan/alubum_fine_tuning/Experiments
