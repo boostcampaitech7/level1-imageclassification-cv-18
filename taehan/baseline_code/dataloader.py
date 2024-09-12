@@ -7,7 +7,6 @@ import numpy as np
 from typing import Callable, Tuple, Union
 from torchvision import transforms
 from torch.utils.data import Dataset
-from PIL import Image
 
 
 class CustomDataset(Dataset):
@@ -67,7 +66,7 @@ class TorchvisionTransform: # 단순한 전처리, 간편한 사용, 증강이 �
             self.transform = transforms.Compose(common_transforms)
 
     def __call__(self, image: np.ndarray) -> torch.Tensor:
-        image = Image.fromarray(image)  # numpy 배열을 PIL 이미지로 변환
+        image = image.fromarray(image)  # numpy 배열을 PIL 이미지로 변환
 
         transformed = self.transform(image)  # 설정된 변환을 적용
 
