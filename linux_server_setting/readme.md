@@ -19,6 +19,14 @@
 - **bash_setting.sh**, **zsh_setting_1.sh**, **zsh_setting_2.sh** 를 다운 받아 준비해주세요.
 - ssh 연결 후 */data/ephemeral/home* 파일을 열어주세요.
 -  */data/ephemeral/home* 폴더에 다운로드한 .sh 파일을 저장해주세요.
+    ```bash
+    /data/ephemeral/home
+
+    home
+    ┣ bash_setting.sh
+    ┣ zsh_setting_1.sh
+    ┗ zsh_setting_2.sh 
+    ```
 
 - bash shell 에서 시작합니다.
     ```bash
