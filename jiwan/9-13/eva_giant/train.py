@@ -257,6 +257,29 @@ def train():
     model = model_selector.get_model()
     model = model.to(device)
 
+    import torch.nn as nn
+
+    num_features = model.model.head.in_features
+
+    # 새로운 MLP HEAD 레이어 추가
+    model.model.head = nn.Sequential( # MLP HEAD
+        nn.Linear(num_features, 1024, bias=True),  # 추가할 FC 레이어
+        nn.GELU(approximate='none'),
+        nn.Dropout(p=0.0, inplace=False),
+        nn.Identity(),
+        nn.Linear(in_features=1024, out_features=500, bias=True) # 추가할 FC 레이어
+    )
+
+    # 전이 학습
+    for n,p in model.model.named_parameters():
+        p.requires_grad=False
+
+    # 추가한 FC 레이어의 파라미터만 학습 가능하도록 설정
+    for name, param in model.model.head.named_parameters():
+        param.requires_grad = True
+
+    model = model.to(device)
+
     # optimizer
     optimizer = optim.Adam(model.parameters(), lr=args.lr)
     
@@ -296,14 +319,14 @@ if __name__ == "__main__":
     # default 부분 수정해서 사용!!
 
     # 모델 선택
-    parser.add_argument('--model_type', type=str, default='simple', help='사용할 모델 이름')
-    parser.add_argument('--model_name', type=str, default='resnet18', help='timm model을 사용할 경우 timm 모델 중 선택')
+    parser.add_argument('--model_type', type=str, default='timm', help='사용할 모델 이름')
+    parser.add_argument('--model_name', type=str, default='timm/eva_giant_patch14_336.clip_ft_in1k', help='timm model을 사용할 경우 timm 모델 중 선택')
 
     # 데이터 경로
-    parser.add_argument('--train_dir', type=str, default="./../../../data/train", help='훈련 데이터셋 루트 디렉토리 경로')
-    parser.add_argument('--test_dir', type=str, default="./../../../data/test", help='테스트 데이터셋 루트 디렉토리 경로')
-    parser.add_argument('--train_csv', type=str, default="./../../../data/train.csv", help='훈련 데이터셋 csv 파일 경로')
-    parser.add_argument('--test_csv', type=str, default="./../../../data/test.csv", help='테스트 데이터셋 csv 파일 경로')
+    parser.add_argument('--train_dir', type=str, default="/data/ephemeral/home/data/train", help='훈련 데이터셋 루트 디렉토리 경로')
+    parser.add_argument('--test_dir', type=str, default="/data/ephemeral/home/data/test", help='테스트 데이터셋 루트 디렉토리 경로')
+    parser.add_argument('--train_csv', type=str, default="/data/ephemeral/home/data/train.csv", help='훈련 데이터셋 csv 파일 경로')
+    parser.add_argument('--test_csv', type=str, default="/data/ephemeral/home/data/test.csv", help='테스트 데이터셋 csv 파일 경로')
     parser.add_argument('--save_rootpath', type=str, default="Experiments/debug", help='가중치, log, tensorboard 그래프 저장을 위한 path 실험명으로 디렉토리 구성')
     
     # 하이퍼파라미터
