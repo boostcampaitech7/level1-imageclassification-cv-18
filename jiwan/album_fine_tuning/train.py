@@ -12,8 +12,9 @@ import time
 from torch.utils.data import DataLoader
 from sklearn.model_selection import train_test_split
 from model_selector import ModelSelector
-from dataloader import CustomDataset, TorchvisionTransform
+from dataloader import CustomDataset, TorchvisionTransform, AlbumentationsTransform
 from torch.utils.tensorboard import SummaryWriter
+from tqdm import tqdm
 
 class Loss(nn.Module):
 
@@ -32,7 +33,8 @@ class Loss(nn.Module):
 
         return self.loss_fn(outputs, targets)
     
-
+import cv2
+import numpy as np
 class Trainer:
     def __init__(
         self,
@@ -95,8 +97,19 @@ class Trainer:
 
         for images, targets in progress_bar:
             images, targets = images.to(self.device), targets.to(self.device)
+            # 만약 images[0]이 torch.Tensor라면
+            #image_np = images[0].cpu().numpy()  # tensor를 numpy array로 변환
+            #image_np = np.transpose(image_np, (1, 2, 0))  # (C, H, W)에서 (H, W, C)로 변환 필요
+
+            #cv2.imwrite("debut.jpg", image_np)
+            #assert False
+            #print(images.shape)
+            #print(targets.shape)
             self.optimizer.zero_grad()
             outputs = self.model(images)
+            #print(outputs.shape)
+            #assert False
+
             loss = self.loss_fn(outputs, targets)
             loss.backward()
             self.optimizer.step()
@@ -189,8 +202,8 @@ def train():
     num_classes = len(train_info['target'].unique()) # 클래스 수
 
     train_df, val_df = train_test_split(train_info, test_size=0.2, stratify=train_info['target'], random_state=42)
-    train_transform = TorchvisionTransform(is_train=True)
-    val_transform = TorchvisionTransform(is_train=False)
+    train_transform = AlbumentationsTransform(is_train=True)
+    val_transform = AlbumentationsTransform(is_train=False)
 
     train_dataset = CustomDataset(
     root_dir=traindata_dir,
@@ -224,9 +237,10 @@ def train():
         pretrained=True
     )
 
+    
     model = model_selector.get_model()
     model = model.to(device)
-    
+
     # optimizer
     optimizer = optim.Adam(model.parameters(), lr=args.lr)
     
@@ -239,7 +253,6 @@ def train():
     # loss
     loss_fn = Loss() # CrossEntropyLoss
     loss_fn = loss_fn.to(device)
-    
     # train
     trainer = Trainer(
     model=model,
@@ -269,14 +282,14 @@ if __name__ == "__main__":
     parser.add_argument('--model_name', type=str, default='resnet50', help='timm model을 사용할 경우 timm 모델 중 선택')
 
     # 데이터 경로
-    parser.add_argument('--train_dir', type=str, default="data/train", help='훈련 데이터셋 루트 디렉토리 경로')
-    parser.add_argument('--test_dir', type=str, default="data/test", help='테스트 데이터셋 루트 디렉토리 경로')
-    parser.add_argument('--train_csv', type=str, default="data/train.csv", help='훈련 데이터셋 csv 파일 경로')
-    parser.add_argument('--test_csv', type=str, default="data/test.csv", help='테스트 데이터셋 csv 파일 경로')
+    parser.add_argument('--train_dir', type=str, default="/data/ephemeral/home/data/train", help='훈련 데이터셋 루트 디렉토리 경로')
+    parser.add_argument('--test_dir', type=str, default="/data/ephemeral/home/data/test", help='테스트 데이터셋 루트 디렉토리 경로')
+    parser.add_argument('--train_csv', type=str, default="/data/ephemeral/home/data/train.csv", help='훈련 데이터셋 csv 파일 경로')
+    parser.add_argument('--test_csv', type=str, default="/data/ephemeral/home/data/test.csv", help='테스트 데이터셋 csv 파일 경로')
     parser.add_argument('--save_rootpath', type=str, default="Experiments/debug", help='가중치, log, tensorboard 그래프 저장을 위한 path 실험명으로 디렉토리 구성')
     
     # 하이퍼파라미터
-    parser.add_argument('--epochs', type=int, default=15, help='에포크 설정')
+    parser.add_argument('--epochs', type=int, default=30, help='에포크 설정')
     parser.add_argument('--lr', type=float, default=0.001, help='learning rage')
     parser.add_argument('--batch_size', type=int, default=64)
     parser.add_argument('--step_size', type=int, default=15, help='몇 번째 epoch 마다 학습률 줄일지 선택')
