@@ -296,7 +296,7 @@ if __name__ == "__main__":
     # default 부분 수정해서 사용!!
 
     # 모델 선택
-    parser.add_argument('--model_type', type=str, default='timm', help='사용할 모델 이름')
+    parser.add_argument('--model_type', type=str, default='simple', help='사용할 모델 이름')
     parser.add_argument('--model_name', type=str, default='resnet18', help='timm model을 사용할 경우 timm 모델 중 선택')
 
     # 데이터 경로
