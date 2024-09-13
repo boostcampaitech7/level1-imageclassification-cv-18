@@ -257,6 +257,29 @@ def train():
     model = model_selector.get_model()
     model = model.to(device)
 
+    import torch.nn as nn
+
+    num_features = model.model.head.in_features
+
+    # 새로운 MLP HEAD 레이어 추가
+    model.model.head = nn.Sequential( # MLP HEAD
+        nn.Linear(num_features, 1024, bias=True),  # 추가할 FC 레이어
+        nn.GELU(approximate='none'),
+        nn.Dropout(p=0.0, inplace=False),
+        nn.Identity(),
+        nn.Linear(in_features=1024, out_features=500, bias=True) # 추가할 FC 레이어
+    )
+
+    # 전이 학습
+    for n,p in model.model.named_parameters():
+        p.requires_grad=False
+
+    # 추가한 FC 레이어의 파라미터만 학습 가능하도록 설정
+    for name, param in model.model.head.named_parameters():
+        param.requires_grad = True
+
+    model = model.to(device)
+
     # optimizer
     optimizer = optim.Adam(model.parameters(), lr=args.lr)
     
