@@ -33,7 +33,7 @@ echo '' >> ~/.zshrc
 
 sed -i '/^PROMPT=/,+1d' ~/.zshrc
 
-echo "PROMPT='%F{yellow}> %F{blue}%~%f $(git_prompt_info)" >> ~/.zshrc
+echo "PROMPT='%F{yellow}> %F{blue}%~%f \$(git_prompt_info)" >> ~/.zshrc
 echo "%F{green}> %f'" >> ~/.zshrc
 
 echo '' >> ~/.zshrc 
@@ -44,9 +44,7 @@ else
     echo "Conda를 찾을 수 없습니다."
 fi
 
-# Conda 초기화 및 버전 확인
 conda --version
 /opt/conda/bin/conda init zsh
 
-# 설정 적용
 source ~/.zshrc
