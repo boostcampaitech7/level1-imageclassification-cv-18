@@ -2,11 +2,10 @@
 
 cd ~
 
-apt-get update
+apt-get update -y
+apt-get install curl -y
 
-apt-get install curl
-
-apt install git
+apt install git -y
 git --version 
 
 sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
