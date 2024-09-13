@@ -264,13 +264,13 @@ if __name__ == "__main__":
 
     # 모델 선택
     parser.add_argument('--model_type', type=str, default='timm', help='사용할 모델 이름')
-    parser.add_argument('--model_name', type=str, default='xcit_tiny_24_p16_224_dist', help='timm model을 사용할 경우 timm 모델 중 선택')
+    parser.add_argument('--model_name', type=str, default='resnet50', help='timm model을 사용할 경우 timm 모델 중 선택')
 
     # 데이터 경로
     parser.add_argument('--train_dir', type=str, default="data/train", help='훈련 데이터셋 루트 디렉토리 경로')
     parser.add_argument('--test_dir', type=str, default="data/test", help='테스트 데이터셋 루트 디렉토리 경로')
-    parser.add_argument('--train_csv', type=str, default="/data/ephemeral/home/jeong/level1-imageclassification-cv-18/clear/data/train.csv", help='훈련 데이터셋 csv 파일 경로')
-    parser.add_argument('--test_csv', type=str, default="level1-imageclassification-cv-18/clear/data/test.csv", help='테스트 데이터셋 csv 파일 경로')
+    parser.add_argument('--train_csv', type=str, default="data/train.csv", help='훈련 데이터셋 csv 파일 경로')
+    parser.add_argument('--test_csv', type=str, default="data/test.csv", help='테스트 데이터셋 csv 파일 경로')
     parser.add_argument('--save_rootpath', type=str, default="Experiments/debug", help='가중치, log, tensorboard 그래프 저장을 위한 path 실험명으로 디렉토리 구성')
     
     # 하이퍼파라미터
