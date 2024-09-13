@@ -7,6 +7,7 @@ import argparse
 import pandas as pd
 import logging
 import time
+import torch.nn.functional as F
 
 
 from torch.utils.data import DataLoader
@@ -35,6 +36,7 @@ class Loss(nn.Module):
     
 import cv2
 import numpy as np
+import matplotlib.pyplot as plt
 class Trainer:
     def __init__(
         self,
@@ -93,18 +95,20 @@ class Trainer:
         self.model.train()
 
         total_loss = 0.0
+        total = 0
+        correct = 0
         progress_bar = tqdm(self.train_loader, desc="Training", leave=False)
 
         for images, targets in progress_bar:
             images, targets = images.to(self.device), targets.to(self.device)
             # 만약 images[0]이 torch.Tensor라면
-            #image_np = images[0].cpu().numpy()  # tensor를 numpy array로 변환
-            #image_np = np.transpose(image_np, (1, 2, 0))  # (C, H, W)에서 (H, W, C)로 변환 필요
+            # image_np = images[0].cpu().numpy()  # tensor를 numpy array로 변환
+            # image_np = np.transpose(image_np, (1, 2, 0))  # (C, H, W)에서 (H, W, C)로 변환 필요
 
-            #cv2.imwrite("debut.jpg", image_np)
+            # cv2.imwrite("debut.jpg", image_np)
             #assert False
-            #print(images.shape)
-            #print(targets.shape)
+            # print(images[0].max())
+            # print(images[0].min())
             self.optimizer.zero_grad()
             outputs = self.model(images)
             #print(outputs.shape)
@@ -116,14 +120,20 @@ class Trainer:
             self.scheduler.step()
             total_loss += loss.item()
             progress_bar.set_postfix(loss=loss.item())
+            logits = F.softmax(outputs, dim=1)
+            preds = logits.argmax(dim=1)
+            total += targets.size(0)
+            correct += (preds == targets).sum().item()
 
-        return total_loss / len(self.train_loader)
+        return total_loss / len(self.train_loader), correct / total * 100
 
     def validate(self) -> float:
         # 모델의 검증을 진행
         self.model.eval()
 
         total_loss = 0.0
+        total = 0
+        correct = 0
         progress_bar = tqdm(self.val_loader, desc="Validating", leave=False)
 
         with torch.no_grad():
@@ -133,8 +143,12 @@ class Trainer:
                 loss = self.loss_fn(outputs, targets)
                 total_loss += loss.item()
                 progress_bar.set_postfix(loss=loss.item())
+                logits = F.softmax(outputs, dim=1)
+                preds = logits.argmax(dim=1)
+                total += targets.size(0)
+                correct += (preds == targets).sum().item()
 
-        return total_loss / len(self.val_loader)
+        return total_loss / len(self.val_loader), correct / total * 100
 
     def train(self) -> None:
 
@@ -154,15 +168,17 @@ class Trainer:
         for epoch in range(self.epochs):
             logger.info(f"Epoch {epoch+1}/{self.epochs}")
 
-            train_loss = self.train_epoch()
-            val_loss = self.validate()
-            logger.info(f"Epoch {epoch+1}, Train Loss: {train_loss:.4f}, Validation Loss: {val_loss:.4f}\n")
+            train_loss, train_acc = self.train_epoch()
+            val_loss, val_acc = self.validate()
+            logger.info(f"Epoch {epoch+1}, Train Loss: {train_loss:.4f}, Train Accuracy: {train_acc:.2f}, Validation Loss: {val_loss:.4f}, Validataion Accuracy: {val_acc:.2f}\n")
 
             self.save_model(epoch, val_loss)
             self.scheduler.step()
 
             writer.add_scalar('Loss/train', train_loss, epoch)  # 훈련 손실 기록
+            writer.add_scalar('Accuracy/train', train_acc, epoch)  # 훈련 손실 기록
             writer.add_scalar('Loss/validation', val_loss, epoch)  # 검증 손실 기록
+            writer.add_scalar('Accuracy/validation', val_acc, epoch)  # 검증 손실 기록
         writer.close()    
 
 
@@ -244,9 +260,11 @@ def train():
     # optimizer
     optimizer = optim.Adam(model.parameters(), lr=args.lr)
     
+    steps_per_epoch = len(train_loader)
+
     scheduler = optim.lr_scheduler.StepLR(
     optimizer,
-    step_size=args.step_size,
+    step_size=steps_per_epoch * args.step_size,
     gamma=args.gamma
     )
 
@@ -279,13 +297,13 @@ if __name__ == "__main__":
 
     # 모델 선택
     parser.add_argument('--model_type', type=str, default='timm', help='사용할 모델 이름')
-    parser.add_argument('--model_name', type=str, default='resnet50', help='timm model을 사용할 경우 timm 모델 중 선택')
+    parser.add_argument('--model_name', type=str, default='resnet18', help='timm model을 사용할 경우 timm 모델 중 선택')
 
     # 데이터 경로
-    parser.add_argument('--train_dir', type=str, default="/data/ephemeral/home/data/train", help='훈련 데이터셋 루트 디렉토리 경로')
-    parser.add_argument('--test_dir', type=str, default="/data/ephemeral/home/data/test", help='테스트 데이터셋 루트 디렉토리 경로')
-    parser.add_argument('--train_csv', type=str, default="/data/ephemeral/home/data/train.csv", help='훈련 데이터셋 csv 파일 경로')
-    parser.add_argument('--test_csv', type=str, default="/data/ephemeral/home/data/test.csv", help='테스트 데이터셋 csv 파일 경로')
+    parser.add_argument('--train_dir', type=str, default="./../../../data/train", help='훈련 데이터셋 루트 디렉토리 경로')
+    parser.add_argument('--test_dir', type=str, default="./../../../data/test", help='테스트 데이터셋 루트 디렉토리 경로')
+    parser.add_argument('--train_csv', type=str, default="./../../../data/train.csv", help='훈련 데이터셋 csv 파일 경로')
+    parser.add_argument('--test_csv', type=str, default="./../../../data/test.csv", help='테스트 데이터셋 csv 파일 경로')
     parser.add_argument('--save_rootpath', type=str, default="Experiments/debug", help='가중치, log, tensorboard 그래프 저장을 위한 path 실험명으로 디렉토리 구성')
     
     # 하이퍼파라미터
