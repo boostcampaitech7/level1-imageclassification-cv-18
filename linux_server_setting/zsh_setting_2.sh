@@ -2,7 +2,7 @@
 
 apt-get install nano -y
 
-git clone https://github.com/zsh-users/zsh-syntax-highlighting.git $ZSH_CUSTOM/plugins/zsh-syntax-highlighting
+git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ~/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting
 
 if grep -q '^ZSH_THEME=' ~/.zshrc; then
     sed -i 's/^ZSH_THEME=.*$/ZSH_THEME="agnoster"/' ~/.zshrc
@@ -33,8 +33,8 @@ echo '' >> ~/.zshrc
 
 sed -i '/^PROMPT=/,+1d' ~/.zshrc
 
-echo "PROMPT='%F{yellow}> %F{blue}%~%f $(git_prompt_info)
-%F{green}> %f'" >> ~/.zshrc
+echo "PROMPT='%F{yellow}> %F{blue}%~%f $(git_prompt_info)" >> ~/.zshrc
+echo "%F{green}> %f'" >> ~/.zshrc
 
 echo '' >> ~/.zshrc 
 
