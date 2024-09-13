@@ -2,7 +2,7 @@ import torch.nn as nn
 import torch
 import torch.optim as optim
 import os
-import tqdm
+from tqdm import tqdm
 import argparse
 import pandas as pd
 import logging
@@ -225,7 +225,8 @@ def train():
     )
 
     model = model_selector.get_model()
-
+    model = model.to(device)
+    
     # optimizer
     optimizer = optim.Adam(model.parameters(), lr=args.lr)
     
@@ -237,7 +238,8 @@ def train():
 
     # loss
     loss_fn = Loss() # CrossEntropyLoss
-
+    loss_fn = loss_fn.to(device)
+    
     # train
     trainer = Trainer(
     model=model,
