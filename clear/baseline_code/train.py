@@ -2,7 +2,7 @@ import torch.nn as nn
 import torch
 import torch.optim as optim
 import os
-import tqdm
+from tqdm import tqdm
 import argparse
 import pandas as pd
 import logging
