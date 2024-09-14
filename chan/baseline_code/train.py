@@ -8,30 +8,12 @@ import pandas as pd
 import logging
 import time
 
-
 from torch.utils.data import DataLoader
 from sklearn.model_selection import train_test_split
+from loss import CrossEntropyLoss
 from model_selector import ModelSelector
 from dataloader import CustomDataset, TorchvisionTransform
 from torch.utils.tensorboard import SummaryWriter
-
-class Loss(nn.Module):
-
-    """
-    모델의 손실함수를 계산하는 클래스.
-    """
-    def __init__(self):
-        super(Loss, self).__init__()
-        self.loss_fn = nn.CrossEntropyLoss()
-
-    def forward(
-        self,
-        outputs: torch.Tensor,
-        targets: torch.Tensor
-    ) -> torch.Tensor:
-
-        return self.loss_fn(outputs, targets)
-    
 
 class Trainer:
     def __init__(
@@ -237,7 +219,7 @@ def train():
     )
 
     # loss
-    loss_fn = Loss() # CrossEntropyLoss
+    loss_fn = CrossEntropyLoss 
     loss_fn = loss_fn.to(device)
     
     # train
