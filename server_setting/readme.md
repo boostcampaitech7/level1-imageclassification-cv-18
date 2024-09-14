@@ -74,14 +74,6 @@
 
     source ~/.zshrc
     ```
-<<<<<<< HEAD:linux_server_setting/readme.md
-- home 디렉토리에 data를 다운로드 (공용 데이터로 사용)
-    ```bash
-    chmod +x download_data.sh
-    ./download_data.sh  
-    ```
-    
-=======
 
     ```bash
     cd ~
@@ -92,7 +84,6 @@
     chmod +x download_sketch_data.sh
     ./download_sketch_data.sh
     ```
->>>>>>> chan-note/server_setting:server_setting/readme.md
 ## step 3 
 
 - 개인 폴더를 만들고 github와 연동합니다.
