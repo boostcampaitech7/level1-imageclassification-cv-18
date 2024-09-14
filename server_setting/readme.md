@@ -23,7 +23,7 @@
 
     - ***zsh_setting_2.sh*** 
 
-        -  zsh shell을 custom 합니다.
+        -  zsh shell을 customize 합니다.
 
         -  conda 설정을 적용합니다.
         
