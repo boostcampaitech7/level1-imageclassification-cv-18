@@ -2,7 +2,7 @@ import torch.nn as nn
 import torch
 import torch.optim as optim
 import os
-from tqdm import tqdm
+import tqdm
 import argparse
 import pandas as pd
 import logging
@@ -57,7 +57,7 @@ class Trainer:
         self.scheduler = scheduler # 학습률 스케줄러
         self.loss_fn = loss_fn  # 손실 함수
         self.epochs = epochs  # 총 훈련 에폭 수
-        self.weight_path = weight_path  # 모델 저장 경로
+        self.result_path = weight_path  # 모델 저장 경로
         self.log_path = log_path # 로그 저장 경로
         self.tensorboard_path = tensorboard_path # 로그 저장 경로
         self.best_models = [] # 가장 좋은 상위 3개 모델의 정보를 저장할 리스트
@@ -65,10 +65,10 @@ class Trainer:
 
     def save_model(self, epoch, loss):
         # 모델 저장 경로 설정
-        os.makedirs(self.weight_path, exist_ok=True)
+        os.makedirs(self.result_path, exist_ok=True)
 
         # 현재 에폭 모델 저장
-        current_model_path = os.path.join(self.weight_path, f'model_epoch_{epoch}_loss_{loss:.4f}.pt')
+        current_model_path = os.path.join(self.result_path, f'model_epoch_{epoch}_loss_{loss:.4f}.pt')
         torch.save(self.model.state_dict(), current_model_path)
 
         # 최상위 3개 모델 관리
@@ -82,7 +82,7 @@ class Trainer:
         # 가장 낮은 손실의 모델 저장
         if loss < self.lowest_loss:
             self.lowest_loss = loss
-            best_model_path = os.path.join(self.weight_path, 'best_model.pt')
+            best_model_path = os.path.join(self.result_path, 'best_model.pt')
             torch.save(self.model.state_dict(), best_model_path)
             print(f"Save {epoch}epoch result. Loss = {loss:.4f}")
 
@@ -225,42 +225,19 @@ def train():
     )
 
     model = model_selector.get_model()
-    model = model.to(device)
-    
-    num_features = model.model.head.in_features
-
-    # 새로운 MLP HEAD 레이어 추가
-    model.model.head = nn.Sequential( # MLP HEAD
-        nn.Linear(num_features, 1024, bias=True),  # 추가할 FC 레이어
-        nn.GELU(approximate='none'),
-        nn.Dropout(p=0.0, inplace=False),
-        nn.Identity(),
-        nn.Linear(in_features=1024, out_features=500, bias=True) # 추가할 FC 레이어
-    )
-
-    # 전이 학습
-    for n,p in model.model.named_parameters():
-        p.requires_grad=False
-
-    # 추가한 FC 레이어의 파라미터만 학습 가능하도록 설정
-    for name, param in model.model.head.named_parameters():
-        param.requires_grad = True
-
 
     # optimizer
     optimizer = optim.Adam(model.parameters(), lr=args.lr)
     
-    steps_per_epoch = len(train_loader)
     scheduler = optim.lr_scheduler.StepLR(
     optimizer,
-    step_size=steps_per_epoch * args.step_size,
+    step_size=args.step_size,
     gamma=args.gamma
     )
 
     # loss
     loss_fn = Loss() # CrossEntropyLoss
-    loss_fn = loss_fn.to(device)
-    
+
     # train
     trainer = Trainer(
     model=model,
@@ -271,13 +248,12 @@ def train():
     scheduler=scheduler,
     loss_fn=loss_fn,
     epochs=args.epochs,
-    weight_path= weight_dir,
+    result_path= weight_dir,
     log_path= logfile,
     tensorboard_path= tensorboard_dir
     )
 
     trainer.train()
-    
 
 if __name__ == "__main__":
     torch.multiprocessing.set_start_method('spawn')
@@ -288,7 +264,7 @@ if __name__ == "__main__":
 
     # 모델 선택
     parser.add_argument('--model_type', type=str, default='timm', help='사용할 모델 이름')
-    parser.add_argument('--model_name', type=str, default='vit_tiny_patch16_224', help='timm model을 사용할 경우 timm 모델 중 선택')
+    parser.add_argument('--model_name', type=str, default='resnet50', help='timm model을 사용할 경우 timm 모델 중 선택')
 
     # 데이터 경로
     parser.add_argument('--train_dir', type=str, default="data/train", help='훈련 데이터셋 루트 디렉토리 경로')
@@ -298,11 +274,11 @@ if __name__ == "__main__":
     parser.add_argument('--save_rootpath', type=str, default="Experiments/debug", help='가중치, log, tensorboard 그래프 저장을 위한 path 실험명으로 디렉토리 구성')
     
     # 하이퍼파라미터
-    parser.add_argument('--epochs', type=int, default=30, help='에포크 설정')
+    parser.add_argument('--epochs', type=int, default=15, help='에포크 설정')
     parser.add_argument('--lr', type=float, default=0.001, help='learning rage')
     parser.add_argument('--batch_size', type=int, default=64)
     parser.add_argument('--step_size', type=int, default=15, help='몇 번째 epoch 마다 학습률 줄일지 선택')
-    parser.add_argument('--gamma', type=float, default=0.01, help='학습률에 얼마를 곱하여 줄일지 선택')
+    parser.add_argument('--gamma', type=float, default=0.1, help='학습률에 얼마를 곱하여 줄일지 선택')
 
     args = parser.parse_args()
 

@@ -2,18 +2,20 @@ import torch.nn as nn
 import torch
 import torch.optim as optim
 import os
-from tqdm import tqdm
+import tqdm
 import argparse
 import pandas as pd
 import logging
 import time
+import torch.nn.functional as F
 
 
 from torch.utils.data import DataLoader
 from sklearn.model_selection import train_test_split
 from model_selector import ModelSelector
-from dataloader import CustomDataset, TorchvisionTransform
+from dataloader import CustomDataset, TorchvisionTransform, AlbumentationsTransform
 from torch.utils.tensorboard import SummaryWriter
+from tqdm import tqdm
 
 class Loss(nn.Module):
 
@@ -32,7 +34,9 @@ class Loss(nn.Module):
 
         return self.loss_fn(outputs, targets)
     
-
+import cv2
+import numpy as np
+import matplotlib.pyplot as plt
 class Trainer:
     def __init__(
         self,
@@ -91,26 +95,45 @@ class Trainer:
         self.model.train()
 
         total_loss = 0.0
+        total = 0
+        correct = 0
         progress_bar = tqdm(self.train_loader, desc="Training", leave=False)
 
         for images, targets in progress_bar:
             images, targets = images.to(self.device), targets.to(self.device)
+            # 만약 images[0]이 torch.Tensor라면
+            # image_np = images[0].cpu().numpy()  # tensor를 numpy array로 변환
+            # image_np = np.transpose(image_np, (1, 2, 0))  # (C, H, W)에서 (H, W, C)로 변환 필요
+
+            # cv2.imwrite("debut.jpg", image_np)
+            #assert False
+            # print(images[0].max())
+            # print(images[0].min())
             self.optimizer.zero_grad()
             outputs = self.model(images)
+            #print(outputs.shape)
+            #assert False
+
             loss = self.loss_fn(outputs, targets)
             loss.backward()
             self.optimizer.step()
             self.scheduler.step()
             total_loss += loss.item()
             progress_bar.set_postfix(loss=loss.item())
+            logits = F.softmax(outputs, dim=1)
+            preds = logits.argmax(dim=1)
+            total += targets.size(0)
+            correct += (preds == targets).sum().item()
 
-        return total_loss / len(self.train_loader)
+        return total_loss / len(self.train_loader), correct / total * 100
 
     def validate(self) -> float:
         # 모델의 검증을 진행
         self.model.eval()
 
         total_loss = 0.0
+        total = 0
+        correct = 0
         progress_bar = tqdm(self.val_loader, desc="Validating", leave=False)
 
         with torch.no_grad():
@@ -120,8 +143,12 @@ class Trainer:
                 loss = self.loss_fn(outputs, targets)
                 total_loss += loss.item()
                 progress_bar.set_postfix(loss=loss.item())
+                logits = F.softmax(outputs, dim=1)
+                preds = logits.argmax(dim=1)
+                total += targets.size(0)
+                correct += (preds == targets).sum().item()
 
-        return total_loss / len(self.val_loader)
+        return total_loss / len(self.val_loader), correct / total * 100
 
     def train(self) -> None:
 
@@ -141,15 +168,17 @@ class Trainer:
         for epoch in range(self.epochs):
             logger.info(f"Epoch {epoch+1}/{self.epochs}")
 
-            train_loss = self.train_epoch()
-            val_loss = self.validate()
-            logger.info(f"Epoch {epoch+1}, Train Loss: {train_loss:.4f}, Validation Loss: {val_loss:.4f}\n")
+            train_loss, train_acc = self.train_epoch()
+            val_loss, val_acc = self.validate()
+            logger.info(f"Epoch {epoch+1}, Train Loss: {train_loss:.4f}, Train Accuracy: {train_acc:.2f}, Validation Loss: {val_loss:.4f}, Validataion Accuracy: {val_acc:.2f}\n")
 
             self.save_model(epoch, val_loss)
             self.scheduler.step()
 
             writer.add_scalar('Loss/train', train_loss, epoch)  # 훈련 손실 기록
+            writer.add_scalar('Accuracy/train', train_acc, epoch)  # 훈련 손실 기록
             writer.add_scalar('Loss/validation', val_loss, epoch)  # 검증 손실 기록
+            writer.add_scalar('Accuracy/validation', val_acc, epoch)  # 검증 손실 기록
         writer.close()    
 
 
@@ -189,8 +218,8 @@ def train():
     num_classes = len(train_info['target'].unique()) # 클래스 수
 
     train_df, val_df = train_test_split(train_info, test_size=0.2, stratify=train_info['target'], random_state=42)
-    train_transform = TorchvisionTransform(is_train=True)
-    val_transform = TorchvisionTransform(is_train=False)
+    train_transform = AlbumentationsTransform(is_train=True)
+    val_transform = AlbumentationsTransform(is_train=False)
 
     train_dataset = CustomDataset(
     root_dir=traindata_dir,
@@ -224,9 +253,12 @@ def train():
         pretrained=True
     )
 
+    
     model = model_selector.get_model()
     model = model.to(device)
-    
+
+    import torch.nn as nn
+
     num_features = model.model.head.in_features
 
     # 새로운 MLP HEAD 레이어 추가
@@ -246,11 +278,13 @@ def train():
     for name, param in model.model.head.named_parameters():
         param.requires_grad = True
 
+    model = model.to(device)
 
     # optimizer
     optimizer = optim.Adam(model.parameters(), lr=args.lr)
     
     steps_per_epoch = len(train_loader)
+
     scheduler = optim.lr_scheduler.StepLR(
     optimizer,
     step_size=steps_per_epoch * args.step_size,
@@ -260,7 +294,6 @@ def train():
     # loss
     loss_fn = Loss() # CrossEntropyLoss
     loss_fn = loss_fn.to(device)
-    
     # train
     trainer = Trainer(
     model=model,
@@ -277,7 +310,6 @@ def train():
     )
 
     trainer.train()
-    
 
 if __name__ == "__main__":
     torch.multiprocessing.set_start_method('spawn')
@@ -288,13 +320,13 @@ if __name__ == "__main__":
 
     # 모델 선택
     parser.add_argument('--model_type', type=str, default='timm', help='사용할 모델 이름')
-    parser.add_argument('--model_name', type=str, default='vit_tiny_patch16_224', help='timm model을 사용할 경우 timm 모델 중 선택')
+    parser.add_argument('--model_name', type=str, default='timm/eva02_large_patch14_448.mim_m38m_ft_in22k_in1k', help='timm model을 사용할 경우 timm 모델 중 선택')
 
     # 데이터 경로
-    parser.add_argument('--train_dir', type=str, default="data/train", help='훈련 데이터셋 루트 디렉토리 경로')
-    parser.add_argument('--test_dir', type=str, default="data/test", help='테스트 데이터셋 루트 디렉토리 경로')
-    parser.add_argument('--train_csv', type=str, default="data/train.csv", help='훈련 데이터셋 csv 파일 경로')
-    parser.add_argument('--test_csv', type=str, default="data/test.csv", help='테스트 데이터셋 csv 파일 경로')
+    parser.add_argument('--train_dir', type=str, default="/data/ephemeral/home/data/train", help='훈련 데이터셋 루트 디렉토리 경로')
+    parser.add_argument('--test_dir', type=str, default="/data/ephemeral/home/data/test", help='테스트 데이터셋 루트 디렉토리 경로')
+    parser.add_argument('--train_csv', type=str, default="/data/ephemeral/home/data/train.csv", help='훈련 데이터셋 csv 파일 경로')
+    parser.add_argument('--test_csv', type=str, default="/data/ephemeral/home/data/test.csv", help='테스트 데이터셋 csv 파일 경로')
     parser.add_argument('--save_rootpath', type=str, default="Experiments/debug", help='가중치, log, tensorboard 그래프 저장을 위한 path 실험명으로 디렉토리 구성')
     
     # 하이퍼파라미터
@@ -302,7 +334,7 @@ if __name__ == "__main__":
     parser.add_argument('--lr', type=float, default=0.001, help='learning rage')
     parser.add_argument('--batch_size', type=int, default=64)
     parser.add_argument('--step_size', type=int, default=15, help='몇 번째 epoch 마다 학습률 줄일지 선택')
-    parser.add_argument('--gamma', type=float, default=0.01, help='학습률에 얼마를 곱하여 줄일지 선택')
+    parser.add_argument('--gamma', type=float, default=0.1, help='학습률에 얼마를 곱하여 줄일지 선택')
 
     args = parser.parse_args()
 
