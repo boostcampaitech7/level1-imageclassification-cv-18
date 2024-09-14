@@ -3,27 +3,39 @@
 
 
 ---
-***(주의) 올바른 경로에서 작업하는게 매우 중요합니다!***
-
-***(주의) 서버가 설정 되어 있다면, step 3의 git setting 만 진행하면 됩니다.***
+- ***올바른 경로에서 작업하는게 매우 중요합니다.***
 
 
-***(참고) 부분적인 setting 이 필요하다면 위 주소를 참고해 직접 코드를 입력해주세요.***
-
-***(참고) ssh 첫 연결을 개인페이지로 열었을 때 zsh 설정이 초기화 되는 경우가 있는데, 터미널에 *zsh* 를 입력해주면 됩니다.***
+- 설정이 반영이 안되어있을 땐 터미널에 ***zsh*** 를 입력하여 활성화 할 수 있습니다.
 
 
+- step 1
+    - ***install_zsh.sh*** : zsh shelll 을 설치합니다.
+
+-  step 2
+    - ***zsh_setting_1.sh*** : 필요한 기본 기능과 oh-my-zsh 테마를 설치합니다.
+    - ***zsh_setting_2.sh*** : zsh shell을 custom 하고 conda 설정을 적용합니다.
+    - ***download_sketch_data.sh*** : home 디렉토리에 데이터를 다운로드합니다.
+
+- step 3
+    - github 연동
+    - conda 가상환경 설정
 
 ## step 1 
 
-- **bash_setting.sh**, **zsh_setting_1.sh**, **zsh_setting_2.sh** 를 다운 받아 준비해주세요.
-- ssh 연결 후 */data/ephemeral/home* 파일을 열어주세요.
--  */data/ephemeral/home* 폴더에 다운로드한 .sh 파일을 저장해주세요.
+
+
+- **(중요) vs-code로 ssh 연결 후 */data/ephemeral/home* 폴더를 열어줍니다.**
+
+
+-  */data/ephemeral/home* 폴더에 다운로드한 .sh 파일을 저장합니다.
     ```bash
+    # 폴더 구조
     /data/ephemeral/home
 
     home
-    ┣ bash_setting.sh
+    ┣ install_zsh.sh
+    ┣ download_sketch_data.sh
     ┣ zsh_setting_1.sh
     ┗ zsh_setting_2.sh 
     ```
@@ -32,18 +44,19 @@
     ```bash
     # bash shell
 
-    # ~ 경로는 vs-code에서 open 한 경로입니다. (자동으로 설정되어 있습니다.)
+    # ~ = /data/ephemeral/home
     cd ~
     pwd
 
     # /data/ephemeral/home 경로면 진행    
-    chmod +x bash_setting.sh
-    ./bash_setting.sh
+    chmod +x install_zsh.sh
+    ./install_zsh.sh
     ```
 
 ## step 2
 
-- *data/ephemeral/home* 으로 ssh를 열었는 지 한번 더 확인해주세요.
+- ***(중요) *data/ephemeral/home* 으로 ssh를 열었는 지 한번 더 확인해주세요.***
+
     ```bash
     # zsh shell 전환
     zsh
@@ -51,7 +64,8 @@
     cd ~
     pwd
 
-     # /data/ephemeral/home 경로면 진행    
+    # /data/ephemeral/home 경로면 진행    
+
     chmod +x zsh_setting_1.sh
     ./zsh_setting_1.sh
 
@@ -60,12 +74,25 @@
 
     source ~/.zshrc
     ```
+<<<<<<< HEAD:linux_server_setting/readme.md
 - home 디렉토리에 data를 다운로드 (공용 데이터로 사용)
     ```bash
     chmod +x download_data.sh
     ./download_data.sh  
     ```
     
+=======
+
+    ```bash
+    cd ~
+    pwd
+
+    # /data/ephemeral/home 경로면 진행    
+
+    chmod +x download_sketch_data.sh
+    ./download_sketch_data.sh
+    ```
+>>>>>>> chan-note/server_setting:server_setting/readme.md
 ## step 3 
 
 - 개인 폴더를 만들고 github와 연동합니다.
