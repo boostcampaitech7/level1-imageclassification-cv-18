@@ -11,15 +11,22 @@
 
 - step 1
     - ***install_zsh.sh*** 
+
         -  zsh shelll 을 설치합니다.
 
 -  step 2
     - ***zsh_setting_1.sh*** 
+
         - 필요한 기본 기능을 설치합니다.(curl, wget, nano, libglib2.0-0)
+
         - oh-my-zsh 테마를 설치합니다.
+
     - ***zsh_setting_2.sh*** 
+
         -  zsh shell을 custom 합니다.
+
         -  conda 설정을 적용합니다.
+        
     - ***download_sketch_data.sh*** 
         -  home 디렉토리에 데이터를 다운로드합니다.
 
