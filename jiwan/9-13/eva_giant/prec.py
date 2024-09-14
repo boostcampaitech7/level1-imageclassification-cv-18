@@ -38,7 +38,7 @@ def inference(
 # 추론 데이터의 경로와 정보를 가진 파일의 경로를 설정.
 testdata_dir = "/data/ephemeral/home/data/test"
 testdata_info_file = "/data/ephemeral/home/data/test.csv"
-save_result_path = "Experiments/debug"
+save_result_path = "/Experiments/debug/weights"
 
 # 추론 데이터의 class, image path, target에 대한 정보가 들어있는 csv파일을 읽기.
 test_info = pd.read_csv(testdata_info_file)
