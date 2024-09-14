@@ -2,12 +2,12 @@ import torch.nn as nn
 import torch
 import torch.optim as optim
 import os
-import tqdm
 import argparse
 import pandas as pd
 import logging
 import time
 
+from tqdm import tqdm
 from torch.utils.data import DataLoader
 from sklearn.model_selection import train_test_split
 from loss import CrossEntropyLoss
@@ -82,10 +82,9 @@ class Trainer:
             loss = self.loss_fn(outputs, targets)
             loss.backward()
             self.optimizer.step()
-            self.scheduler.step()
             total_loss += loss.item()
             progress_bar.set_postfix(loss=loss.item())
-
+        self.scheduler.step()
         return total_loss / len(self.train_loader)
 
     def validate(self) -> float:
@@ -128,7 +127,6 @@ class Trainer:
             logger.info(f"Epoch {epoch+1}, Train Loss: {train_loss:.4f}, Validation Loss: {val_loss:.4f}\n")
 
             self.save_model(epoch, val_loss)
-            self.scheduler.step()
 
             writer.add_scalar('Loss/train', train_loss, epoch)  # 훈련 손실 기록
             writer.add_scalar('Loss/validation', val_loss, epoch)  # 검증 손실 기록
