@@ -1,3 +1,5 @@
+(미완성)
+
 - base code 폴더 복사한 후 model 이나 method 로 폴더 이름 변경해서 수정하여 사용
 
 - train_test.py 밑 부분만을 수정하여 학습 가능
