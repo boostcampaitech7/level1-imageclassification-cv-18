@@ -12,7 +12,7 @@ from torch.utils.data import DataLoader
 from sklearn.model_selection import train_test_split
 from loss import CrossEntropyLoss
 from model_selector import ModelSelector
-from dataloader import CustomDataset, TorchvisionTransform
+from dataloader import CustomDataset, TorchvisionTransform, AlbumentationsTransform
 from torch.utils.tensorboard import SummaryWriter
 
 class Trainer:
@@ -169,8 +169,13 @@ def train():
     num_classes = len(train_info['target'].unique()) # 클래스 수
 
     train_df, val_df = train_test_split(train_info, test_size=0.2, stratify=train_info['target'], random_state=42)
-    train_transform = TorchvisionTransform(is_train=True)
-    val_transform = TorchvisionTransform(is_train=False)
+    
+    if args.transform == "TorchvisionTransform":
+        train_transform = TorchvisionTransform(is_train=True)
+        val_transform = TorchvisionTransform(is_train=False)
+    elif args.transform == "AlbumentationsTransform":
+        train_transform = AlbumentationsTransform(is_train=True)
+        val_transform = AlbumentationsTransform(is_train=False)
 
     train_dataset = CustomDataset(
     root_dir=traindata_dir,
@@ -243,9 +248,10 @@ if __name__ == "__main__":
     
     # default 부분 수정해서 사용!!
 
-    # 모델 선택
+    # method
     parser.add_argument('--model_type', type=str, default='timm', help='사용할 모델 이름')
     parser.add_argument('--model_name', type=str, default='resnet50', help='timm model을 사용할 경우 timm 모델 중 선택')
+    parser.add_argument('--transform', type=str, default='AlbumentationsTransform', help='transform class 선택 torchvision or albumentation / dataloader.py code 참고')
 
     # 데이터 경로
     parser.add_argument('--train_dir', type=str, default="/data/ephemeral/home/data/train", help='훈련 데이터셋 루트 디렉토리 경로')
