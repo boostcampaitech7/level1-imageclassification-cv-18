@@ -3,14 +3,12 @@ import cv2
 import os
 import torch
 import numpy as np
+import albumentations as A
 
 from typing import Callable, Tuple, Union
 from torchvision import transforms
-from torch.utils.data import Dataset
-import albumentations as A
+from torch.utils.data import Dataset, ConcatDataset
 from albumentations.pytorch import ToTensorV2
-import numpy as np
-import torch
 from tqdm import tqdm
 from PIL import Image
 
@@ -76,35 +74,40 @@ class TorchvisionTransform: # 단순한 전처리, 간편한 사용, 증강이 �
         transformed = self.transform(image)  # 설정된 변환을 적용
 
         return transformed  # 변환된 이미지 반환
-    
-import albumentations as A
-from albumentations.pytorch import ToTensorV2
-import numpy as np
-import torch
 
 class AlbumentationsTransform:
     def __init__(self, is_train: bool = True):
-        # 공통 변환 설정: 이미지 리사이즈, 정규화, 텐서 변환
         common_transforms = [
-            A.Resize(336, 336),  # 이미지를 336x336 크기로 리사이즈
-            A.CenterCrop(336, 336),  # 이미지를 중앙에서 크롭
-            A.Normalize(mean=[0.48145466, 0.4578275, 0.40821073], std=[0.26862954, 0.26130258, 0.27577711]),  # CLIP 정규화 값 사용
-            ToTensorV2()  # albumentations에서 제공하는 PyTorch 텐서 변환
+            A.Resize(336, 336),
+            A.CenterCrop(336, 336),
+            A.Normalize(mean=[0.48145466, 0.4578275, 0.40821073], std=[0.26862954, 0.26130258, 0.27577711]),
+            ToTensorV2()
         ]
 
         if is_train:
-            # 훈련용 변환: 공통 변환만 적용 (간단한 전처리)
-            self.transform = A.Compose(common_transforms)
+            train_transforms = [
+                A.HorizontalFlip(p=0.5),
+                A.Rotate(limit=15),
+                A.RandomBrightnessContrast(p=0.2)
+            ] + common_transforms
+            self.transform = A.Compose(train_transforms)
         else:
-            # 검증/테스트용 변환: 공통 변환만 적용
             self.transform = A.Compose(common_transforms)
 
     def __call__(self, image) -> torch.Tensor:
-        # 이미지가 NumPy 배열인지 확인
         if not isinstance(image, np.ndarray):
             raise TypeError("Image should be a NumPy array (OpenCV format).")
-
-        # 이미지에 변환 적용 및 결과 반환
         transformed = self.transform(image=image)
+        return transformed['image']
 
-        return transformed['image']  # 변환된 이미지의 텐서를 반환
+# 데이터셋을 로드할 때 원본과 증강을 함께 사용하기 위한 코드
+def create_combined_dataset(root_dir: str, info_df: pd.DataFrame, is_train: bool):
+    original_transform = AlbumentationsTransform(is_train=False).transform
+    original_dataset = CustomDataset(root_dir, info_df, original_transform, is_inference=False)
+
+    augmented_transform = AlbumentationsTransform(is_train=True).transform
+    augmented_dataset = CustomDataset(root_dir, info_df, augmented_transform, is_inference=False)
+
+    combined_dataset = ConcatDataset([original_dataset, augmented_dataset])
+
+    return combined_dataset

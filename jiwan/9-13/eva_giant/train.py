@@ -9,11 +9,10 @@ import logging
 import time
 import torch.nn.functional as F
 
-
 from torch.utils.data import DataLoader
 from sklearn.model_selection import train_test_split
 from model_selector import ModelSelector
-from dataloader import CustomDataset, TorchvisionTransform, AlbumentationsTransform
+from dataloader import CustomDataset, TorchvisionTransform, AlbumentationsTransform, create_combined_dataset
 from torch.utils.tensorboard import SummaryWriter
 from tqdm import tqdm
 from prec import prec_model
@@ -219,13 +218,20 @@ def train():
     num_classes = len(train_info['target'].unique()) # 클래스 수
 
     train_df, val_df = train_test_split(train_info, test_size=0.2, stratify=train_info['target'], random_state=42)
-    train_transform = AlbumentationsTransform(is_train=True)
+    # train_transform = AlbumentationsTransform(is_train=True)
     val_transform = AlbumentationsTransform(is_train=False)
 
-    train_dataset = CustomDataset(
-    root_dir=traindata_dir,
-    info_df=train_df,
-    transform=train_transform
+    # train_dataset = CustomDataset(
+    # root_dir=traindata_dir,
+    # info_df=train_df,
+    # transform=train_transform
+    # )
+
+    # 원본 + 증강 데이터를 함께 사용하기 위한 combined dataset 생성
+    train_dataset = create_combined_dataset(
+        root_dir=traindata_dir,
+        info_df=train_df,
+        is_train=True  # 원본과 증강된 데이터를 함께 사용할 수 있게 설정
     )
 
     val_dataset = CustomDataset(

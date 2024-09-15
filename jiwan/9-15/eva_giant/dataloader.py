@@ -3,14 +3,12 @@ import cv2
 import os
 import torch
 import numpy as np
+import albumentations as A
 
 from typing import Callable, Tuple, Union
 from torchvision import transforms
-from torch.utils.data import Dataset
-import albumentations as A
+from torch.utils.data import Dataset, ConcatDataset
 from albumentations.pytorch import ToTensorV2
-import numpy as np
-import torch
 from tqdm import tqdm
 from PIL import Image
 
@@ -40,7 +38,7 @@ class CustomDataset(Dataset):
         img_path = os.path.join(self.root_dir, self.image_paths[index])  # 이미지 경로 조합
         image = cv2.imread(img_path, cv2.IMREAD_COLOR)  # 이미지를 BGR 컬러 포맷의 numpy array로 읽어옵니다.
         image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)  # BGR 포맷을 RGB 포맷으로 변환합니다.
-        image = self.transform(image)  # 설정된 이미지 변환을 적용합니다.
+        image = self.transform(image=image)  # 설정된 이미지 변환을 적용합니다.
 
         if self.is_inference:
             return image
@@ -76,41 +74,40 @@ class TorchvisionTransform: # 단순한 전처리, 간편한 사용, 증강이 �
         transformed = self.transform(image)  # 설정된 변환을 적용
 
         return transformed  # 변환된 이미지 반환
-    
-import albumentations as A
-from albumentations.pytorch import ToTensorV2
-import numpy as np
-import torch
 
 class AlbumentationsTransform:
     def __init__(self, is_train: bool = True):
-        # 공통 변환 설정: 이미지 리사이즈, 정규화, 텐서 변환
         common_transforms = [
-            A.Resize(224, 224),  # 이미지를 224x224 크기로 리사이즈
-            A.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),  # 정규화
-            ToTensorV2()  # albumentations에서 제공하는 PyTorch 텐서 변환
+            A.Resize(336, 336),
+            A.CenterCrop(336, 336),
+            A.Normalize(mean=[0.48145466, 0.4578275, 0.40821073], std=[0.26862954, 0.26130258, 0.27577711]),
+            ToTensorV2()
         ]
 
         if is_train:
-            # 훈련용 변환: 새로운 증강 기법 적용
-            self.transform = A.Compose(
-                [
-                    A.RandomResizedCrop(height=224, width=224, scale=(0.05, 1.0), p=1.0),  # 크롭 후 리사이즈
-                    A.HorizontalFlip(p=0.5),  # 50% 확률로 좌우 뒤집기
-                    A.RandomBrightnessContrast(brightness_limit=0.2, contrast_limit=0.2, p=0.5),  # 밝기 및 대비 조정
-                    A.HueSaturationValue(hue_shift_limit=0.2, sat_shift_limit=0.2, val_shift_limit=0.2, p=0.5),  # 색조, 채도, 명도 조정
-                ] + common_transforms
-            )
+            train_transforms = [
+                A.HorizontalFlip(p=0.5),
+                A.Rotate(limit=15),
+                A.RandomBrightnessContrast(p=0.2)
+            ] + common_transforms
+            self.transform = A.Compose(train_transforms)
         else:
-            # 검증/테스트용 변환: 공통 변환만 적용
             self.transform = A.Compose(common_transforms)
 
     def __call__(self, image) -> torch.Tensor:
-        # 이미지가 NumPy 배열인지 확인
         if not isinstance(image, np.ndarray):
             raise TypeError("Image should be a NumPy array (OpenCV format).")
-
-        # 이미지에 변환 적용 및 결과 반환
         transformed = self.transform(image=image)
+        return transformed['image']
 
-        return transformed['image']  # 변환된 이미지의 텐서를 반환
+# 데이터셋을 로드할 때 원본과 증강을 함께 사용하기 위한 코드
+def create_combined_dataset(root_dir: str, info_df: pd.DataFrame, is_train: bool):
+    original_transform = AlbumentationsTransform(is_train=False).transform
+    original_dataset = CustomDataset(root_dir, info_df, original_transform, is_inference=False)
+
+    augmented_transform = AlbumentationsTransform(is_train=True).transform
+    augmented_dataset = CustomDataset(root_dir, info_df, augmented_transform, is_inference=False)
+
+    combined_dataset = ConcatDataset([original_dataset, augmented_dataset])
+
+    return combined_dataset
