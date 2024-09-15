@@ -4,6 +4,6 @@ data.tar.gz
 .ipynb_checkpoints
 *.pt
 *.cpython*.pyc
-*.log
-events.*
-Experiments
+Experiments/weights
+__pycache__
+
