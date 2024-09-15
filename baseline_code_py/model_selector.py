@@ -15,9 +15,6 @@ class ModelSelector:
         if model_type == 'simple':
             self.model = SimpleCNN(num_classes=num_classes)
 
-        # elif model_type == 'torchvision':
-        #     self.model = TorchvisionModel(num_classes=num_classes, **kwargs)
-
         elif model_type == 'timm':
             self.model = TimmModel(num_classes=num_classes, **kwargs)
 
