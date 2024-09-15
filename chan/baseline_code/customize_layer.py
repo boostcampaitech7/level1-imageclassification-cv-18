@@ -9,17 +9,19 @@ def customize_layer(model, num_classes):
 
     만약 model 구조 수정 안하고 기존 레이어 몇 개만 열어서 학습하고 싶으면
     레이어 정의만 주석하면 됩니다.
+
+    model.model.fc < 이부분이 달라닙니다 예를들어 TimModel (ResNet)의 model 레이어안에 fc 레이어 (TimModel 의 경우 model 이라는 레이어안에 구현해놓은 듯)
     '''
 
     # 레이어 정의 예시
-    model.fc = nn.Sequential(
-        nn.Linear(model.fc.in_features, 1000),
+    model.model.fc = nn.Sequential(
+        nn.Linear(model.model.fc.in_features, 1000),
         nn.ReLU(),
         nn.Linear(1000, num_classes)
     )
     
     # 파라미터 학습 가능하게 수정
-    for param in model.fc.parameters():
+    for param in model.model.fc.parameters():
         param.requires_grad = True
 
     return model
