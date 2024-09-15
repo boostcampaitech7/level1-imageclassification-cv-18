@@ -1,5 +1,5 @@
 (미완성)
-
+ 
 - base code 폴더 복사한 후 model 이나 method 로 폴더 이름 변경해서 수정하여 사용
 
 - train_test.py 밑 부분만을 수정하여 학습 가능
@@ -13,3 +13,6 @@
 
 - train_test.py 실행 시 학습 후 Experiments/test_csv 폴더에 test csv 파일 저장됨
 - (4개 저장됨 가장 높은 성능 보인 4개의 가중치 파일에 대해서)
+
+- 가상환경 없으면 enviroment.yml 사용
+-  apt-get install libglib2.0-0 (깔아야 할 수도 있음 참고만.)
