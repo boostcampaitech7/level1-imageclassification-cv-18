@@ -100,19 +100,13 @@ class Trainer:
         progress_bar = tqdm(self.train_loader, desc="Training", leave=False)
 
         for images, targets in progress_bar:
-            images, targets = images.to(self.device), targets.to(self.device)
-            # 만약 images[0]이 torch.Tensor라면
-            # image_np = images[0].cpu().numpy()  # tensor를 numpy array로 변환
-            # image_np = np.transpose(image_np, (1, 2, 0))  # (C, H, W)에서 (H, W, C)로 변환 필요
+            # 이미지를 dict에서 추출
+            if isinstance(images, dict):  # Albumentations 변환을 사용한 경우
+                images = images['image']
 
-            # cv2.imwrite("debut.jpg", image_np)
-            #assert False
-            # print(images[0].max())
-            # print(images[0].min())
+            images, targets = images.to(self.device), targets.to(self.device)
             self.optimizer.zero_grad()
             outputs = self.model(images)
-            #print(outputs.shape)
-            #assert False
 
             loss = self.loss_fn(outputs, targets)
             loss.backward()
@@ -138,6 +132,10 @@ class Trainer:
 
         with torch.no_grad():
             for images, targets in progress_bar:
+                # 이미지를 dict에서 추출
+                if isinstance(images, dict):  # Albumentations 변환을 사용한 경우
+                    images = images['image']
+                    
                 images, targets = images.to(self.device), targets.to(self.device)
                 outputs = self.model(images)
                 loss = self.loss_fn(outputs, targets)
@@ -220,7 +218,7 @@ def train():
     train_df, val_df = train_test_split(train_info, test_size=0.2, stratify=train_info['target'], random_state=42)
     # train_transform = AlbumentationsTransform(is_train=True)
     val_transform = AlbumentationsTransform(is_train=False)
-
+    
     # train_dataset = CustomDataset(
     # root_dir=traindata_dir,
     # info_df=train_df,

@@ -38,7 +38,7 @@ class CustomDataset(Dataset):
         img_path = os.path.join(self.root_dir, self.image_paths[index])  # 이미지 경로 조합
         image = cv2.imread(img_path, cv2.IMREAD_COLOR)  # 이미지를 BGR 컬러 포맷의 numpy array로 읽어옵니다.
         image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)  # BGR 포맷을 RGB 포맷으로 변환합니다.
-        image = self.transform(image)  # 설정된 이미지 변환을 적용합니다.
+        image = self.transform(image=image)  # 설정된 이미지 변환을 적용합니다.
 
         if self.is_inference:
             return image

@@ -1,0 +1,34 @@
+2024-09-15 16:24:28,984 - INFO - Epoch 1/50
+2024-09-15 16:29:09,792 - INFO - Epoch 1/50
+2024-09-15 16:30:54,381 - INFO - Epoch 1/50
+2024-09-15 16:33:55,751 - INFO - Epoch 1/50
+2024-09-15 17:18:47,995 - INFO - Epoch 1, Train Loss: 1.5002, Train Accuracy: 78.57, Validation Loss: 0.4678, Validataion Accuracy: 86.69
+
+2024-09-15 17:19:03,402 - INFO - Epoch 2/50
+2024-09-15 18:03:57,571 - INFO - Epoch 2, Train Loss: 0.2812, Train Accuracy: 91.07, Validation Loss: 0.3902, Validataion Accuracy: 88.75
+
+2024-09-15 18:04:42,553 - INFO - Epoch 3/50
+2024-09-15 18:49:34,596 - INFO - Epoch 3, Train Loss: 0.1973, Train Accuracy: 93.40, Validation Loss: 0.3710, Validataion Accuracy: 88.92
+
+2024-09-15 18:50:19,710 - INFO - Epoch 4/50
+2024-09-15 19:35:14,930 - INFO - Epoch 4, Train Loss: 0.1569, Train Accuracy: 94.38, Validation Loss: 0.3704, Validataion Accuracy: 89.78
+
+2024-09-15 19:35:59,720 - INFO - Epoch 5/50
+2024-09-15 20:20:53,418 - INFO - Epoch 5, Train Loss: 0.1355, Train Accuracy: 95.16, Validation Loss: 0.3704, Validataion Accuracy: 89.55
+
+2024-09-15 20:21:38,517 - INFO - Epoch 6/50
+2024-09-15 21:06:33,114 - INFO - Epoch 6, Train Loss: 0.1132, Train Accuracy: 95.92, Validation Loss: 0.3663, Validataion Accuracy: 89.98
+
+2024-09-15 21:07:21,755 - INFO - Epoch 7/50
+2024-09-15 21:52:17,894 - INFO - Epoch 7, Train Loss: 0.1028, Train Accuracy: 96.22, Validation Loss: 0.3660, Validataion Accuracy: 89.92
+
+2024-09-15 21:53:02,733 - INFO - Epoch 8/50
+2024-09-15 22:37:54,130 - INFO - Epoch 8, Train Loss: 0.0909, Train Accuracy: 96.60, Validation Loss: 0.3588, Validataion Accuracy: 90.45
+
+2024-09-15 22:38:39,757 - INFO - Epoch 9/50
+2024-09-15 23:23:33,560 - INFO - Epoch 9, Train Loss: 0.0824, Train Accuracy: 96.95, Validation Loss: 0.3830, Validataion Accuracy: 90.08
+
+2024-09-15 23:23:41,792 - INFO - Epoch 10/50
+2024-09-16 00:08:37,614 - INFO - Epoch 10, Train Loss: 0.0755, Train Accuracy: 97.17, Validation Loss: 0.3916, Validataion Accuracy: 90.35
+
+2024-09-16 00:08:45,710 - INFO - Epoch 11/50

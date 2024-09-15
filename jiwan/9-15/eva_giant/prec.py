@@ -120,5 +120,3 @@ def prec_model():
 
     # DataFrame 저장
     test_info.to_csv("./csv/result_3.csv", index=False)
-
-prec_model()
