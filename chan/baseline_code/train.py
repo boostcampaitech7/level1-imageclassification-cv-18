@@ -10,10 +10,12 @@ import time
 from tqdm import tqdm
 from torch.utils.data import DataLoader
 from sklearn.model_selection import train_test_split
+from torch.utils.tensorboard import SummaryWriter
+
 from loss import CrossEntropyLoss
 from model_selector import ModelSelector
 from dataloader import CustomDataset, TorchvisionTransform, AlbumentationsTransform
-from torch.utils.tensorboard import SummaryWriter
+from cutomize_layer import cutomize_layer
 
 class Trainer:
     def __init__(
@@ -159,16 +161,16 @@ def train():
 
     #set save dir
     weight_dir, log_dir, tensorboard_dir = setup_directories(args.save_rootpath)
-    logfile = os.path.join(log_dir, "trianlog.log")
+    logfile = os.path.join(log_dir, "train_log.log")
 
     # 데이터 준비
     traindata_dir = args.train_dir
     traindata_info_file = args.train_csv
 
     train_info = pd.read_csv(traindata_info_file)
-    num_classes = len(train_info['target'].unique()) # 클래스 수
+    num_classes = len(train_info['target'].unique()) 
 
-    train_df, val_df = train_test_split(train_info, test_size=0.2, stratify=train_info['target'], random_state=42)
+    train_df, val_df = train_test_split(train_info, test_size=0.2, stratify=train_info['target'], random_state=42) # split 은 항상 seed 42로 고정.
     
     if args.transform == "TorchvisionTransform":
         train_transform = TorchvisionTransform(is_train=True)
@@ -206,10 +208,21 @@ def train():
         model_type= args.model_type,
         num_classes = num_classes,
         model_name= args.model_name,
-        pretrained=True
+        pretrained= args.pretrained
     )
 
     model = model_selector.get_model()
+
+    # model 구조 모르겠으면 주석 풀고 확인
+    # print(model)
+    # assert False
+
+    if args.pretrained == True:
+        for param in model.parameters():
+            param.requires_grad = False
+        
+        model = customize_layer(num_classes)
+
     model = model.to(device)
     
     # optimizer
@@ -246,13 +259,21 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument('--gpu', type=int, default=0, help='cuda:(gpu)')
     
-    # default 부분 수정해서 사용!!
+    # default 부분 수정해서 사용!
+    # default 부분 수정해서 사용!
+    # default 부분 수정해서 사용!
+    # default 부분 수정해서 사용!
+    # default 부분 수정해서 사용!
 
     # method
-    parser.add_argument('--model_type', type=str, default='timm', help='사용할 모델 이름')
-    parser.add_argument('--model_name', type=str, default='resnet50', help='timm model을 사용할 경우 timm 모델 중 선택')
-    parser.add_argument('--transform', type=str, default='AlbumentationsTransform', help='transform class 선택 torchvision or albumentation / dataloader.py code 참고')
+    parser.add_argument('--model_type', type=str, default='timm', help='사용할 모델 이름 : model_selector.py 중 선택')
+    parser.add_argument('--model_name', type=str, default='resnet50', help='model/timm_model_name.txt 에서 확인, 아키텍처 확인은 "https://github.com/huggingface/pytorch-image-models/tree/main/timm/models"')
+    parser.add_argument('--pretrained', type=str, default='True', help='전이학습 or 학습된 가중치 가져오기 : True / 전체학습 : False')
+    # 전이학습할 거면 꼭! (True) customize_layer.py 가서 레이어 수정, 레이어 수정 안할 거면 가서 레이어 구조 변경 부분만 주석해서 사용 (어떤 레이어 열지는 알아야함)
+    # 모델 구조랑 레이어 이름 모르겠으면 위에 모델 정의 부분가서 print(model) , assert False 주석 풀어서 확인하기
 
+    parser.add_argument('--transform', type=str, default='AlbumentationsTransform', help='transform class 선택 torchvision or albumentation / dataloader.py code 참고')
+    
     # 데이터 경로
     parser.add_argument('--train_dir', type=str, default="/data/ephemeral/home/data/train", help='훈련 데이터셋 루트 디렉토리 경로')
     parser.add_argument('--test_dir', type=str, default="/data/ephemeral/home/data/test", help='테스트 데이터셋 루트 디렉토리 경로')
@@ -265,8 +286,8 @@ if __name__ == "__main__":
     parser.add_argument('--epochs', type=int, default=15, help='에포크 설정')
     parser.add_argument('--lr', type=float, default=0.001, help='learning rage')
     parser.add_argument('--batch_size', type=int, default=64)
-    parser.add_argument('--step_size', type=int, default=15, help='몇 번째 epoch 마다 학습률 줄일지 선택')
-    parser.add_argument('--gamma', type=float, default=0.1, help='학습률에 얼마를 곱하여 줄일지 선택')
+    parser.add_argument('--step_size', type=int, default=15, help='몇 번째 epoch 마다 학습률 줄일 지 선택')
+    parser.add_argument('--gamma', type=float, default=0.1, help='학습률에 얼마를 곱하여 줄일 지 선택')
 
     args = parser.parse_args()
 
