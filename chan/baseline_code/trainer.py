@@ -21,7 +21,9 @@ class Trainer:
         epochs: int,
         weight_path: str,
         log_path: str,
-        tensorboard_path: str
+        tensorboard_path: str,
+        model_name : str,
+        pretrained : bool
     ):
         # 클래스 초기화: 모델, 디바이스, 데이터 로더 등 설정
         self.model = model  # 훈련할 모델
@@ -37,13 +39,14 @@ class Trainer:
         self.tensorboard_path = tensorboard_path # 로그 저장 경로
         self.best_models = [] # 가장 좋은 상위 3개 모델의 정보를 저장할 리스트
         self.lowest_loss = float('inf') # 가장 낮은 Loss를 저장할 변수
-
+        self.model_name = model_name
+        self.pretrained = pretrained
     def save_model(self, epoch, loss):
         # 모델 저장 경로 설정
         os.makedirs(self.weight_path, exist_ok=True)
 
         # 현재 에폭 모델 저장
-        current_model_path = os.path.join(self.weight_path, f'model_epoch_{epoch}_loss_{loss:.4f}.pt')
+        current_model_path = os.path.join(self.weight_path, f'{self.model_name}_{self.pretrained}_epoch_{epoch}_loss_{loss:.4f}.pt')
         torch.save(self.model.state_dict(), current_model_path)
 
         # 최상위 3개 모델 관리
@@ -57,7 +60,7 @@ class Trainer:
         # 가장 낮은 손실의 모델 저장
         if loss < self.lowest_loss:
             self.lowest_loss = loss
-            best_model_path = os.path.join(self.weight_path, 'best_model.pt')
+            best_model_path = os.path.join(self.weight_path, f'best_{self.model_name}_{self.pretrained}_epoch_{epoch}_loss_{loss:.4f}.pt')
             torch.save(self.model.state_dict(), best_model_path)
             print(f"Save {epoch}epoch result. Loss = {loss:.4f}")
 
