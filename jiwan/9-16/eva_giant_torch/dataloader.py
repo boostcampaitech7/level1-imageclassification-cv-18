@@ -59,9 +59,10 @@ class TorchvisionTransform: # 단순한 전처리, 간편한 사용, 증강이 �
             # 훈련용 변환: 랜덤 수평 뒤집기, 랜덤 회전, 색상 조정 추가
             self.transform = transforms.Compose(
                 [
-                    transforms.RandomHorizontalFlip(p=0.5),  # 50% 확률로 이미지를 수평 뒤집기
-                    transforms.RandomRotation(15),  # 최대 15도 회전
-                    transforms.ColorJitter(brightness=0.2, contrast=0.2),  # 밝기 및 대비 조정
+                    transforms.AutoAugment(policy=transforms.AutoAugmentPolicy.IMAGENET),  # AutoAugment 추가
+                    # transforms.RandomHorizontalFlip(p=0.5),  # 50% 확률로 이미지를 수평 뒤집기
+                    # transforms.RandomRotation(15),  # 최대 15도 회전
+                    # transforms.ColorJitter(brightness=0.2, contrast=0.2),  # 밝기 및 대비 조정
                 ] + common_transforms
             )
         else:
@@ -86,9 +87,15 @@ class AlbumentationsTransform:
 
         if is_train:
             train_transforms = [
-                A.HorizontalFlip(p=0.5),
-                A.Rotate(limit=15),
-                A.RandomBrightnessContrast(p=0.2)
+                A.Rotate(limit=30, p=0.5)
+                A.HorizontalFlip(p=0.5)
+                A.VerticalFlip(p=0.5)
+                A.ShiftScaleRotate(shift_limit=0.05, scale_limit=0.05, rotate_limit=15, p=0.5)
+                A.RandomBrightnessContrast(brightness_limit=0.2, contrast_limit=0.2, p=0.5)
+                A.ElasticTransform(alpha=1.0, sigma=50.0, alpha_affine=50.0, p=0.5)
+                A.GaussianBlur(blur_limit=(3, 7), p=0.3)
+                A.GaussNoise(var_limit=(10.0, 50.0), p=0.5)
+                # A.RandomResizedCrop(height=336, width=336, scale=(0.8, 1.0), p=0.5) # 좋을지 모르겠음 
             ] + common_transforms
             self.transform = A.Compose(train_transforms)
         else:
