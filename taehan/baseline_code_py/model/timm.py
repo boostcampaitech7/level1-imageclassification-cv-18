@@ -3,9 +3,7 @@ import torch
 import timm
 
 class TimmModel(nn.Module):
-    """
-    Timm 라이브러리를 사용하여 다양한 사전 훈련된 모델을 제공하는 클래스.
-    """
+    
     def __init__(
         self,
         model_name: str,
