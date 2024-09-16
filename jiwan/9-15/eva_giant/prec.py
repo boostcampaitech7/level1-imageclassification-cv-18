@@ -119,4 +119,4 @@ def prec_model():
     test_info = test_info.reset_index().rename(columns={"index": "ID"})
 
     # DataFrame 저장
-    test_info.to_csv("./csv/result_3.csv", index=False)
+    test_info.to_csv("./csv/result_4.csv", index=False)
