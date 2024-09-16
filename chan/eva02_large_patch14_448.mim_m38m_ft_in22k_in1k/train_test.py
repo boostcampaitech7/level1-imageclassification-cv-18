@@ -121,6 +121,8 @@ def train_test():
         pretrained= args.pretrained
     )
 
+    model_name = args.model_name.replace('/', '_')
+
     model = model_selector.get_model()
 
     # model 구조 모르겠으면 주석 풀고 확인
@@ -160,7 +162,7 @@ def train_test():
     weight_path= weight_dir,
     log_path= logfile,
     tensorboard_path= tensorboard_dir,
-    model_name = args.model_name,
+    model_name = model_name,
     pretrained = args.pretrained
     )
 
