@@ -137,7 +137,7 @@ def train_test():
     lora_config = LoraConfig(
         r=args.lora_r,  # LoRA의 rank
         lora_alpha=args.lora_alpha,
-        target_modules = ["attn.qkv", "attn.proj"],
+        target_modules = ["attn.q_proj", "attn.k_proj", "attn.v_proj", "attn.proj"],
         lora_dropout=0.1,
         bias="none",
         modules_to_save=["head"],
@@ -247,7 +247,7 @@ if __name__ == "__main__":
 
     # method
     parser.add_argument('--model_type', type=str, default='timm', help='사용할 모델 이름 : model_selector.py 중 선택')
-    parser.add_argument('--model_name', type=str, default='vit_base_patch16_224.orig_in21k_ft_in1k', help='model/timm_model_name.txt 에서 확인, 아키텍처 확인은 "https://github.com/huggingface/pytorch-image-models/tree/main/timm/models"')
+    parser.add_argument('--model_name', type=str, default='eva02_large_patch14_448.mim_m38m_ft_in22k_in1k', help='model/timm_model_name.txt 에서 확인, 아키텍처 확인은 "https://github.com/huggingface/pytorch-image-models/tree/main/timm/models"')
     parser.add_argument('--pretrained', type=bool, default='True', help='전이학습 or 학습된 가중치 가져오기 : True / 전체학습 : False')
     # 전이학습할 거면 꼭! (True) customize_layer.py 가서 레이어 수정, 레이어 수정 안할 거면 가서 레이어 구조 변경 부분만 주석해서 사용 (어떤 레이어 열지는 알아야함)
     # 모델 구조랑 레이어 이름 모르겠으면 위에 모델 정의 부분가서 print(model) , assert False 주석 풀어서 확인하기
@@ -265,13 +265,13 @@ if __name__ == "__main__":
     # 하이퍼파라미터
     parser.add_argument('--epochs', type=int, default=20, help='에포크 설정')
     parser.add_argument('--lr', type=float, default=0.001, help='learning rage')
-    parser.add_argument('--batch_size', type=int, default=64)
+    parser.add_argument('--batch_size', type=int, default=16)
     parser.add_argument('--step_size', type=int, default=15, help='몇 번째 epoch 마다 학습률 줄일 지 선택')
     parser.add_argument('--gamma', type=float, default=0.1, help='학습률에 얼마를 곱하여 줄일 지 선택')
 
     # LoRA
-    parser.add_argument('--lora_r', type=int, default=16, help='lora_r 설정')
-    parser.add_argument('--lora_alpha', type=int, default=16, help='lora_alpha 설정')
+    parser.add_argument('--lora_r', type=int, default=2, help='lora_r 설정')
+    parser.add_argument('--lora_alpha', type=int, default=2, help='lora_alpha 설정')
     parser.add_argument('--lora_dropout', type=float, default=0.1, help='lora_dropout 설정')
 
     args = parser.parse_args()
