@@ -50,7 +50,8 @@ class Trainer:
         epochs: int,
         weight_path: str,
         log_path: str,
-        tensorboard_path: str
+        tensorboard_path: str,
+        early_stopping_patience: int = 8  # 조기 종료 설정
     ):
         # 클래스 초기화: 모델, 디바이스, 데이터 로더 등 설정
         self.model = model  # 훈련할 모델
@@ -66,6 +67,9 @@ class Trainer:
         self.tensorboard_path = tensorboard_path # 로그 저장 경로
         self.best_models = [] # 가장 좋은 상위 3개 모델의 정보를 저장할 리스트
         self.lowest_loss = float('inf') # 가장 낮은 Loss를 저장할 변수
+
+        self.early_stopping_patience = early_stopping_patience  # 조기 종료 patience 값
+        self.early_stopping_counter = 0  # 조기 종료를 위한 카운터
 
     def save_model(self, epoch, loss):
         # 모델 저장 경로 설정
@@ -161,13 +165,14 @@ class Trainer:
         )
 
         writer = SummaryWriter(log_dir=self.tensorboard_path)
-
         logger = logging.getLogger()
+
         for epoch in range(self.epochs):
             logger.info(f"Epoch {epoch+1}/{self.epochs}")
 
             train_loss, train_acc = self.train_epoch()
             val_loss, val_acc = self.validate()
+
             logger.info(f"Epoch {epoch+1}, Train Loss: {train_loss:.4f}, Train Accuracy: {train_acc:.2f}, Validation Loss: {val_loss:.4f}, Validataion Accuracy: {val_acc:.2f}\n")
 
             self.save_model(epoch, val_loss)
@@ -177,6 +182,16 @@ class Trainer:
             writer.add_scalar('Accuracy/train', train_acc, epoch)  # 훈련 손실 기록
             writer.add_scalar('Loss/validation', val_loss, epoch)  # 검증 손실 기록
             writer.add_scalar('Accuracy/validation', val_acc, epoch)  # 검증 손실 기록
+
+                # 조기 종료 조건 검사
+            if val_loss < self.lowest_loss:
+                self.lowest_loss = val_loss
+                self.early_stopping_counter = 0  # 손실이 개선되었을 때 카운터 초기화
+            else:
+                self.early_stopping_counter += 1
+                if self.early_stopping_counter >= self.early_stopping_patience:
+                    logger.info(f"Early stopping at epoch {epoch+1}")
+                    break  # 조기 종료
         writer.close()    
 
 
@@ -336,8 +351,8 @@ if __name__ == "__main__":
     
     # 하이퍼파라미터
     parser.add_argument('--epochs', type=int, default=50, help='에포크 설정')
-    parser.add_argument('--lr', type=float, default=0.0001, help='learning rage')
-    parser.add_argument('--batch_size', type=int, default=32)
+    parser.add_argument('--lr', type=float, default=0.001, help='learning rage')
+    parser.add_argument('--batch_size', type=int, default=64)
     parser.add_argument('--step_size', type=int, default=10, help='몇 번째 epoch 마다 학습률 줄일지 선택')
     parser.add_argument('--gamma', type=float, default=0.1, help='학습률에 얼마를 곱하여 줄일지 선택')
 
