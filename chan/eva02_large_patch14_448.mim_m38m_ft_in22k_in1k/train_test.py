@@ -237,7 +237,7 @@ if __name__ == "__main__":
     parser.add_argument('--save_rootpath', type=str, default="Experiments/eva02_large_epoch20_0.001_batch64_step_size15", help='가중치, log, tensorboard 그래프 저장을 위한 path 실험명으로 디렉토리 구성')
     
     # 하이퍼파라미터
-    parser.add_argument('--epochs', type=int, default=20 help='에포크 설정')
+    parser.add_argument('--epochs', type=int, default=20, help='에포크 설정')
     parser.add_argument('--lr', type=float, default=0.001, help='learning rage')
     parser.add_argument('--batch_size', type=int, default=64)
     parser.add_argument('--step_size', type=int, default=15, help='몇 번째 epoch 마다 학습률 줄일 지 선택')
