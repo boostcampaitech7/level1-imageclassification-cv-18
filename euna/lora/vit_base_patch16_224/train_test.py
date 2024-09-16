@@ -136,11 +136,18 @@ def train_test():
     lora_config = LoraConfig(
         r=args.lora_r,  # LoRA의 rank
         lora_alpha=args.lora_alpha,
-        target_modules=["qkv", "fc1", "fc2"],
+        target_modules=["qkv", "proj", "mlp.fc1", "mlp.fc2"],
         lora_dropout=0.1,
         bias="none",
         modules_to_save=["head"],
     )
+
+    try:
+        peft_model = get_peft_model(model, lora_config)
+        print("LoRA가 성공적으로 적용되었습니다.")
+    except ValueError as e:
+        print(f"오류 발생: {e}")
+        print("모델 구조를 다시 확인하고 target_modules를 조정해주세요.")
 
     model = get_peft_model(model, lora_config)
     print(f"학습 가능한 파라미터: {count_parameters(model)}")
@@ -227,7 +234,7 @@ def train_test():
 
 
 if __name__ == "__main__":
-    torch.multiprocessing.set_start_method('spawn')
+    # torch.multiprocessing.set_start_method('spawn')
     parser = argparse.ArgumentParser()
     parser.add_argument('--gpu', type=int, default=0, help='cuda:(gpu)')
     
