@@ -12,6 +12,15 @@
 - 연속적인 의미 공간을 코드 압축으로 이산화하는 토큰을 훈련하기 위해 vector-quantized knowledge distillation 제안
 - 전역 의미 표현을 향상
 
+[**timm/deit3_base_patch16_224**](https://huggingface.co/timm/deit3_base_patch16_224.fb_in1k)
+
+- 이미지 사이즈 : 224x224
+- 2022.04.14
+- ViT 아키텍처 사전 정보를 개선
+- ViT의 supervised Training 검토
+- ResNet-50 훈련을 위해 도입된 레시피 기반, 단순
+- 간단한 데이터 증강 절차 포함
+
 [**timm/convnext**](https://huggingface.co/timm/convnext_atto.d2_in1k)
 
 - 이미지 사이즈 : train 224x224 test 288x288
