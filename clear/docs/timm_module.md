@@ -150,9 +150,21 @@
 # 2018
 
 [**timm/darknet53.c2ns_in1k**](https://huggingface.co/timm/darknet53.c2ns_in1k)
-- 이미지 사이즈 : train 256x256, text 288x288
+- 이미지 사이즈 : train 256x256, test 288x288
 - 2018.04.08
 - YOLO v3 구현
+
+[**timm/densenet121.ra_in1k**](https://huggingface.co/timm/densenet121.ra_in1k)
+- 이미지 사이즈 : train 224x224, test 288x288
+- 2018.01.28
+- 입력에 가까운 레이어와 출력에 가까운 레이어간의 짧은 연결을 포함
+- 각 레이어를 feed-forward 방식으로 다른 모든 레이어에 연결
+- 기존 컨벌루션 네트워크는 L개의 연결 -> 네트워크는 L(L+1)의 2방향 연결
+	- 각 레이어에 대해 이전 모든 레이어의 특징 map이 입력으로 사용
+	- 자체 특징 map이 모든 후속 레이어의 입력으로 사용
+- Vanishing gradient 문제 완화
+- 특징 전파 강화, 특징 재사용 장려, 매개 변수의 수를 크게 줄임
+- **densenetblur121d** - Blur Pooling 사용
   
 # 2017
 
