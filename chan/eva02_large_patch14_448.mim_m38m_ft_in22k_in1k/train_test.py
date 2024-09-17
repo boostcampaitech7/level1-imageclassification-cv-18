@@ -236,14 +236,14 @@ if __name__ == "__main__":
     parser.add_argument('--train_csv', type=str, default="/data/ephemeral/home/data/train.csv", help='훈련 데이터셋 csv 파일 경로')
     parser.add_argument('--test_csv', type=str, default="/data/ephemeral/home/data/test.csv", help='테스트 데이터셋 csv 파일 경로')
 
-    parser.add_argument('--save_rootpath', type=str, default="Experiments/eva02_large_epoch20_0.001_batch64_step_size15", help='가중치, log, tensorboard 그래프 저장을 위한 path 실험명으로 디렉토리 구성')
+    parser.add_argument('--save_rootpath', type=str, default="Experiments/eva02_step_size3_0.5_epoch10", help='가중치, log, tensorboard 그래프 저장을 위한 path 실험명으로 디렉토리 구성')
     
     # 하이퍼파라미터
-    parser.add_argument('--epochs', type=int, default=20, help='에포크 설정')
+    parser.add_argument('--epochs', type=int, default=10, help='에포크 설정')
     parser.add_argument('--lr', type=float, default=0.001, help='learning rage')
     parser.add_argument('--batch_size', type=int, default=64)
-    parser.add_argument('--step_size', type=int, default=15, help='몇 번째 epoch 마다 학습률 줄일 지 선택')
-    parser.add_argument('--gamma', type=float, default=0.1, help='학습률에 얼마를 곱하여 줄일 지 선택')
+    parser.add_argument('--step_size', type=int, default=3, help='몇 번째 epoch 마다 학습률 줄일 지 선택')
+    parser.add_argument('--gamma', type=float, default=0.5, help='학습률에 얼마를 곱하여 줄일 지 선택')
 
     args = parser.parse_args()
 
