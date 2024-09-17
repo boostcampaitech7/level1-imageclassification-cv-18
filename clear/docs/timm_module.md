@@ -3,7 +3,7 @@
 # 2022
 
   
-[**timm/beitv2_base_patch16_224.in1k_ft_in22k**](https://huggingface.co/timm/beitv2_base_patch16_224.in1k_ft_in22k)
+[**timm/beitv2**](https://huggingface.co/timm/beitv2_base_patch16_224.in1k_ft_in22k)
 
 - 이미지 사이즈 : 224 x 224
 - 2022.10.03 논문
@@ -12,16 +12,30 @@
 - 연속적인 의미 공간을 코드 압축으로 이산화하는 토큰을 훈련하기 위해 vector-quantized knowledge distillation 제안
 - 전역 의미 표현을 향상
 
+[**timm/convnext**](https://huggingface.co/timm/convnext_atto.d2_in1k)
+
+- 이미지 사이즈 : train 224x224 test 288x288
+- 2022.03.02
+- 바닐라 ViT : 물체 감지 및 의미론적 분할과 같은 일반적인 컴퓨터 비전 작업에 적용될 때 어려움
+	- 개선 : 계층적 트랜스 포머(Swin Transformer) : 비전 backbone으로 사용
+	- 그러나 이런 하이브리드 접근 방식의 효과는 트랜스포머의 본질적인 우수성에 기인
+- 설계 공간을 재검토, 순수 ConvNet이 달성할 수 있는 한계 Test
+-  표준 ResNet을 점진적으로 현대화, 성능 차이에 기여하는 몇 가지 주요 구성 요소 발견
+- 결과 : ConvNext
+- 가장 성능이 좋은 모델 : [convnextv2_huge.fcmae_ft_in22k_in1k_512](https://huggingface.co/timm/convnextv2_huge.fcmae_ft_in22k_in1k_512)
+
+
 [**timm/convmixer_768_32.in1k**](https://huggingface.co/timm/convmixer_768_32.in1k)
 
 - 이미지 사이즈 : 224x224
+- 2022.01.24
 - ViT가 성능이 좋은 것은 더 좋은 트랜스포머 아키택처 때문? 패치 임베딩 때문?
 - ConvMixer 제안
 	- 패치에서 직접 입력으로 작동
 	- 공간 및 채널 차원의 혼합을 분리
 	- 네트워크 전체에서 동일한 크기와 해상도 n을 유지
 	- ViT, MLP-Mixer 및 일부 변형 능가, ResNet같은 기존 비전 모델 능가
-
+	- 
 # 2021
 
 [**timm/coat**](https://huggingface.co/timm/coat_lite_mini.in1k)
@@ -90,12 +104,10 @@
 # 2020
 
   
-  
+
   
 
 # 2017
-
-  
 
 **timm/bat_resnext26ts.ch_in1k**
 
@@ -110,8 +122,6 @@
   
 
 # 2015
-
-  
 
 [**timm/inception_v3.tf_adv_in1k**](https://huggingface.co/timm/inception_v3.tf_adv_in1k)
 
