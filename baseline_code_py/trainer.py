@@ -60,7 +60,7 @@ class Trainer:
         # 가장 낮은 손실의 모델 저장
         if loss < self.lowest_loss:
             self.lowest_loss = loss
-            best_model_path = os.path.join(self.weight_path, f'best_{self.model_name}_{self.pretrained}_epoch_{epoch}_loss_{loss:.4f}.pt')
+            best_model_path = os.path.join(self.weight_path, f'best.pt')
             torch.save(self.model.state_dict(), best_model_path)
             print(f"Save {epoch}epoch result. Loss = {loss:.4f}")
 
