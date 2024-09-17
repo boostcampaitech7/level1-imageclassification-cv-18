@@ -33,8 +33,6 @@
 - 결과 : ConvNext
 - 가장 성능이 좋은 모델 : [convnextv2_huge.fcmae_ft_in22k_in1k_512](https://huggingface.co/timm/convnextv2_huge.fcmae_ft_in22k_in1k_512)
 
-[**timm/dm_nfnet_f0.dm_in1k**](https://huggingface.co/timm/dm_nfnet_f0.dm_in1k)
-
 [**timm/convmixer_768_32.in1k**](https://huggingface.co/timm/convmixer_768_32.in1k)
 
 - 이미지 사이즈 : 224x224
@@ -122,6 +120,19 @@
 - 조기에 포화 되지 않는 모델 생성
 
   
+[**timm/dm_nfnet_f0.dm_in1k**](https://huggingface.co/timm/dm_nfnet_f0.dm_in1k)
+
+- 이미지 사이즈 : train 192x192, test 256x256
+- 2022.02.11
+- NFNet (Normalization Free Network)
+- 배치 정규화는 배치 크기와 예제 간의 상호 작용에 의존하기 때문에 바람직하지 않은 속성이 많음.
+- 정규화 레이어 없이 심층 ResNet 훈련 성공, But 불안 요소 존재
+	- 최고의 배치 정규화 네트워크의 테스트 정확도와 일치하지 않음
+	- 대규모 학습률이나 강렬한 데이터 증강에 대해 불안정함
+- 이런 불안정성을 극복하기 위해 적응형 기울기 클리핑 기술 개발
+- 크게 개선된 자유로운 정규화 ResNet 클래스 설계
+- 소규모 모델은 8.7배 더 빠르고, EfficientNet-B7의 테스트 정확도와 일치
+- Fine-tuning시 배치 정규화된 모델보다 훨씬 더 나은 성능 달성
 
 # 2020
 
