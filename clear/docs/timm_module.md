@@ -123,12 +123,24 @@
 - 이미지 사이즈 train 256 x 256, test 288 x 288
 - 2019.11.27
 - 많은 계산 추론 문제 완화 (최적화)
+- **cs3edgenet_x** - Darknet 모델에서 MobileNet-V1을 사용
+- 파라미터만 다를 뿐, 같은 형제들
+	- cs3darknet_focus_l 
+	- cs3darknet_focus_m 
+	- cs3darknet_l
+	- cs3darknet_m
+	- cs3darknet_x 
+	- cs3edgenet_x 
+	- cs3se_edgenet_x 
+	- cs3sedarknet_l 
+	- cs3sedarknet_x 
+	- cspdarknet53 
+	- cspresnet50 
+	- cspresnext50
   
 # 2017
 
-  
-
-**timm/bat_resnext26ts.ch_in1k**
+[**timm/bat_resnext26ts.ch_in1k**]()
 
 - 이미지 사이즈 : 256x256
 - 2017.4.11 논문
@@ -137,7 +149,6 @@
 - 깊이, 너비의 차원 이외에도 카디널리티(변환 집합의 크기)를 필수 요소로 노출
     - 카디널리티 증가 -> 분류 정확성 증가
     - 용량을 늘릴 때 카디널리티를 증가 시키는 것이 깊게 하거나 넓히는 것보다 더 효과적
-
   
 
 # 2015
