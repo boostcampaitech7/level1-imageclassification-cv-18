@@ -33,6 +33,7 @@
 - 결과 : ConvNext
 - 가장 성능이 좋은 모델 : [convnextv2_huge.fcmae_ft_in22k_in1k_512](https://huggingface.co/timm/convnextv2_huge.fcmae_ft_in22k_in1k_512)
 
+[**timm/dm_nfnet_f0.dm_in1k**](https://huggingface.co/timm/dm_nfnet_f0.dm_in1k)
 
 [**timm/convmixer_768_32.in1k**](https://huggingface.co/timm/convmixer_768_32.in1k)
 
@@ -120,6 +121,8 @@
 - 이미지 트랜스포머의 최적화
 - 조기에 포화 되지 않는 모델 생성
 
+  
+
 # 2020
 
   
@@ -145,6 +148,23 @@
 	- cspresnet50 
 	- cspresnext50
 
+[**timm/dla34.in1k**](https://huggingface.co/timm/dla34.in1k)
+- 이미지 사이즈 : 224x224
+- 2019.01.04
+- Deep Layer Aggregation
+- 시각적 인식에선 풍부한 표현이 필요함
+	- 낮은 수준 -> 높은 수준
+	- 작은 수준 -> 큰 수준
+	- 미세한 수준 -> 거친 수준
+- 표현을 합성하고 집계하는 것만으론 충분치 않다.
+- 표현을 결합하면 무엇과 어디에 대한 추론이 향상
+- 네트워크 전체에서 레이어와 블록을 잘 집계하는 방법에 대해 관심을 가짐
+- Skip connection의 한계 보안 - 심층 레이어 집계 구조
+	- Skip connection은 한 단계 연산으로만 융합
+	- 레이어 간의 정보를 더 잘 융합하기 위해 더 깊은 집계로 표준 아키텍처 보강
+	- 심층 레이어 집계 구조 : 특징 계층 구조를 반복적이고 계층적으로 병합
+		- 더 나은 정확도, 더 적은 매개 변수
+		- 인식, 해상도 향상
 # 2018
 
 [**timm/darknet53.c2ns_in1k**](https://huggingface.co/timm/darknet53.c2ns_in1k)
