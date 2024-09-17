@@ -137,6 +137,13 @@
 	- cspdarknet53 
 	- cspresnet50 
 	- cspresnext50
+
+# 2018
+
+[**timm/darknet53.c2ns_in1k**](https://huggingface.co/timm/darknet53.c2ns_in1k)
+- 이미지 사이즈 : train 256x256, text 288x288
+- 2018.04.08
+- YOLO v3 구현
   
 # 2017
 
