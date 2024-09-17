@@ -19,6 +19,8 @@ from dataloader import CustomDataset, TorchvisionTransform, AlbumentationsTransf
 from customize_layer import customize_layer
 from trainer import Trainer
 
+from peft import LoraConfig, get_peft_model
+
 def set_cuda(gpu):
     torch.cuda.set_device(gpu)
     device = torch.device(f'cuda:{gpu}')
@@ -40,6 +42,10 @@ def setup_directories(save_rootpath):
     os.makedirs(save_csv_dir, exist_ok=True)
 
     return weight_dir, log_dir, tensorboard_dir, save_csv_dir
+
+def count_parameters(model):
+    # 학습 가능한 파라미터 확인
+    return sum(p.numel() for p in model.parameters() if p.requires_grad)
 
 def inference(
     model: nn.Module,
@@ -120,20 +126,38 @@ def train_test():
         model_name= args.model_name,
         pretrained= args.pretrained
     )
-    
-    model_name = args.model_name.replace('/', '_')
 
     model = model_selector.get_model()
 
     # model 구조 모르겠으면 주석 풀고 확인
-    # print(model)
+    # for name, module in model.named_modules():
+    #     print(name)
     # assert False
 
-    if args.pretrained == True:
-        for param in model.parameters():
-            param.requires_grad = False
+    lora_config = LoraConfig(
+        r=args.lora_r,  # LoRA의 rank
+        lora_alpha=args.lora_alpha,
+        target_modules = ["attn.qkv", "attn.proj"],
+        lora_dropout=0.1,
+        bias="none",
+        modules_to_save=["head"],
+    )
+
+    try:
+        peft_model = get_peft_model(model, lora_config)
+        print("LoRA가 성공적으로 적용되었습니다.")
+    except ValueError as e:
+        print(f"오류 발생: {e}")
+        print("모델 구조를 다시 확인하고 target_modules를 조정해주세요.")
+
+    model = get_peft_model(model, lora_config)
+    print(f"학습 가능한 파라미터: {count_parameters(model)}")
+
+    # if args.pretrained == True:
+    #     for param in model.parameters():
+    #         param.requires_grad = False
         
-        model = customize_layer(model, num_classes)
+    #     model = customize_layer(model, num_classes)
 
     model = model.to(device)
     
@@ -162,7 +186,7 @@ def train_test():
     weight_path= weight_dir,
     log_path= logfile,
     tensorboard_path= tensorboard_dir,
-    model_name = model_name,
+    model_name = args.model_name,
     pretrained = args.pretrained
     )
 
@@ -211,7 +235,7 @@ def train_test():
 
 
 if __name__ == "__main__":
-    torch.multiprocessing.set_start_method('spawn')
+    # torch.multiprocessing.set_start_method('spawn')
     parser = argparse.ArgumentParser()
     parser.add_argument('--gpu', type=int, default=0, help='cuda:(gpu)')
     
@@ -223,7 +247,7 @@ if __name__ == "__main__":
 
     # method
     parser.add_argument('--model_type', type=str, default='timm', help='사용할 모델 이름 : model_selector.py 중 선택')
-    parser.add_argument('--model_name', type=str, default='resnet50', help='model/timm_model_name.txt 에서 확인, 아키텍처 확인은 "https://github.com/huggingface/pytorch-image-models/tree/main/timm/models"')
+    parser.add_argument('--model_name', type=str, default='vit_base_patch16_224.orig_in21k_ft_in1k', help='model/timm_model_name.txt 에서 확인, 아키텍처 확인은 "https://github.com/huggingface/pytorch-image-models/tree/main/timm/models"')
     parser.add_argument('--pretrained', type=bool, default='True', help='전이학습 or 학습된 가중치 가져오기 : True / 전체학습 : False')
     # 전이학습할 거면 꼭! (True) customize_layer.py 가서 레이어 수정, 레이어 수정 안할 거면 가서 레이어 구조 변경 부분만 주석해서 사용 (어떤 레이어 열지는 알아야함)
     # 모델 구조랑 레이어 이름 모르겠으면 위에 모델 정의 부분가서 print(model) , assert False 주석 풀어서 확인하기
@@ -239,11 +263,16 @@ if __name__ == "__main__":
     parser.add_argument('--save_rootpath', type=str, default="Experiments/debug", help='가중치, log, tensorboard 그래프 저장을 위한 path 실험명으로 디렉토리 구성')
     
     # 하이퍼파라미터
-    parser.add_argument('--epochs', type=int, default=1, help='에포크 설정')
+    parser.add_argument('--epochs', type=int, default=20, help='에포크 설정')
     parser.add_argument('--lr', type=float, default=0.001, help='learning rage')
     parser.add_argument('--batch_size', type=int, default=64)
     parser.add_argument('--step_size', type=int, default=15, help='몇 번째 epoch 마다 학습률 줄일 지 선택')
     parser.add_argument('--gamma', type=float, default=0.1, help='학습률에 얼마를 곱하여 줄일 지 선택')
+
+    # LoRA
+    parser.add_argument('--lora_r', type=int, default=16, help='lora_r 설정')
+    parser.add_argument('--lora_alpha', type=int, default=16, help='lora_alpha 설정')
+    parser.add_argument('--lora_dropout', type=float, default=0.1, help='lora_dropout 설정')
 
     args = parser.parse_args()
 

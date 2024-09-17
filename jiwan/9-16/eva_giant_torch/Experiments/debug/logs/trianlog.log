@@ -1,0 +1,30 @@
+2024-09-16 12:51:00,383 - INFO - Epoch 1/50
+2024-09-16 13:37:59,188 - INFO - Epoch 1, Train Loss: 0.7785, Train Accuracy: 83.42, Validation Loss: 0.4962, Validataion Accuracy: 87.52
+
+2024-09-16 13:38:14,706 - INFO - Epoch 2/50
+2024-09-16 14:25:16,584 - INFO - Epoch 2, Train Loss: 0.2422, Train Accuracy: 92.04, Validation Loss: 0.4432, Validataion Accuracy: 88.29
+
+2024-09-16 14:26:01,680 - INFO - Epoch 3/50
+2024-09-16 15:13:05,043 - INFO - Epoch 3, Train Loss: 0.1891, Train Accuracy: 93.77, Validation Loss: 0.4826, Validataion Accuracy: 88.52
+
+2024-09-16 15:13:12,766 - INFO - Epoch 4/50
+2024-09-16 16:00:12,808 - INFO - Epoch 4, Train Loss: 0.1652, Train Accuracy: 94.48, Validation Loss: 0.5208, Validataion Accuracy: 88.72
+
+2024-09-16 16:00:21,056 - INFO - Epoch 5/50
+2024-09-16 16:47:23,485 - INFO - Epoch 5, Train Loss: 0.1657, Train Accuracy: 94.52, Validation Loss: 0.5296, Validataion Accuracy: 88.72
+
+2024-09-16 16:47:31,675 - INFO - Epoch 6/50
+2024-09-16 17:34:29,618 - INFO - Epoch 6, Train Loss: 0.1455, Train Accuracy: 95.31, Validation Loss: 0.5426, Validataion Accuracy: 89.18
+
+2024-09-16 17:34:37,930 - INFO - Epoch 7/50
+2024-09-16 18:21:35,197 - INFO - Epoch 7, Train Loss: 0.1331, Train Accuracy: 95.72, Validation Loss: 0.5850, Validataion Accuracy: 88.99
+
+2024-09-16 18:21:43,460 - INFO - Epoch 8/50
+2024-09-16 19:08:44,620 - INFO - Epoch 8, Train Loss: 0.1254, Train Accuracy: 95.96, Validation Loss: 0.5390, Validataion Accuracy: 89.55
+
+2024-09-16 19:08:52,933 - INFO - Early stopping at epoch 8
+2024-09-16 19:09:09,128 - INFO - Loading pretrained weights from Hugging Face hub (timm/eva_giant_patch14_336.clip_ft_in1k)
+2024-09-16 19:09:09,701 - INFO - [timm/eva_giant_patch14_336.clip_ft_in1k] Safe alternative available for 'pytorch_model.bin' (as 'model.safetensors'). Loading weights using safetensors.
+2024-09-16 19:09:10,080 - INFO - Missing keys (head.weight, head.bias) discovered while loading pretrained weights. This is expected if model is being adapted.
+-------------------------------------------------------------------------------------------------
+2024-09-16 19:43:17,232 - INFO - Epoch 1/50

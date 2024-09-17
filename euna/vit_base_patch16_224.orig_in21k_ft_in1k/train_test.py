@@ -41,6 +41,9 @@ def setup_directories(save_rootpath):
 
     return weight_dir, log_dir, tensorboard_dir, save_csv_dir
 
+def count_trainable_parameters(model):
+    return sum(p.numel() for p in model.parameters() if p.requires_grad)
+
 def inference(
     model: nn.Module,
     device: torch.device,
@@ -120,8 +123,6 @@ def train_test():
         model_name= args.model_name,
         pretrained= args.pretrained
     )
-    
-    model_name = args.model_name.replace('/', '_')
 
     model = model_selector.get_model()
 
@@ -135,8 +136,12 @@ def train_test():
         
         model = customize_layer(model, num_classes)
 
+    print(f"학습 가능한 파라미터 수: {count_trainable_parameters(model)}")
+
     model = model.to(device)
     
+    
+
     # optimizer
     optimizer = optim.Adam(model.parameters(), lr=args.lr)
     
@@ -162,7 +167,7 @@ def train_test():
     weight_path= weight_dir,
     log_path= logfile,
     tensorboard_path= tensorboard_dir,
-    model_name = model_name,
+    model_name = args.model_name,
     pretrained = args.pretrained
     )
 
@@ -223,7 +228,7 @@ if __name__ == "__main__":
 
     # method
     parser.add_argument('--model_type', type=str, default='timm', help='사용할 모델 이름 : model_selector.py 중 선택')
-    parser.add_argument('--model_name', type=str, default='resnet50', help='model/timm_model_name.txt 에서 확인, 아키텍처 확인은 "https://github.com/huggingface/pytorch-image-models/tree/main/timm/models"')
+    parser.add_argument('--model_name', type=str, default='eva02_large_patch14_448.mim_m38m_ft_in22k_in1k', help='model/timm_model_name.txt 에서 확인, 아키텍처 확인은 "https://github.com/huggingface/pytorch-image-models/tree/main/timm/models"')
     parser.add_argument('--pretrained', type=bool, default='True', help='전이학습 or 학습된 가중치 가져오기 : True / 전체학습 : False')
     # 전이학습할 거면 꼭! (True) customize_layer.py 가서 레이어 수정, 레이어 수정 안할 거면 가서 레이어 구조 변경 부분만 주석해서 사용 (어떤 레이어 열지는 알아야함)
     # 모델 구조랑 레이어 이름 모르겠으면 위에 모델 정의 부분가서 print(model) , assert False 주석 풀어서 확인하기
@@ -239,7 +244,7 @@ if __name__ == "__main__":
     parser.add_argument('--save_rootpath', type=str, default="Experiments/debug", help='가중치, log, tensorboard 그래프 저장을 위한 path 실험명으로 디렉토리 구성')
     
     # 하이퍼파라미터
-    parser.add_argument('--epochs', type=int, default=1, help='에포크 설정')
+    parser.add_argument('--epochs', type=int, default=10, help='에포크 설정')
     parser.add_argument('--lr', type=float, default=0.001, help='learning rage')
     parser.add_argument('--batch_size', type=int, default=64)
     parser.add_argument('--step_size', type=int, default=15, help='몇 번째 epoch 마다 학습률 줄일 지 선택')
