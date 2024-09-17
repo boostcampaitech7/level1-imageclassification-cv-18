@@ -35,7 +35,7 @@
 	- 공간 및 채널 차원의 혼합을 분리
 	- 네트워크 전체에서 동일한 크기와 해상도 n을 유지
 	- ViT, MLP-Mixer 및 일부 변형 능가, ResNet같은 기존 비전 모델 능가
-	- 
+
 # 2021
 
 [**timm/coat**](https://huggingface.co/timm/coat_lite_mini.in1k)
@@ -66,6 +66,18 @@
     - coatnet_rmlp_nano_rw_224
 - 참고 : coatnet대신 coatNext 쓴 버전
     - coatnext_nano_rw_224
+
+[**timm/crossvit**](https://huggingface.co/timm/crossvit_9_240.in1k)
+
+- 이미지 사이즈 : 240x240
+- 2021.08.22 논문
+- 다중 스케일 특징 표현을 학습
+- branch 트랜스포머 : 서로 다른 이미지 패치를 결합하여 더 강력한 이미지 특징을 생성 
+- 1. 계산 복잡성이 다른 두 개의 개별 분기로 작은 patch 및 큰 patch 토큰을 처리
+- 2. 이런 토큰들을 순수하게 attention에 의해 여러 번 융합하여 서로를 보완
+- 계산을 줄이기 위해 각 분기에 대한 단일 토큰을 쿼리로 사용
+	- 다른 분기와 정보를 교환하는 교차 주의 기반 토큰 융합 모듈을 개발
+	- 계산 및 메모리 복잡성에 대해 linear time이 걸림
 
 
 [**timm/botnet26t_256.c1_in1k**](https://huggingface.co/timm/botnet26t_256.c1_in1k)
@@ -104,10 +116,17 @@
 # 2020
 
   
+# 2019
+
+[**timm/cs3darknet_focus_l.c2ns_in1k**](https://huggingface.co/timm/cs3darknet_focus_l.c2ns_in1k)
+
+- 이미지 사이즈 train 256 x 256, test 288 x 288
+- 2019.11.27
+- 많은 계산 추론 문제 완화 (최적화)
+  
+# 2017
 
   
-
-# 2017
 
 **timm/bat_resnext26ts.ch_in1k**
 
@@ -122,6 +141,8 @@
   
 
 # 2015
+
+  
 
 [**timm/inception_v3.tf_adv_in1k**](https://huggingface.co/timm/inception_v3.tf_adv_in1k)
 
