@@ -351,9 +351,9 @@ if __name__ == "__main__":
     
     # 하이퍼파라미터
     parser.add_argument('--epochs', type=int, default=50, help='에포크 설정')
-    parser.add_argument('--lr', type=float, default=0.0001, help='learning rage')
+    parser.add_argument('--lr', type=float, default=0.001, help='learning rage')
     parser.add_argument('--batch_size', type=int, default=64)
-    parser.add_argument('--step_size', type=int, default=10, help='몇 번째 epoch 마다 학습률 줄일지 선택')
+    parser.add_argument('--step_size', type=int, default=4, help='몇 번째 epoch 마다 학습률 줄일지 선택')
     parser.add_argument('--gamma', type=float, default=0.1, help='학습률에 얼마를 곱하여 줄일지 선택')
 
     args = parser.parse_args()

@@ -87,13 +87,13 @@ class AlbumentationsTransform:
 
         if is_train:
             train_transforms = [
-                A.Rotate(limit=30, p=0.5)
-                A.HorizontalFlip(p=0.5)
-                A.VerticalFlip(p=0.5)
-                A.ShiftScaleRotate(shift_limit=0.05, scale_limit=0.05, rotate_limit=15, p=0.5)
-                A.RandomBrightnessContrast(brightness_limit=0.2, contrast_limit=0.2, p=0.5)
-                A.ElasticTransform(alpha=1.0, sigma=50.0, alpha_affine=50.0, p=0.5)
-                A.GaussianBlur(blur_limit=(3, 7), p=0.3)
+                A.Rotate(limit=30, p=0.5),
+                A.HorizontalFlip(p=0.5),
+                A.VerticalFlip(p=0.5),
+                A.ShiftScaleRotate(shift_limit=0.05, scale_limit=0.05, rotate_limit=15, p=0.5),
+                A.RandomBrightnessContrast(brightness_limit=0.2, contrast_limit=0.2, p=0.5),
+                A.ElasticTransform(alpha=1.0, sigma=50.0, alpha_affine=50.0, p=0.5),
+                A.GaussianBlur(blur_limit=(3, 7), p=0.3),
                 A.GaussNoise(var_limit=(10.0, 50.0), p=0.5)
                 # A.RandomResizedCrop(height=336, width=336, scale=(0.8, 1.0), p=0.5) # 좋을지 모르겠음 
             ] + common_transforms
