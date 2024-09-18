@@ -28,33 +28,31 @@
 2024-09-16 19:09:10,080 - INFO - Missing keys (head.weight, head.bias) discovered while loading pretrained weights. This is expected if model is being adapted.
 -------------------------------------------------------------------------------------------------
 2024-09-16 19:43:17,232 - INFO - Epoch 1/50
-2024-09-16 20:30:12,988 - INFO - Epoch 1, Train Loss: 1.9779, Train Accuracy: 75.54, Validation Loss: 0.5087, Validataion Accuracy: 87.22
+2024-09-17 14:37:17,465 - INFO - Epoch 1/50
+2024-09-17 16:10:18,593 - INFO - Epoch 1, Train Loss: 1.0876, Train Accuracy: 77.12, Validation Loss: 0.4757, Validataion Accuracy: 86.32
 
-2024-09-16 20:30:28,504 - INFO - Epoch 2/50
-2024-09-16 21:17:22,931 - INFO - Epoch 2, Train Loss: 0.3343, Train Accuracy: 90.13, Validation Loss: 0.4039, Validataion Accuracy: 88.32
+2024-09-17 16:10:33,820 - INFO - Epoch 2/50
+2024-09-17 17:44:19,962 - INFO - Epoch 2, Train Loss: 0.5040, Train Accuracy: 86.06, Validation Loss: 0.4614, Validataion Accuracy: 87.55
 
-2024-09-16 21:18:08,650 - INFO - Epoch 3/50
-2024-09-16 22:05:05,644 - INFO - Epoch 3, Train Loss: 0.2277, Train Accuracy: 92.67, Validation Loss: 0.3806, Validataion Accuracy: 88.19
+2024-09-17 17:45:04,960 - INFO - Epoch 3/50
+2024-09-17 19:18:19,115 - INFO - Epoch 3, Train Loss: 0.4087, Train Accuracy: 88.39, Validation Loss: 0.4620, Validataion Accuracy: 88.35
 
-2024-09-16 22:05:50,816 - INFO - Epoch 4/50
-2024-09-16 22:52:51,884 - INFO - Epoch 4, Train Loss: 0.1779, Train Accuracy: 94.24, Validation Loss: 0.3541, Validataion Accuracy: 89.12
+2024-09-17 19:18:25,011 - INFO - Epoch 4/50
+2024-09-17 20:51:08,050 - INFO - Epoch 4, Train Loss: 0.3627, Train Accuracy: 89.73, Validation Loss: 0.4767, Validataion Accuracy: 88.85
 
-2024-09-16 22:53:37,025 - INFO - Epoch 5/50
-2024-09-16 23:40:35,717 - INFO - Epoch 5, Train Loss: 0.1499, Train Accuracy: 94.75, Validation Loss: 0.3462, Validataion Accuracy: 89.82
+2024-09-17 20:51:14,315 - INFO - Epoch 5/50
+2024-09-17 22:24:30,848 - INFO - Epoch 5, Train Loss: 0.2272, Train Accuracy: 93.11, Validation Loss: 0.3637, Validataion Accuracy: 90.98
 
-2024-09-16 23:41:20,523 - INFO - Epoch 6/50
-2024-09-17 00:28:18,673 - INFO - Epoch 6, Train Loss: 0.1310, Train Accuracy: 95.51, Validation Loss: 0.3491, Validataion Accuracy: 90.28
+2024-09-17 22:25:15,969 - INFO - Epoch 6/50
+2024-09-17 23:58:41,591 - INFO - Epoch 6, Train Loss: 0.1759, Train Accuracy: 94.64, Validation Loss: 0.3547, Validataion Accuracy: 91.21
 
-2024-09-17 00:28:26,712 - INFO - Epoch 7/50
-2024-09-17 01:15:26,420 - INFO - Epoch 7, Train Loss: 0.1174, Train Accuracy: 95.93, Validation Loss: 0.3554, Validataion Accuracy: 89.68
+2024-09-17 23:59:26,509 - INFO - Epoch 7/50
+2024-09-18 01:32:41,970 - INFO - Epoch 7, Train Loss: 0.1611, Train Accuracy: 95.01, Validation Loss: 0.3518, Validataion Accuracy: 91.18
 
-2024-09-17 01:15:34,721 - INFO - Epoch 8/50
-2024-09-17 02:02:38,687 - INFO - Epoch 8, Train Loss: 0.1035, Train Accuracy: 96.43, Validation Loss: 0.3471, Validataion Accuracy: 90.45
+2024-09-18 01:33:26,813 - INFO - Epoch 8/50
+2024-09-18 03:07:04,800 - INFO - Epoch 8, Train Loss: 0.1549, Train Accuracy: 95.21, Validation Loss: 0.3578, Validataion Accuracy: 91.35
 
-2024-09-17 02:02:46,804 - INFO - Early stopping at epoch 8
-2024-09-17 02:03:03,358 - INFO - Loading pretrained weights from Hugging Face hub (timm/eva_giant_patch14_336.clip_ft_in1k)
-2024-09-17 02:03:03,623 - INFO - [timm/eva_giant_patch14_336.clip_ft_in1k] Safe alternative available for 'pytorch_model.bin' (as 'model.safetensors'). Loading weights using safetensors.
-2024-09-17 02:03:03,847 - INFO - Missing keys (head.weight, head.bias) discovered while loading pretrained weights. This is expected if model is being adapted.
-
-----------------------------------------------------------
-
+2024-09-18 03:07:11,120 - INFO - Early stopping at epoch 8
+2024-09-18 03:07:27,325 - INFO - Loading pretrained weights from Hugging Face hub (timm/eva_giant_patch14_336.clip_ft_in1k)
+2024-09-18 03:07:32,760 - INFO - [timm/eva_giant_patch14_336.clip_ft_in1k] Safe alternative available for 'pytorch_model.bin' (as 'model.safetensors'). Loading weights using safetensors.
+2024-09-18 03:07:32,982 - INFO - Missing keys (head.weight, head.bias) discovered while loading pretrained weights. This is expected if model is being adapted.
