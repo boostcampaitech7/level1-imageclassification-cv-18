@@ -15,13 +15,13 @@ def customize_layer(model, num_classes):
 
     # 레이어 정의 예시
     model.model.fc = nn.Sequential(
-        nn.Linear(model.model.fc.in_features, 1024),
+        nn.Linear(model.model.head.in_features, 1024),
         nn.ReLU(),
         nn.Linear(1024, num_classes)
     )
     
     # 파라미터 학습 가능하게 수정
-    for param in model.model.fc.parameters():
+    for param in model.model.head.parameters():
         param.requires_grad = True
 
     return model
