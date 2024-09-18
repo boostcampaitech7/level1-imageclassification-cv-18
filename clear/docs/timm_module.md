@@ -1,4 +1,8 @@
-  
+# pytorch-image-models
+
+- [results-imagenet-a-clean](https://github.com/huggingface/pytorch-image-models/blob/main/results/results-imagenet-a-clean.csv)
+
+
 
 # 2022
 
@@ -160,6 +164,7 @@
 	- cspresnext50
 
 [**timm/dla34.in1k**](https://huggingface.co/timm/dla34.in1k)
+
 - 이미지 사이즈 : 224x224
 - 2019.01.04
 - Deep Layer Aggregation
@@ -179,11 +184,13 @@
 # 2018
 
 [**timm/darknet53.c2ns_in1k**](https://huggingface.co/timm/darknet53.c2ns_in1k)
+
 - 이미지 사이즈 : train 256x256, test 288x288
 - 2018.04.08
 - YOLO v3 구현
 
 [**timm/densenet121.ra_in1k**](https://huggingface.co/timm/densenet121.ra_in1k)
+
 - 이미지 사이즈 : train 224x224, test 288x288
 - 2018.01.28
 - 입력에 가까운 레이어와 출력에 가까운 레이어간의 짧은 연결을 포함
@@ -197,6 +204,13 @@
   
 # 2017
 
+[**timm/dpn68.mx_in1k**](https://huggingface.co/timm/dpn68.mx_in1k)
+
+- 이미지 사이즈 : 224x224
+- 2017.08.01
+- 
+
+
 [**timm/bat_resnext26ts.ch_in1k**]()
 
 - 이미지 사이즈 : 256x256
@@ -208,9 +222,9 @@
     - 용량을 늘릴 때 카디널리티를 증가 시키는 것이 깊게 하거나 넓히는 것보다 더 효과적
   
 
+
 # 2015
 
-  
 
 [**timm/inception_v3.tf_adv_in1k**](https://huggingface.co/timm/inception_v3.tf_adv_in1k)
 
