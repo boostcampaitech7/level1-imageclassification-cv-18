@@ -72,7 +72,7 @@ def inference(
 
     return predictions
 
-def train_test():
+def train():
     # set cuda
     device = set_cuda(args.gpu) 
 
@@ -168,7 +168,9 @@ def train_test():
     )
 
     trainer.train()
+    return model
 
+def test(model, val_transform):
     #-------------------------------------------------------
 
     # test
