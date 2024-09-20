@@ -20,6 +20,7 @@ from customize_layer import customize_layer
 from trainer import Trainer
 
 from peft import LoraConfig, get_peft_model
+import torch.quantization as tq
 
 def set_cuda(gpu):
     torch.cuda.set_device(gpu)
@@ -46,6 +47,34 @@ def setup_directories(save_rootpath):
 def count_parameters(model):
     # 학습 가능한 파라미터 확인
     return sum(p.numel() for p in model.parameters() if p.requires_grad)
+
+
+def q_lora(model, args):
+    # QLoRA 적용 함수 
+
+    # LoRA 설정
+    lora_config = LoraConfig(
+        r=args.lora_r,  # LoRA의 rank
+        lora_alpha=args.lora_alpha,
+        target_modules=["attn.q_proj", "attn.k_proj", "attn.v_proj", "attn.proj"],
+        lora_dropout=args.lora_dropout,
+        bias="none",
+        modules_to_save=["head"],  
+    )
+
+
+    peft_model = get_peft_model(model, lora_config)
+  
+    # 8비트 양자화
+    peft_model.qconfig = tq.get_default_qconfig('fbgemm')  # 양자화 설정
+
+    torch.quantization.prepare(peft_model, inplace=True)  # 준비 단계
+    dummy_input = torch.randn(1, 3, 448, 448)
+
+    peft_model(dummy_input)  # 모델에 입력 데이터 통과시켜 양자화 학습
+    torch.quantization.convert(peft_model, inplace=True)  # 양자화 적용
+    
+    return peft_model
 
 def inference(
     model: nn.Module,
@@ -129,40 +158,13 @@ def train_test():
 
     model = model_selector.get_model()
 
-    # # model 구조 모르겠으면 주석 풀고 확인
-    # print(model)
+    # model 구조 모르겠으면 주석 풀고 확인
+    # for name, module in model.named_modules():
+    #     print(name)
     # assert False
 
-    lora_config = LoraConfig(
-        r=args.lora_r,  # LoRA의 rank
-        lora_alpha=args.lora_alpha,
-        target_modules = ["mlp.fc2"],
-        lora_dropout=args.lora_dropout,
-        bias="none",
-        modules_to_save=["head"],
-    )
-
-    # try:
-    #     peft_model = get_peft_model(model, lora_config)
-    #     print("LoRA가 성공적으로 적용되었습니다.")
-    # except ValueError as e:
-    #     print(f"오류 발생: {e}")
-    #     print("모델 구조를 다시 확인하고 target_modules를 조정해주세요.")
-
-    model = get_peft_model(model, lora_config)
-
-    # print(model)
-    # assert False
-
-    # model = customize_layer(model, num_classes)
-
+    model = q_lora(model, args)
     print(f"학습 가능한 파라미터: {count_parameters(model)}")
-
-    # if args.pretrained == True:
-    #     for param in model.parameters():
-    #         param.requires_grad = False
-        
-    #     model = customize_layer(model, num_classes)
 
     model = model.to(device)
     
@@ -270,14 +272,14 @@ if __name__ == "__main__":
     # 하이퍼파라미터
     parser.add_argument('--epochs', type=int, default=20, help='에포크 설정')
     parser.add_argument('--lr', type=float, default=0.001, help='learning rage')
-    parser.add_argument('--batch_size', type=int, default=16)
+    parser.add_argument('--batch_size', type=int, default=64)
     parser.add_argument('--step_size', type=int, default=15, help='몇 번째 epoch 마다 학습률 줄일 지 선택')
     parser.add_argument('--gamma', type=float, default=0.1, help='학습률에 얼마를 곱하여 줄일 지 선택')
 
     # LoRA
-    parser.add_argument('--lora_r', type=int, default=8, help='lora_r 설정')
-    parser.add_argument('--lora_alpha', type=int, default=128, help='lora_alpha 설정')
-    parser.add_argument('--lora_dropout', type=float, default=0.5, help='lora_dropout 설정')
+    parser.add_argument('--lora_r', type=int, default=16, help='lora_r 설정')
+    parser.add_argument('--lora_alpha', type=int, default=16, help='lora_alpha 설정')
+    parser.add_argument('--lora_dropout', type=float, default=0.1, help='lora_dropout 설정')
 
     args = parser.parse_args()
 
