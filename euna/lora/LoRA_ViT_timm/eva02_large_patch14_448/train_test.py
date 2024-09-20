@@ -20,6 +20,7 @@ from customize_layer import customize_layer
 from trainer import Trainer
 
 from peft import LoraConfig, get_peft_model
+from lora import LoRA_ViT_timm
 
 def set_cuda(gpu):
     torch.cuda.set_device(gpu)
@@ -129,32 +130,14 @@ def train_test():
 
     model = model_selector.get_model()
 
+    lora_model = LoRA_ViT_timm(model, r=args.lora_r, alpha=args.lora_alpha, num_classes=num_classes)
+
     # # model 구조 모르겠으면 주석 풀고 확인
     # print(model)
     # assert False
 
-    lora_config = LoraConfig(
-        r=args.lora_r,  # LoRA의 rank
-        lora_alpha=args.lora_alpha,
-        target_modules = ["mlp.fc2"],
-        lora_dropout=args.lora_dropout,
-        bias="none",
-        modules_to_save=["head"],
-    )
-
-    # try:
-    #     peft_model = get_peft_model(model, lora_config)
-    #     print("LoRA가 성공적으로 적용되었습니다.")
-    # except ValueError as e:
-    #     print(f"오류 발생: {e}")
-    #     print("모델 구조를 다시 확인하고 target_modules를 조정해주세요.")
-
-    model = get_peft_model(model, lora_config)
-
-    # print(model)
-    # assert False
-
-    # model = customize_layer(model, num_classes)
+    num_params = sum(p.numel() for p in lora_model.parameters() if p.requires_grad)
+    print(f"trainable parameters: {num_params/2**20:.3f}M")
 
     print(f"학습 가능한 파라미터: {count_parameters(model)}")
 
