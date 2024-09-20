@@ -3,6 +3,7 @@ import torch
 import torch.optim as optim
 import os
 import logging
+import torch.nn.functional as F
 
 from torch.utils.data import DataLoader
 from tqdm import tqdm
@@ -23,7 +24,8 @@ class Trainer:
         log_path: str,
         tensorboard_path: str,
         model_name : str,
-        pretrained : bool
+        pretrained : bool,
+        early_stopping_patience : int = 3  # 조기 종료 설정
     ):
         # 클래스 초기화: 모델, 디바이스, 데이터 로더 등 설정
         self.model = model  # 훈련할 모델
@@ -41,6 +43,9 @@ class Trainer:
         self.lowest_loss = float('inf') # 가장 낮은 Loss를 저장할 변수
         self.model_name = model_name
         self.pretrained = pretrained
+        self.early_stopping_patience = early_stopping_patience  # 조기 종료 patience 값
+        self.early_stopping_counter = 0  # 조기 종료를 위한 카운터
+        self.is_full_finetuning = False  # 모든 파라미터 학습
     def save_model(self, epoch, loss):
         # 모델 저장 경로 설정
         os.makedirs(self.weight_path, exist_ok=True)
@@ -69,6 +74,8 @@ class Trainer:
         self.model.train()
 
         total_loss = 0.0
+        correct = 0
+        total = 0
         progress_bar = tqdm(self.train_loader, desc="Training", leave=False)
 
         for images, targets in progress_bar:
@@ -80,6 +87,10 @@ class Trainer:
             self.optimizer.step()
             total_loss += loss.item()
             progress_bar.set_postfix(loss=loss.item())
+            logits = F.softmax(outputs, dim=1)
+            preds = logits.argmax(dim=1)
+            total += targets.size(0)
+            correct += (preds == targets).sum().item()
         self.scheduler.step()
         return total_loss / len(self.train_loader)
 
@@ -88,6 +99,9 @@ class Trainer:
         self.model.eval()
 
         total_loss = 0.0
+        total_loss = 0.0
+        correct = 0
+        total = 0
         progress_bar = tqdm(self.val_loader, desc="Validating", leave=False)
 
         with torch.no_grad():
@@ -97,6 +111,10 @@ class Trainer:
                 loss = self.loss_fn(outputs, targets)
                 total_loss += loss.item()
                 progress_bar.set_postfix(loss=loss.item())
+                logits = F.softmax(outputs, dim=1)
+                preds = logits.argmax(dim=1)
+                total += targets.size(0)
+                correct += (preds == targets).sum().item()
 
         return total_loss / len(self.val_loader)
 
@@ -112,23 +130,58 @@ class Trainer:
             ]
         )
 
-        train_writer = SummaryWriter(log_dir=os.path.join(self.tensorboard_path, f'train_fold{fold+1}'))
-        validation_writer = SummaryWriter(log_dir=os.path.join(self.tensorboard_path, f'validation_fold{fold+1}'))
+        train_writer = SummaryWriter(log_dir=os.path.join(self.tensorboard_path, f'train'))
+        validation_writer = SummaryWriter(log_dir=os.path.join(self.tensorboard_path, f'validation'))
 
         logger = logging.getLogger()
         for epoch in range(self.epochs):
             logger.info(f"Epoch {epoch+1}/{self.epochs}")
 
-            train_loss = self.train_epoch()
-            val_loss = self.validate()
-            logger.info(f"Epoch {epoch+1}, Train Loss: {train_loss:.4f}, Validation Loss: {val_loss:.4f}\n")
+            train_loss, train_acc = self.train_epoch()
+            val_loss, val_acc = self.validate()
+            logger.info(f"Epoch {epoch+1}, Train Loss: {train_loss:.4f}, Train Accuracy: {train_acc:.2f}, Validation Loss: {val_loss:.4f}, Validataion Accuracy: {val_acc:.2f}\n")
 
             self.save_model(epoch, val_loss)
 
-            writer.add_scalars('Loss', {
-                'Train': train_loss,
-                'Validation': val_loss
-            }, epoch)
+            train_writer.add_scalar('train/Loss', train_loss, epoch)  # 훈련 손실 기록
+            train_writer.add_scalar('train/Accuracy', train_acc, epoch)  # 훈련 손실 기록
+            validation_writer.add_scalar('validation/Loss', val_loss, epoch)  # 검증 손실 기록
+            validation_writer.add_scalar('validation/Accuracy', val_acc, epoch)  # 검증 손실 기록
+
+            train_writer.add_scalar('train_validation/Loss', train_loss, epoch)  # 훈련 손실 기록
+            train_writer.add_scalar('train_validation/Accuracy', train_acc, epoch)
+            validation_writer.add_scalar('train_validation/Loss', val_loss, epoch)  # 검증 손실 기록
+            validation_writer.add_scalar('train_validation/Accuracy', val_acc, epoch)  # 검증 손실 기록
+
+            # 조기 종료 조건 검사
+            if val_loss < self.lowest_loss:
+                self.lowest_loss = val_loss
+                self.early_stopping_counter = 0  # 손실이 개선되었을 때 카운터 초기화
+            else : 
+                self.early_stopping_counter += 1
+                if self.early_stopping_counter >= self.early_stopping_patience:
+                    if self.is_full_finetuning == False: # 전체 학습 모드로 전환
+                        self.early_stopping_counter = 0
+                        self.is_full_finetuning = True
+                        logger.info(f"Early stopping and full fine tuning start at epoch {epoch+1}")
+                        for param in self.model.parameters():
+                            param.requires_grad = False
+                        # 전이 학습 - 특정 레이어 이후의 파라미터만 학습 가능하도록 설정
+                        # specific_layer_name = 'blocks.15.norm1.weight'  # 학습 가능하게 설정할 첫 번째 레이어의 이름을 설정
+
+                        # # 특정 레이어 이후의 파라미터를 학습 가능하게 설정
+                        # enable_grad = False
+                        # for name, param in self.model.model.named_parameters():
+                        #     if specific_layer_name in name:  # 특정 레이어에 도달했을 때
+                        #         param.requires_grad = True
+                        #         enable_grad = True
+                        #     if enable_grad:
+                        #         param.requires_grad = True
+                    else : # 이미 전체 학습 모드였다면
+                        self.early_stopping_counter = 0
+                        self.is_full_finetuning = False
+                        logger.info(f"full fine tuning Early stopping at epoch {epoch+1}")
+                        break  # 조기 종료
             
         train_writer.close()    
         validation_writer.close() 
