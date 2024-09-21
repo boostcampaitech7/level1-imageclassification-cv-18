@@ -143,10 +143,10 @@ def train_test():
     # optimizer
     optimizer = optim.Adam(model.parameters(), lr=args.lr)
     
-    scheduler = optim.lr_scheduler.StepLR(
-    optimizer,
-    step_size=args.step_size,
-    gamma=args.gamma
+    scheduler = optim.lr_scheduler.CosineAnnealingLR(
+        optimizer,
+        T_max=args.T_max,
+        eta_min=args.eta_min
     )
 
     # loss
@@ -242,11 +242,11 @@ if __name__ == "__main__":
     parser.add_argument('--save_rootpath', type=str, default="Experiments/debug", help='가중치, log, tensorboard 그래프 저장을 위한 path 실험명으로 디렉토리 구성')
     
     # 하이퍼파라미터
-    parser.add_argument('--epochs', type=int, default=20, help='에포크 설정')
+    parser.add_argument('--epochs', type=int, default=30, help='에포크 설정')
     parser.add_argument('--lr', type=float, default=0.001, help='learning rage')
     parser.add_argument('--batch_size', type=int, default=64)
-    parser.add_argument('--step_size', type=int, default=5, help='몇 번째 epoch 마다 학습률 줄일 지 선택')
-    parser.add_argument('--gamma', type=float, default=0.1, help='학습률에 얼마를 곱하여 줄일 지 선택')
+    parser.add_argument('--T_max', type=int, default=15, help='학습률이 최소값에 도달하는데 걸리는 에포크 수')
+    parser.add_argument('--eta_min', type=float, default=1e-6, help='학습률이 도달할 수 있는 최소값')
 
     args = parser.parse_args()
 
