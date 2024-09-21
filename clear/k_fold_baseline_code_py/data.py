@@ -146,7 +146,7 @@ def setup_train_directories(save_root_path):
     return weight_dir, log_dir, tensorboard_dir
 
 def set_up_test_directories(save_root_path):
-    save_csv_dir =  os.path.join(save_root_path, 'test_csv')
+    save_csv_dir = os.path.join(save_root_path, 'test_csv')
     os.makedirs(save_csv_dir, exist_ok=True)
     return save_csv_dir
 
@@ -167,7 +167,7 @@ def set_train_and_val_data(train_info, train_dir, transform = 'torchvision', bat
     # 데이터 준비
     train_df, val_df = train_test_split(train_info, test_size=0.2, stratify=train_info['target'], random_state=42) # split 은 항상 seed 42로 고정.
     transform_selector = TransformSelector(transform_type=transform)
-    train_transform, val_transform = transform_selector.get_transform(is_train=True), transform_selector.get_transform(is_train=True)
+    train_transform, val_transform = transform_selector.get_transform(is_train=True), transform_selector.get_transform(is_train=False)
     train_dataset = CustomDataset(
         root_dir=train_dir,
         info_df=train_df,
@@ -179,6 +179,8 @@ def set_train_and_val_data(train_info, train_dir, transform = 'torchvision', bat
         info_df=val_df,
         transform=val_transform
     )
+
+    print(len(train_dataset))
 
     train_loader = DataLoader(
     train_dataset,
@@ -194,7 +196,8 @@ def set_train_and_val_data(train_info, train_dir, transform = 'torchvision', bat
 
     return train_loader, val_loader
 
-def set_test_loader(test_info, test_dir, transform, batch_size = 64):
+
+def set_test_loader(test_info, test_dir, transform='torchvision', batch_size = 64):
     transform_selector = TransformSelector(transform_type=transform)
     test_transform = transform_selector.get_transform(is_train=False)
    
