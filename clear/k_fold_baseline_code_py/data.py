@@ -7,34 +7,10 @@ import albumentations as A
 
 from typing import Callable, Tuple, Union
 from torchvision import transforms
-from torch.utils.data import Dataset
+from torch.utils.data import Dataset, DataLoader
 from PIL import Image
 from albumentations.pytorch import ToTensorV2
-
-def setup_train_directories(save_root_path):
-    # 가중치, 로그, TensorBoard 경로 설정
-    weight_dir = os.path.join(save_root_path, 'weights')
-    log_dir = os.path.join(save_root_path, 'logs')
-    tensorboard_dir = os.path.join(save_root_path, 'tensorboard')
-
-    # 디렉토리 생성 (존재하지 않으면 생성)
-    os.makedirs(weight_dir, exist_ok=True)
-    os.makedirs(log_dir, exist_ok=True)
-    os.makedirs(tensorboard_dir, exist_ok=True)
-
-    return weight_dir, log_dir, tensorboard_dir
-
-def set_up_test_directories(save_root_path):
-    save_csv_dir =  os.path.join(save_root_path, 'test_csv')
-    os.makedirs(save_csv_dir, exist_ok=True)
-    return save_csv_dir
-
-
-
-
-
-
-
+from sklearn.model_selection import train_test_split
 
 class CustomDataset(Dataset):
     def __init__(
@@ -130,3 +106,109 @@ class AlbumentationsTransform:
         transformed = self.transform(image=image)  # 이미지에 설정된 변환을 적용
 
         return transformed['image']  # 변환된 이미지의 텐서를 반환
+
+class TransformSelector:
+    """
+    이미지 변환 라이브러리를 선택하기 위한 클래스.
+    """
+    def __init__(self, transform_type: str):
+
+        # 지원하는 변환 라이브러리인지 확인
+        if transform_type in ["torchvision", "albumentations"]:
+            self.transform_type = transform_type
+
+        else:
+            raise ValueError("Unknown transformation library specified.")
+
+    def get_transform(self, is_train: bool):
+
+        # 선택된 라이브러리에 따라 적절한 변환 객체를 생성
+        if self.transform_type == 'torchvision':
+            transform = TorchvisionTransform(is_train=is_train)
+
+        elif self.transform_type == 'albumentations':
+            transform = AlbumentationsTransform(is_train=is_train)
+
+        return transform
+
+
+def setup_train_directories(save_root_path):
+    # 가중치, 로그, TensorBoard 경로 설정
+    weight_dir = os.path.join(save_root_path, 'weights')
+    log_dir = os.path.join(save_root_path, 'logs')
+    tensorboard_dir = os.path.join(save_root_path, 'tensorboard')
+
+    # 디렉토리 생성 (존재하지 않으면 생성)
+    os.makedirs(weight_dir, exist_ok=True)
+    os.makedirs(log_dir, exist_ok=True)
+    os.makedirs(tensorboard_dir, exist_ok=True)
+
+    return weight_dir, log_dir, tensorboard_dir
+
+def set_up_test_directories(save_root_path):
+    save_csv_dir =  os.path.join(save_root_path, 'test_csv')
+    os.makedirs(save_csv_dir, exist_ok=True)
+    return save_csv_dir
+
+def return_data_frames_and_num_classes(train_csv,test_csv):
+    
+    # 데이터 준비
+
+    train_info = pd.read_csv(train_csv)
+    test_info = pd.read_csv(test_csv)
+
+    num_classes = len(train_info['target'].unique()) 
+
+    return train_info, test_info, num_classes
+
+
+def set_train_and_val_data(train_info, train_dir, transform = 'torchvision', batch_size = 16):
+
+    # 데이터 준비
+    train_df, val_df = train_test_split(train_info, test_size=0.2, stratify=train_info['target'], random_state=42) # split 은 항상 seed 42로 고정.
+    transform_selector = TransformSelector(transform_type=transform)
+    train_transform, val_transform = transform_selector.get_transform(is_train=True), transform_selector.get_transform(is_train=True)
+    train_dataset = CustomDataset(
+        root_dir=train_dir,
+        info_df=train_df,
+        transform=train_transform
+    )
+
+    val_dataset = CustomDataset(
+        root_dir=train_dir,
+        info_df=val_df,
+        transform=val_transform
+    )
+
+    train_loader = DataLoader(
+    train_dataset,
+    batch_size=batch_size,
+    shuffle=True
+    )
+
+    val_loader = DataLoader(
+        val_dataset,
+        batch_size=batch_size,
+        shuffle=False
+    )
+
+    return train_loader, val_loader
+
+def set_test_loader(test_info, test_dir, transform, batch_size = 64):
+    transform_selector = TransformSelector(transform_type=transform)
+    test_transform = transform_selector.get_transform(is_train=False)
+   
+    test_dataset = CustomDataset(
+        root_dir=test_dir,
+        info_df=test_info,
+        transform=test_transform,
+        is_inference=True
+    )
+
+    test_loader = DataLoader(
+        test_dataset,
+        batch_size=batch_size,
+        shuffle=False,
+        drop_last=False
+    )
+    return test_loader

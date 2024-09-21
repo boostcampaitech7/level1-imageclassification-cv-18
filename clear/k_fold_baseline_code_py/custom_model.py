@@ -20,13 +20,13 @@ class ModelSelector:
 
         else:
             raise ValueError("Unknown model type specified.")
-
+            
     def get_model_name(self): return self.model_name
 
     def get_model(self) -> nn.Module:
         return self.model
+    
 
-# 전이학습 / 뒷단만 변경
 def customize_transfer_layer(model, num_classes):
     
     for param in model.parameters():
@@ -42,5 +42,4 @@ def customize_transfer_layer(model, num_classes):
     # 파라미터 학습 가능하게 수정
     for param in model.model.head.parameters():
         param.requires_grad = True
-
     return model
