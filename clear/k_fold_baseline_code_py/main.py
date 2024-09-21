@@ -18,7 +18,7 @@ if __name__ == "__main__":
     # Data setting
     train_info, test_info, num_classes = data.return_data_frames_and_num_classes(args.train_csv, args.test_csv)
     train_loader, val_loader = data.set_train_and_val_data(train_info, args.train_dir, transform = args.transform, batch_size = args.batch_size)
-    test_loader = data.set_test_loader(test_info, args.test_dir)
+    test_loader = data.set_test_loader(test_info, args.test_dir, transform = args.transform)
 
     # train setting
     trainer = set_trainer(args, train_loader, val_loader, num_classes, device = device)

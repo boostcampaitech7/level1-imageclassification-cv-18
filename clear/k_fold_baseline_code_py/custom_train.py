@@ -97,6 +97,8 @@ class Trainer:
         current_model_path = os.path.join(self.weights, f'{self.model_name}_{self.pretrained}_epoch_{epoch}_loss_{loss:.4f}.pt')
         torch.save(self.model.state_dict(), current_model_path)
 
+
+        # 수정 필요
         # 최상위 3개 모델 관리
         self.best_models.append((loss, epoch, current_model_path))
         self.best_models.sort()
