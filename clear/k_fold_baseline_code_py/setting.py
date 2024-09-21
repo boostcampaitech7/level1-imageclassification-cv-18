@@ -46,6 +46,15 @@ def set_arg_parser_default():
 
     args = vars(parser.parse_args())
     result = dict(defaults)
+    
+    # 하이퍼 파라미터 초기화
+    result['gpu'] = int(result['gpu'])
+    result['epochs'] = int(result['epochs'])
+    result ['lr'] = float(result['lr'])
+    result['batch_size'] = int(result['batch_size'])
+    result['step_size'] = int(result['step_size'])
+    result ['gamma'] = float(result['gamma'])
+
     result.update({k: v for k, v in args.items() if v is not None}) 
     args = argparse.Namespace(**result)
     return args
@@ -57,10 +66,7 @@ def set_cuda(gpu):
     print(f"current use : cuda({torch.cuda.current_device()})\n")
     return device
 
-def set_trainer(args, train_loader, val_loader, num_classes, device = 'cpu'):
-
-    # set cuda
-    device = set_cuda(args.gpu) 
+def set_trainer(args, train_loader, val_loader, num_classes, device):
 
     # set model       
     model_selector = custom_model.ModelSelector(
@@ -90,6 +96,8 @@ def set_trainer(args, train_loader, val_loader, num_classes, device = 'cpu'):
     # train
     trainer = custom_train.Trainer(
     model = model,
+    model_name = args.model_name,
+    pretrained=args.pretrained,
     device=device,
     train_loader=train_loader,
     val_loader=val_loader,
@@ -97,12 +105,12 @@ def set_trainer(args, train_loader, val_loader, num_classes, device = 'cpu'):
     scheduler=scheduler,
     loss_fn=loss_fn,
     epochs=args.epochs,
-    log_path = args.save_rootpath
+    root_log = args.save_rootpath
     )
 
     return trainer
 
-def set_tester(test_info,test_loader,model,save_file_name = 'test.csv',device='cpu'):
+def set_tester(args, test_info, test_loader, model, save_file_name = 'test.csv', device='cpu'):
 
     # 모델로 추론 실행
     predictions = custom_test.inference(
@@ -115,6 +123,6 @@ def set_tester(test_info,test_loader,model,save_file_name = 'test.csv',device='c
     result_info = test_info.copy()
     result_info['target'] = predictions
     result_info = result_info.reset_index().rename(columns={"index": "ID"})
-    save_path = data.set_up_test_directories()
+    save_path = data.set_up_test_directories(args.save_rootpath)
     save_path = os.path.join(save_path, save_file_name)
     result_info.to_csv(save_path, index=False)
