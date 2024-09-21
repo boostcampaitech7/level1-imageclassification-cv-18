@@ -15,9 +15,9 @@ from sklearn.model_selection import StratifiedKFold
 from sklearn.ensemble import VotingClassifier
 from torch.utils.tensorboard import SummaryWriter
 
-from loss import CrossEntropyLoss
-from model_selector import ModelSelector, customize_transfer_layer
-from dataloader import CustomDataset, TorchvisionTransform, AlbumentationsTransform
+# from loss import CrossEntropyLoss
+# from custom_model import ModelSelector, customize_transfer_layer
+# from data import CustomDataset, TorchvisionTransform, AlbumentationsTransform
 
 # 하나의 함수는 하나의 기능만 하도록
 # 클래스가 클래스의 기능을 할 수 있도록
@@ -113,7 +113,7 @@ class Trainer:
             print(f"Save {epoch}epoch result. Loss = {loss:.4f}")
 
 
-    def __train_epoch(self) -> float:
+    def train_epoch(self) -> float:
 
         # 한 에폭 동안의 훈련을 진행
         self.model.train()

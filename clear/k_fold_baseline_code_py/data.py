@@ -180,7 +180,6 @@ def set_train_and_val_data(train_info, train_dir, transform = 'torchvision', bat
         transform=val_transform
     )
 
-    print(len(train_dataset))
 
     train_loader = DataLoader(
     train_dataset,
