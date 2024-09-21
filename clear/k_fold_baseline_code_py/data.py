@@ -11,6 +11,30 @@ from torch.utils.data import Dataset
 from PIL import Image
 from albumentations.pytorch import ToTensorV2
 
+def setup_train_directories(save_root_path):
+    # 가중치, 로그, TensorBoard 경로 설정
+    weight_dir = os.path.join(save_root_path, 'weights')
+    log_dir = os.path.join(save_root_path, 'logs')
+    tensorboard_dir = os.path.join(save_root_path, 'tensorboard')
+
+    # 디렉토리 생성 (존재하지 않으면 생성)
+    os.makedirs(weight_dir, exist_ok=True)
+    os.makedirs(log_dir, exist_ok=True)
+    os.makedirs(tensorboard_dir, exist_ok=True)
+
+    return weight_dir, log_dir, tensorboard_dir
+
+def set_up_test_directories(save_root_path):
+    save_csv_dir =  os.path.join(save_root_path, 'test_csv')
+    os.makedirs(save_csv_dir, exist_ok=True)
+    return save_csv_dir
+
+
+
+
+
+
+
 
 class CustomDataset(Dataset):
     def __init__(

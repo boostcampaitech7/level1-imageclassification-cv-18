@@ -17,139 +17,166 @@ from sklearn.ensemble import VotingClassifier
 from torch.utils.tensorboard import SummaryWriter
 
 from loss import CrossEntropyLoss
-from model_selector import ModelSelector
+from model_selector import ModelSelector, customize_transfer_layer
 from dataloader import CustomDataset, TorchvisionTransform, AlbumentationsTransform
-from customize_layer import customize_layer
 from trainer import Trainer
 
-def set_cuda(gpu):
-    torch.cuda.set_device(gpu)
-    device = torch.device(f'cuda:{gpu}')
-    print(f"is_available cuda : {torch.cuda.is_available()}")
-    print(f"current use : cuda({torch.cuda.current_device()})\n")
-    return device
+# 하나의 함수는 하나의 기능만 하도록
+# 클래스가 클래스의 기능을 할 수 있도록
+# data는 data_loader 단에 묶을 수 있도록
 
-def setup_directories(save_rootpath):
-    # 가중치, 로그, TensorBoard 경로 설정
-    weight_dir = os.path.join(save_rootpath, 'weights')
-    log_dir = os.path.join(save_rootpath, 'logs')
-    tensorboard_dir = os.path.join(save_rootpath, 'tensorboard')
-    save_csv_dir =  os.path.join(save_rootpath, 'test_csv')
+import torch.nn as nn
+import torch
+import torch.optim as optim
+import os
+import logging
 
-    # 디렉토리 생성 (존재하지 않으면 생성)
-    os.makedirs(weight_dir, exist_ok=True)
-    os.makedirs(log_dir, exist_ok=True)
-    os.makedirs(tensorboard_dir, exist_ok=True)
-    os.makedirs(save_csv_dir, exist_ok=True)
+from torch.utils.data import DataLoader
+from tqdm import tqdm
+from torch.utils.tensorboard import SummaryWriter
 
-    return weight_dir, log_dir, tensorboard_dir, save_csv_dir
+class Trainer:
+    def __init__(
+        self,
+        model: nn.Module,
+        device: torch.device,
+        train_loader: DataLoader,
+        val_loader: DataLoader,
+        optimizer: optim.Optimizer,
+        scheduler: optim.lr_scheduler,
+        loss_fn: torch.nn.modules.loss._Loss,
+        epochs: int,
+        log_path: str,
+        model_name : str,
+        pretrained : bool
+    ):
+        # 클래스 초기화: 모델, 디바이스, 데이터 로더 등 설정
+        self.model = model  # 훈련할 모델
+        self.device = device  # 연산을 수행할 디바이스 (CPU or GPU)
+        self.train_loader = train_loader  # 훈련 데이터 로더
+        self.val_loader = val_loader  # 검증 데이터 로더
+        self.optimizer = optimizer  # 최적화 알고리즘
+        self.scheduler = scheduler # 학습률 스케줄러
+        self.loss_fn = loss_fn  # 손실 함수
+        self.epochs = epochs  # 총 훈련 에폭 수
+        self.best_models = [] # 가장 좋은 상위 3개 모델의 정보를 저장할 리스트
+        self.lowest_loss = float('inf') # 가장 낮은 Loss를 저장할 변수
+        self.model_name = model_name
+        self.pretrained = pretrained
 
-def inference(
-    model: nn.Module,
-    device: torch.device,
-    test_loader: DataLoader
-):
-    
-    model.to(device)
-    model.eval()
-
-    predictions = []
-    with torch.no_grad(): 
-        for images in tqdm(test_loader):
-            images = images.to(device)
-
-            # 모델을 통해 예측 수행
-            # ensemble을 위해 스코어 벡터로 반환
-            logits = model(images)
-            logits = F.softmax(logits, dim=1)
-            # preds = logits.argmax(dim=1)
-
-            # 예측 스코어 벡터 저장
-            # predictions.append(logits.cpu().numpy())
-
-            # 예측 결과 저장
-            predictions.extend(logits.cpu().detach().numpy())  # 결과를 CPU로 옮기고 리스트에 추가
-
-    return predictions
-
-def train():
-    # set cuda
-    device = set_cuda(args.gpu) 
-
-    #set save dir
-    weight_dir, log_dir, tensorboard_dir, test_csv_dir = setup_directories(args.save_rootpath)
-    logfile = os.path.join(log_dir, "train_log.log")
-
-    # 데이터 준비
-    traindata_dir = args.train_dir
-    traindata_info_file = args.train_csv
-
-    train_info = pd.read_csv(traindata_info_file)
-    num_classes = len(train_info['target'].unique()) 
-
-    train_df, val_df = train_test_split(train_info, test_size=0.2, stratify=train_info['target'], random_state=42) # split 은 항상 seed 42로 고정.
-    
-    if args.transform == "TorchvisionTransform":
-        train_transform = TorchvisionTransform(is_train=True)
-        val_transform = TorchvisionTransform(is_train=False)
-    elif args.transform == "AlbumentationsTransform":
-        train_transform = AlbumentationsTransform(is_train=True)
-        val_transform = AlbumentationsTransform(is_train=False)
-
-    train_dataset = CustomDataset(
-    root_dir=traindata_dir,
-    info_df=train_df,
-    transform=train_transform
-    )
-
-    val_dataset = CustomDataset(
-        root_dir=traindata_dir,
-        info_df=val_df,
-        transform=val_transform
-    )
-
-    train_loader = DataLoader(
-    train_dataset,
-    batch_size=args.batch_size,
-    shuffle=True
-    )
-
-    val_loader = DataLoader(
-        val_dataset,
-        batch_size=args.batch_size,
-        shuffle=False
-    )
-
-    # set model       
-    model_selector = ModelSelector(
-        model_type= args.model_type,
-        num_classes = num_classes,
-        model_name= args.model_name,
-        pretrained= args.pretrained
-    )
-
-    model = model_selector.get_model()
-
-    if args.pretrained == True:
-        for param in model.parameters():
-            param.requires_grad = False
+        self.weight_path, self.log_path, self.tensorboard_path = self.set_logs_path(log_path)
         
-        model = customize_layer(model, num_classes)
+    def set_logs_path(self,log_path):
 
-    model = model.to(device)
-    
-    # optimizer
-    optimizer = optim.AdamW(model.parameters(), lr=args.lr)
-    
-    scheduler = optim.lr_scheduler.StepLR(
-    optimizer,
-    step_size=args.step_size,
-    gamma=args.gamma
-    )
+        # 가중치, 로그, TensorBoard 경로 설정
+        weight_dir = os.path.join(log_path, 'weights')
+        log_dir = os.path.join(log_path, 'logs')
+        tensorboard_dir = os.path.join(log_path, 'tensorboard')
 
-    # loss
-    loss_fn = CrossEntropyLoss() 
-    
+        # 디렉토리 생성 (존재하지 않으면 생성)
+        os.makedirs(weight_dir, exist_ok=True)
+        os.makedirs(log_dir, exist_ok=True)
+        os.makedirs(tensorboard_dir, exist_ok=True)
+
+        return weight_dir, log_dir, tensorboard_dir
+
+
+    def save_model(self, epoch, loss):
+        # 모델 저장 경로 설정
+        os.makedirs(self.weight_path, exist_ok=True)
+
+        # 현재 에폭 모델 저장
+        current_model_path = os.path.join(self.weight_path, f'{self.model_name}_{self.pretrained}_epoch_{epoch}_loss_{loss:.4f}.pt')
+        torch.save(self.model.state_dict(), current_model_path)
+
+        # 최상위 3개 모델 관리
+        self.best_models.append((loss, epoch, current_model_path))
+        self.best_models.sort()
+        if len(self.best_models) > 3:
+            _, _, path_to_remove = self.best_models.pop(-1)  # 가장 높은 손실 모델 삭제
+            if os.path.exists(path_to_remove):
+                os.remove(path_to_remove)
+
+        # 가장 낮은 손실의 모델 저장
+        if loss < self.lowest_loss:
+            self.lowest_loss = loss
+            best_model_path = os.path.join(self.weight_path, f'best_{self.model_name}_{self.pretrained}_epoch_{epoch}_loss_{loss:.4f}.pt')
+            torch.save(self.model.state_dict(), best_model_path)
+            print(f"Save {epoch}epoch result. Loss = {loss:.4f}")
+
+    def train_epoch(self) -> float:
+        # 한 에폭 동안의 훈련을 진행
+        self.model.train()
+
+        total_loss = 0.0
+        progress_bar = tqdm(self.train_loader, desc="Training", leave=False)
+
+        for images, targets in progress_bar:
+            images, targets = images.to(self.device), targets.to(self.device)
+            self.optimizer.zero_grad()
+            outputs = self.model(images)
+            loss = self.loss_fn(outputs, targets)
+            loss.backward()
+            self.optimizer.step()
+            total_loss += loss.item()
+            progress_bar.set_postfix(loss=loss.item())
+        self.scheduler.step()
+        return total_loss / len(self.train_loader)
+
+    def validate(self) -> float:
+        # 모델의 검증을 진행
+        self.model.eval()
+
+        total_loss = 0.0
+        progress_bar = tqdm(self.val_loader, desc="Validating", leave=False)
+
+        with torch.no_grad():
+            for images, targets in progress_bar:
+                images, targets = images.to(self.device), targets.to(self.device)
+                outputs = self.model(images)
+                loss = self.loss_fn(outputs, targets)
+                total_loss += loss.item()
+                progress_bar.set_postfix(loss=loss.item())
+
+        return total_loss / len(self.val_loader)
+
+    def train(self) -> None:
+
+        # 전체 훈련 과정을 관리
+        logging.basicConfig(
+            level=logging.INFO,  # 로그 레벨을 INFO로 설정
+            format='%(asctime)s - %(levelname)s - %(message)s',  # 로그 형식
+            handlers=[
+                logging.FileHandler(self.log_path),  # 로그를 파일에 기록
+                logging.StreamHandler()  # 로그를 콘솔에도 출력
+            ]
+        )
+
+        writer = SummaryWriter(log_dir=self.tensorboard_path)
+
+        logger = logging.getLogger()
+        for epoch in range(self.epochs):
+            logger.info(f"Epoch {epoch+1}/{self.epochs}")
+
+            train_loss = self.train_epoch()
+            val_loss = self.validate()
+            logger.info(f"Epoch {epoch+1}, Train Loss: {train_loss:.4f}, Validation Loss: {val_loss:.4f}\n")
+
+            self.save_model(epoch, val_loss)
+
+            writer.add_scalar('Loss/train', train_loss, epoch)  # 훈련 손실 기록
+            writer.add_scalar('Loss/validation', val_loss, epoch)  # 검증 손실 기록
+        writer.close()    
+
+def setting_Trainer():
+
+    device = setting_device()
+    train_loader, val_loader = setting_train_data()
+    model = setting_model()
+    optimizer = setting_optimizer()
+    loss = setting_loss()
+    logger = setting_logger()
+
     # train
     trainer = Trainer(
     model=model,
@@ -168,88 +195,5 @@ def train():
     )
 
     trainer.train()
-    return model
 
-def test(model, val_transform):
     #-------------------------------------------------------
-
-    # test
-    test_info = pd.read_csv(args.test_csv)
-
-    test_dataset = CustomDataset(
-        root_dir=args.test_dir,
-        info_df=test_info,
-        transform=val_transform,
-        is_inference=True
-    )
-
-    test_loader = DataLoader(
-        test_dataset,
-        batch_size=64,
-        shuffle=False,
-        drop_last=False
-    )
-
-    weights = os.listdir(weight_dir)
-
-    for weight_file in weights:
-        model.load_state_dict(torch.load(os.path.join(weight_dir, weight_file)))
-
-        csv_name = os.path.basename(weight_file).replace(".pt", "") + ".csv"
-
-        # 모델로 추론 실행
-        predictions = inference(
-            model=model,
-            device=device,
-            test_loader=test_loader
-        )
-
-        # test_info의 복사본을 사용하여 CSV 저장
-        result_info = test_info.copy()
-        result_info['target'] = predictions
-        result_info = result_info.reset_index().rename(columns={"index": "ID"})
-
-        save_path = os.path.join(test_csv_dir, csv_name)
-        result_info.to_csv(save_path, index=False)
-
-
-if __name__ == "__main__":
-    torch.cuda.empty_cache()
-    torch.multiprocessing.set_start_method('spawn')
-    parser = argparse.ArgumentParser()
-    parser.add_argument('--gpu', type=int, default=0, help='cuda:(gpu)')
-    
-    # default 부분 수정해서 사용!
-    # k_fold로 돌리기 위한 코드, 기존 코드와 달라진 부분이 있어 확인 후 사용 바람
-
-    # method
-    parser.add_argument('--model_type', type=str, default='timm', help='사용할 모델 이름 : model_selector.py 중 선택')
-    parser.add_argument('--model_name', type=str, default='eva02_large_patch14_448.mim_m38m_ft_in22k_in1k', help='model/timm_model_name.txt 에서 확인, 아키텍처 확인은 "https://github.com/huggingface/pytorch-image-models/tree/main/timm/models"')
-    parser.add_argument('--pretrained', type=bool, default='True', help='전이학습 or 학습된 가중치 가져오기 : True / 전체학습 : False')
-    # 전이학습할 거면 꼭! (True) customize_layer.py 가서 레이어 수정, 레이어 수정 안할 거면 가서 레이어 구조 변경 부분만 주석해서 사용 (어떤 레이어 열지는 알아야함)
-    # 모델 구조랑 레이어 이름 모르겠으면 위에 모델 정의 부분가서 print(model) , assert False 주석 풀어서 확인하기
-
-    parser.add_argument('--transform', type=str, default='AlbumentationsTransform', help='transform class 선택 torchvision or albumentation / dataloader.py code 참고')
-    
-    # 데이터 경로
-    parser.add_argument('--train_dir', type=str, default="/data/ephemeral/home/data/train", help='훈련 데이터셋 루트 디렉토리 경로') # "/data/ephemeral/home/data/train"
-    parser.add_argument('--test_dir', type=str, default="/data/ephemeral/home/data/test", help='테스트 데이터셋 루트 디렉토리 경로') # "/data/ephemeral/home/data/test"
-    parser.add_argument('--train_csv', type=str, default="/data/ephemeral/home/data/train.csv", help='훈련 데이터셋 csv 파일 경로') # "/data/ephemeral/home/data/train.csv"
-    parser.add_argument('--test_csv', type=str, default="/data/ephemeral/home/data/test.csv", help='테스트 데이터셋 csv 파일 경로') # "/data/ephemeral/home/data/test.csv"
-
-    parser.add_argument('--save_rootpath', type=str, default="Experiments/debug", help='가중치, log, tensorboard 그래프 저장을 위한 path 실험명으로 디렉토리 구성')
-    
-    # 하이퍼파라미터
-    parser.add_argument('--epochs', type=int, default=30, help='에포크 설정')
-    parser.add_argument('--lr', type=float, default=0.0001, help='learning rage')
-    parser.add_argument('--batch_size', type=int, default=16)
-    parser.add_argument('--step_size', type=int, default=5, help='몇 번째 epoch 마다 학습률 줄일 지 선택')
-    parser.add_argument('--gamma', type=float, default=0.1, help='학습률에 얼마를 곱하여 줄일 지 선택')
-
-    args = parser.parse_args()
-
-    start_time = time.time()
-    train_test()
-    end_time = time.time()
-
-    print(f" End : {(end_time - start_time)/60} min")

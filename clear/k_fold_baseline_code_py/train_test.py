@@ -17,10 +17,14 @@ from sklearn.ensemble import VotingClassifier
 from torch.utils.tensorboard import SummaryWriter
 
 from loss import CrossEntropyLoss
-from model_selector import ModelSelector
+from model_selector import ModelSelector, customize_transfer_layer
 from dataloader import CustomDataset, TorchvisionTransform, AlbumentationsTransform
-from customize_layer import customize_layer
 from trainer import Trainer
+
+# 하나의 함수는 하나의 기능만 하도록
+
+# data는 data_loader 단에 묶을 수 있도록
+
 
 def set_cuda(gpu):
     torch.cuda.set_device(gpu)
@@ -28,21 +32,6 @@ def set_cuda(gpu):
     print(f"is_available cuda : {torch.cuda.is_available()}")
     print(f"current use : cuda({torch.cuda.current_device()})\n")
     return device
-
-def setup_directories(save_rootpath):
-    # 가중치, 로그, TensorBoard 경로 설정
-    weight_dir = os.path.join(save_rootpath, 'weights')
-    log_dir = os.path.join(save_rootpath, 'logs')
-    tensorboard_dir = os.path.join(save_rootpath, 'tensorboard')
-    save_csv_dir =  os.path.join(save_rootpath, 'test_csv')
-
-    # 디렉토리 생성 (존재하지 않으면 생성)
-    os.makedirs(weight_dir, exist_ok=True)
-    os.makedirs(log_dir, exist_ok=True)
-    os.makedirs(tensorboard_dir, exist_ok=True)
-    os.makedirs(save_csv_dir, exist_ok=True)
-
-    return weight_dir, log_dir, tensorboard_dir, save_csv_dir
 
 def inference(
     model: nn.Module,
@@ -72,19 +61,13 @@ def inference(
 
     return predictions
 
-def train_test():
-    # set cuda
-    device = set_cuda(args.gpu) 
-
-    #set save dir
-    weight_dir, log_dir, tensorboard_dir, test_csv_dir = setup_directories(args.save_rootpath)
-    logfile = os.path.join(log_dir, "train_log.log")
+def set_train_and_val_data():
 
     # 데이터 준비
-    traindata_dir = args.train_dir
-    traindata_info_file = args.train_csv
+    train_data_dir = args.train_dir
+    train_data_info_file = args.train_csv
 
-    train_info = pd.read_csv(traindata_info_file)
+    train_info = pd.read_csv(train_data_info_file)
     num_classes = len(train_info['target'].unique()) 
 
     train_df, val_df = train_test_split(train_info, test_size=0.2, stratify=train_info['target'], random_state=42) # split 은 항상 seed 42로 고정.
@@ -97,13 +80,13 @@ def train_test():
         val_transform = AlbumentationsTransform(is_train=False)
 
     train_dataset = CustomDataset(
-    root_dir=traindata_dir,
+    root_dir=train_data_dir,
     info_df=train_df,
     transform=train_transform
     )
 
     val_dataset = CustomDataset(
-        root_dir=traindata_dir,
+        root_dir=train_data_dir,
         info_df=val_df,
         transform=val_transform
     )
@@ -120,6 +103,15 @@ def train_test():
         shuffle=False
     )
 
+    return train_loader, val_loader, num_classes
+
+def train_test():
+    # set cuda
+    device = set_cuda(args.gpu) 
+
+    # set data
+    train_loader, val_loader, num_classes = set_train_and_val_data()
+
     # set model       
     model_selector = ModelSelector(
         model_type= args.model_type,
@@ -134,11 +126,11 @@ def train_test():
         for param in model.parameters():
             param.requires_grad = False
         
-        model = customize_layer(model, num_classes)
+        model = customize_transfer_layer(model, num_classes)
 
     model = model.to(device)
     
-    # optimizer
+    # set optimizer
     optimizer = optim.AdamW(model.parameters(), lr=args.lr)
     
     scheduler = optim.lr_scheduler.StepLR(
@@ -147,9 +139,15 @@ def train_test():
     gamma=args.gamma
     )
 
-    # loss
+    # set loss
     loss_fn = CrossEntropyLoss() 
     
+
+    # set logger
+
+    weight_dir, log_dir, tensorboard_dir, test_csv_dir = setup_directories(args.save_rootpath)
+    logfile = os.path.join(log_dir, "train_log.log")
+
     # train
     trainer = Trainer(
     model=model,
@@ -192,7 +190,7 @@ def train_test():
 
     for weight_file in weights:
         model.load_state_dict(torch.load(os.path.join(weight_dir, weight_file)))
-
+        print(weight_file)
         csv_name = os.path.basename(weight_file).replace(".pt", "") + ".csv"
 
         # 모델로 추론 실행
