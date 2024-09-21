@@ -3,7 +3,8 @@ from torch import nn
 
 import torch.nn.functional as F 
 from tqdm import tqdm
-import data
+
+from torch.utils.data import DataLoader
 def inference(
     model: nn.Module,
     device: torch.device,
