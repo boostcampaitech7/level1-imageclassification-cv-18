@@ -1,3 +1,10 @@
+import configparser
+def arg_parser_default_setting():
+    config = configparser.ConfigParser()
+    config.read('config.ini')
+    defaults = config['default']
+    
+
 
 
 

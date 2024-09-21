@@ -168,7 +168,6 @@ class Trainer:
             writer.add_scalar('Loss/validation', val_loss, epoch)  # 검증 손실 기록
         writer.close()    
 
-def setting_Trainer():
 
     device = setting_device()
     train_loader, val_loader = setting_train_data()
