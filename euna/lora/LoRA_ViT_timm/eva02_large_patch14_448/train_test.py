@@ -130,11 +130,11 @@ def train_test():
 
     model = model_selector.get_model()
 
-    lora_model = LoRA_ViT_timm(model, r=args.lora_r, alpha=args.lora_alpha, num_classes=num_classes)
+    # model 구조 모르겠으면 주석 풀고 확인
+    print(model)
+    assert False
 
-    # # model 구조 모르겠으면 주석 풀고 확인
-    # print(model)
-    # assert False
+    lora_model = LoRA_ViT_timm(model, r=args.lora_r, alpha=args.lora_alpha, num_classes=num_classes)
 
     num_params = sum(p.numel() for p in lora_model.parameters() if p.requires_grad)
     print(f"trainable parameters: {num_params/2**20:.3f}M")
