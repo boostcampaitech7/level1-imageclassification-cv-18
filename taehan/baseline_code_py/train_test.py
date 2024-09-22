@@ -163,7 +163,8 @@ def train_test():
     log_path= logfile,
     tensorboard_path= tensorboard_dir,
     model_name = model_name,
-    pretrained = args.pretrained
+    pretrained = args.pretrained,
+    early_stopping_patience = args.early_stopping_patience
     )
 
     trainer.train()
@@ -187,27 +188,25 @@ def train_test():
         drop_last=False
     )
 
-    weights = os.listdir(weight_dir)
+    model.load_state_dict(torch.load(os.path.join(weight_dir, "best.pt")))
 
-    for weight_file in weights:
-        model.load_state_dict(torch.load(os.path.join(weight_dir, weight_file)))
+    csv_name = os.path.basename("best.pt").replace(".pt", "") + ".csv"
 
-        csv_name = os.path.basename(weight_file).replace(".pt", "") + ".csv"
+    # 모델로 추론 실행
+    predictions = inference(
+        model=model,
+        device=device,
+        test_loader=test_loader
+    )
 
-        # 모델로 추론 실행
-        predictions = inference(
-            model=model,
-            device=device,
-            test_loader=test_loader
-        )
+    # test_info의 복사본을 사용하여 CSV 저장
+    result_info = test_info.copy()
+    result_info['target'] = predictions
+    result_info = result_info.reset_index().rename(columns={"index": "ID"})
 
-        # test_info의 복사본을 사용하여 CSV 저장
-        result_info = test_info.copy()
-        result_info['target'] = predictions
-        result_info = result_info.reset_index().rename(columns={"index": "ID"})
-
-        save_path = os.path.join(test_csv_dir, csv_name)
-        result_info.to_csv(save_path, index=False)
+    save_path = os.path.join(test_csv_dir, csv_name)
+    result_info.to_csv(save_path, index=False)
+        
 
 
 if __name__ == "__main__":
@@ -241,9 +240,10 @@ if __name__ == "__main__":
     # 하이퍼파라미터
     parser.add_argument('--epochs', type=int, default=30, help='에포크 설정')
     parser.add_argument('--lr', type=float, default=0.0001, help='learning rage')
-    parser.add_argument('--batch_size', type=int, default=16)
-    parser.add_argument('--step_size', type=int, default=10, help='몇 번째 epoch 마다 학습률 줄일 지 선택')
+    parser.add_argument('--batch_size', type=int, default=8)
+    parser.add_argument('--step_size', type=int, default=5, help='몇 번째 epoch 마다 학습률 줄일 지 선택')
     parser.add_argument('--gamma', type=float, default=0.1, help='학습률에 얼마를 곱하여 줄일 지 선택')
+    parser.add_argument('--early_stopping_patience', type=int, default=2, help='언제 얼리스토핑을 할 것 인 지 선택')
 
     args = parser.parse_args()
 

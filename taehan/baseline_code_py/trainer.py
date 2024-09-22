@@ -25,7 +25,7 @@ class Trainer:
         tensorboard_path: str,
         model_name : str,
         pretrained : bool,
-        early_stopping_patience : int = 3  # 조기 종료 설정
+        early_stopping_patience : int  # 조기 종료 설정
     ):
         # 클래스 초기화: 모델, 디바이스, 데이터 로더 등 설정
         self.model = model  # 훈련할 모델
@@ -64,7 +64,7 @@ class Trainer:
 
         # 가장 낮은 손실의 모델 저장
         if loss < self.lowest_loss:
-            self.lowest_loss = loss
+            # self.lowest_loss = loss
             best_model_path = os.path.join(self.weight_path, f'best.pt')
             torch.save(self.model.state_dict(), best_model_path)
             print(f"Save {epoch}epoch result. Loss = {loss:.4f}")
@@ -92,7 +92,7 @@ class Trainer:
             total += targets.size(0)
             correct += (preds == targets).sum().item()
         self.scheduler.step()
-        return total_loss / len(self.train_loader)
+        return total_loss / len(self.train_loader), correct / total * 100
 
     def validate(self) -> float:
         # 모델의 검증을 진행
@@ -116,7 +116,7 @@ class Trainer:
                 total += targets.size(0)
                 correct += (preds == targets).sum().item()
 
-        return total_loss / len(self.val_loader)
+        return total_loss / len(self.train_loader), correct / total * 100
 
     def train(self) -> None:
 
@@ -161,11 +161,22 @@ class Trainer:
                 self.early_stopping_counter += 1
                 if self.early_stopping_counter >= self.early_stopping_patience:
                     if self.is_full_finetuning == False: # 전체 학습 모드로 전환
+                        # 얼리스토핑 초기화
                         self.early_stopping_counter = 0
+                        self.lowest_loss = float('inf')
+                        self.early_stopping_patience = 5
+
                         self.is_full_finetuning = True
                         logger.info(f"Early stopping and full fine tuning start at epoch {epoch+1}")
+                        # 모델 전체 파라미터 학습 가능하게 전환
                         for param in self.model.parameters():
-                            param.requires_grad = False
+                            param.requires_grad = True
+
+                        # 러닝레이트 변경
+                        new_lr = 0.00001
+                        for param_group in self.optimizer.param_groups:
+                            param_group['lr'] = new_lr
+                        
                         # 전이 학습 - 특정 레이어 이후의 파라미터만 학습 가능하도록 설정
                         # specific_layer_name = 'blocks.15.norm1.weight'  # 학습 가능하게 설정할 첫 번째 레이어의 이름을 설정
 
@@ -182,6 +193,7 @@ class Trainer:
                         self.is_full_finetuning = False
                         logger.info(f"full fine tuning Early stopping at epoch {epoch+1}")
                         break  # 조기 종료
+            torch.cuda.empty_cache()
             
         train_writer.close()    
         validation_writer.close() 
