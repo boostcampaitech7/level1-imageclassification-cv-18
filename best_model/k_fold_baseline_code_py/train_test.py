@@ -104,7 +104,7 @@ def train_test():
     y = train_info.iloc[:,2].tolist() # target만 리스트로 추출
 
     # 각 폴드 마다 루프
-    for fold, (train_idx, test_idx) in enumerate(kf.split(train_dataset, y)):
+    for fold, (train_idx, test_idx) in enumerate(kf.split(train_info, y)):
         print(f"Fold {fold + 1}")
         print("-------")
 
