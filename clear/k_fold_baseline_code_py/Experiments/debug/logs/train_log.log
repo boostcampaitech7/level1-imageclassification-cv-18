@@ -685,3 +685,93 @@
 2024-09-21 05:42:00,515 - INFO - Epoch 30/30
 2024-09-21 05:59:48,576 - INFO - Epoch 30, Train Loss: 0.0873, Validation Loss: 0.3033
 
+2024-09-21 20:06:40,680 - INFO - Epoch 1/30
+2024-09-21 20:24:29,833 - INFO - Epoch 1, Train Loss: 2.7696, Validation Loss: 0.7747
+
+2024-09-21 20:24:33,189 - INFO - Epoch 2/30
+2024-09-21 20:42:21,114 - INFO - Epoch 2, Train Loss: 0.4983, Validation Loss: 0.4523
+
+2024-09-21 20:42:24,460 - INFO - Epoch 3/30
+2024-09-21 21:00:15,458 - INFO - Epoch 3, Train Loss: 0.2906, Validation Loss: 0.3722
+
+2024-09-21 21:00:18,843 - INFO - Epoch 4/30
+2024-09-21 21:18:12,047 - INFO - Epoch 4, Train Loss: 0.2046, Validation Loss: 0.3397
+
+2024-09-21 21:18:15,549 - INFO - Epoch 5/30
+2024-09-21 21:36:04,309 - INFO - Epoch 5, Train Loss: 0.1556, Validation Loss: 0.3213
+
+2024-09-21 21:36:07,706 - INFO - Epoch 6/30
+2024-09-21 21:53:54,175 - INFO - Epoch 6, Train Loss: 0.1123, Validation Loss: 0.3114
+
+2024-09-21 21:53:57,682 - INFO - Epoch 7/30
+2024-09-21 22:11:47,119 - INFO - Epoch 7, Train Loss: 0.1031, Validation Loss: 0.3086
+
+2024-09-21 22:11:50,664 - INFO - Epoch 8/30
+2024-09-21 22:29:38,399 - INFO - Epoch 8, Train Loss: 0.0988, Validation Loss: 0.3066
+
+2024-09-21 22:29:41,893 - INFO - Epoch 9/30
+2024-09-21 22:47:31,055 - INFO - Epoch 9, Train Loss: 0.0956, Validation Loss: 0.3049
+
+2024-09-21 22:47:34,535 - INFO - Epoch 10/30
+2024-09-21 23:05:21,877 - INFO - Epoch 10, Train Loss: 0.0923, Validation Loss: 0.3042
+
+2024-09-21 23:05:25,327 - INFO - Epoch 11/30
+2024-09-21 23:23:13,490 - INFO - Epoch 11, Train Loss: 0.0882, Validation Loss: 0.3039
+
+2024-09-21 23:23:16,967 - INFO - Epoch 12/30
+2024-09-21 23:41:01,066 - INFO - Epoch 12, Train Loss: 0.0888, Validation Loss: 0.3037
+
+2024-09-21 23:41:04,553 - INFO - Epoch 13/30
+2024-09-21 23:58:50,304 - INFO - Epoch 13, Train Loss: 0.0870, Validation Loss: 0.3035
+
+2024-09-21 23:58:53,814 - INFO - Epoch 14/30
+2024-09-22 00:16:38,350 - INFO - Epoch 14, Train Loss: 0.0863, Validation Loss: 0.3034
+
+2024-09-22 00:16:41,716 - INFO - Epoch 15/30
+2024-09-22 00:34:29,260 - INFO - Epoch 15, Train Loss: 0.0866, Validation Loss: 0.3031
+
+2024-09-22 00:34:32,666 - INFO - Epoch 16/30
+2024-09-22 00:52:18,356 - INFO - Epoch 16, Train Loss: 0.0862, Validation Loss: 0.3031
+
+2024-09-22 00:52:21,804 - INFO - Epoch 17/30
+2024-09-22 01:10:10,591 - INFO - Epoch 17, Train Loss: 0.0870, Validation Loss: 0.3031
+
+2024-09-22 01:10:14,084 - INFO - Epoch 18/30
+2024-09-22 01:28:01,277 - INFO - Epoch 18, Train Loss: 0.0858, Validation Loss: 0.3031
+
+2024-09-22 01:28:04,762 - INFO - Epoch 19/30
+2024-09-22 01:45:53,607 - INFO - Epoch 19, Train Loss: 0.0861, Validation Loss: 0.3030
+
+2024-09-22 01:45:57,135 - INFO - Epoch 20/30
+2024-09-22 02:03:41,491 - INFO - Epoch 20, Train Loss: 0.0865, Validation Loss: 0.3030
+
+2024-09-22 02:03:44,935 - INFO - Epoch 21/30
+2024-09-22 02:21:34,991 - INFO - Epoch 21, Train Loss: 0.0855, Validation Loss: 0.3030
+
+2024-09-22 02:21:38,437 - INFO - Epoch 22/30
+2024-09-22 02:39:25,181 - INFO - Epoch 22, Train Loss: 0.0859, Validation Loss: 0.3030
+
+2024-09-22 02:39:28,514 - INFO - Epoch 23/30
+2024-09-22 02:57:17,827 - INFO - Epoch 23, Train Loss: 0.0837, Validation Loss: 0.3030
+
+2024-09-22 02:57:21,261 - INFO - Epoch 24/30
+2024-09-22 03:15:08,622 - INFO - Epoch 24, Train Loss: 0.0840, Validation Loss: 0.3030
+
+2024-09-22 03:15:12,109 - INFO - Epoch 25/30
+2024-09-22 03:32:58,668 - INFO - Epoch 25, Train Loss: 0.0856, Validation Loss: 0.3030
+
+2024-09-22 03:33:02,171 - INFO - Epoch 26/30
+2024-09-22 03:50:49,933 - INFO - Epoch 26, Train Loss: 0.0864, Validation Loss: 0.3030
+
+2024-09-22 03:50:53,407 - INFO - Epoch 27/30
+2024-09-22 04:08:40,236 - INFO - Epoch 27, Train Loss: 0.0862, Validation Loss: 0.3030
+
+2024-09-22 04:08:43,628 - INFO - Epoch 28/30
+2024-09-22 04:26:28,244 - INFO - Epoch 28, Train Loss: 0.0857, Validation Loss: 0.3030
+
+2024-09-22 04:26:31,644 - INFO - Epoch 29/30
+2024-09-22 04:44:19,505 - INFO - Epoch 29, Train Loss: 0.0846, Validation Loss: 0.3030
+
+2024-09-22 04:44:22,977 - INFO - Epoch 30/30
+2024-09-22 05:02:09,140 - INFO - Epoch 30, Train Loss: 0.0871, Validation Loss: 0.3030
+
