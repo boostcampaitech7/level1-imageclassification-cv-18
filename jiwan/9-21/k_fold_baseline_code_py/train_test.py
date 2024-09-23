@@ -173,7 +173,7 @@ def train_test():
         )
         
         # 학습 시작
-        trainer.train(fold)
+        #trainer.train(fold)
     #-------------------------------------------------------
 
     # test
@@ -196,9 +196,40 @@ def train_test():
     weights = os.listdir(weight_dir)
     print(weights)
 
+    # # k-fold ensemble
+    # k_fold_predictions = []
+    # for fold in range(k_folds):
+    #     print(f"Fold {fold + 1} inference")
+    #     print("-------")
+    #     model.load_state_dict(torch.load(os.path.join(weight_dir, f'{fold}_bestmodel.pt')))
+    #     # 모델로 추론 실행
+    #     predictions = inference(
+    #         model=model,
+    #         device=device,
+    #         test_loader=test_loader
+    #     )
+    #     k_fold_predictions.append(predictions) 
+
+    # k_fold_predictions = np.array(k_fold_predictions) # (fold size, test_size, num_classes)
+    # print(f"K-fold predictions shape: {np.shape(k_fold_predictions)}")
+
+    # # 확률 평균화
+    # average_probs = np.mean(k_fold_predictions, axis=0)
+    # # 최종 예측값 결정
+    # final_predictions = np.argmax(average_probs, axis=1)
+
+    # # test_info의 복사본을 사용하여 CSV 저장
+    # csv_name = "k-fold_ensemble.csv"
+    # result_info = test_info.copy()
+    # result_info['target'] = final_predictions 
+    # result_info = result_info.reset_index().rename(columns={"index": "ID"})
+
+    # save_path = os.path.join(test_csv_dir, csv_name)
+    # result_info.to_csv(save_path, index=False)
+    
     # k-fold ensemble
     k_fold_predictions = []
-    for fold in range(k_folds):
+    for fold in range(4):  # 4개의 폴드만 사용
         print(f"Fold {fold + 1} inference")
         print("-------")
         model.load_state_dict(torch.load(os.path.join(weight_dir, f'{fold}_bestmodel.pt')))
@@ -208,9 +239,9 @@ def train_test():
             device=device,
             test_loader=test_loader
         )
-        k_fold_predictions.append(predictions) 
+        k_fold_predictions.append(predictions)
 
-    k_fold_predictions = np.array(k_fold_predictions) # (fold size, test_size, num_classes)
+    k_fold_predictions = np.array(k_fold_predictions)  # (fold size, test_size, num_classes)
     print(f"K-fold predictions shape: {np.shape(k_fold_predictions)}")
 
     # 확률 평균화
@@ -221,12 +252,12 @@ def train_test():
     # test_info의 복사본을 사용하여 CSV 저장
     csv_name = "k-fold_ensemble.csv"
     result_info = test_info.copy()
-    result_info['target'] = final_predictions 
+    result_info['target'] = final_predictions
+
     result_info = result_info.reset_index().rename(columns={"index": "ID"})
 
     save_path = os.path.join(test_csv_dir, csv_name)
     result_info.to_csv(save_path, index=False)
-
 
 if __name__ == "__main__":
     torch.cuda.empty_cache()
