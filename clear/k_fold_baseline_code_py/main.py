@@ -20,15 +20,15 @@ if __name__ == "__main__":
     train_loader, val_loader = data.set_train_and_val_data(train_info, args.train_dir, transform = args.transform, batch_size = args.batch_size)
     test_loader = data.set_test_loader(test_info, args.test_dir)
 
-    # # train setting
-    # trainer = set_trainer(args, train_loader, val_loader, num_classes, device = device)
+    # train setting
+    trainer = set_trainer(args, train_loader, val_loader, num_classes, device = device)
 
-    # # train
-    # trainer.train()
+    # train
+    trainer.train()
     
-    # # test
-    # tester = set_tester(args, test_info, test_loader, trainer.model, device = device)
+    # test
+    tester = set_tester(args, test_info, test_loader, trainer.model, device = device)
     
-    # end_time = time.time()
+    end_time = time.time()
 
-    # print(f" End : {(end_time - start_time)/60} min")
+    print(f" End : {(end_time - start_time)/60} min")
