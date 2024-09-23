@@ -78,6 +78,8 @@ def train_test():
 
     #set save dir
     weight_dir, log_dir, tensorboard_dir, test_csv_dir = setup_directories(args.save_rootpath)
+    fold_dir =  os.path.join(save_rootpath, 'fold')
+    os.makedirs(fold_dir, exist_ok=True)
     logfile = os.path.join(log_dir, "train_log.log")
 
     # 데이터 준비
@@ -108,8 +110,8 @@ def train_test():
         print(f"Fold {fold + 1}")
         print("-------")
 
-        train_fold_file = f"train_fold_{fold+1}.csv"
-        val_fold_file = f"val_fold_{fold+1}.csv"
+        train_fold_file = f"fold/train_fold_{fold+1}.csv"
+        val_fold_file = f"fold/val_fold_{fold+1}.csv"
         
         # Train과 validation 데이터를 나눔
         train_fold_data = train_info.iloc[train_idx]
@@ -160,6 +162,8 @@ def train_test():
             model = customize_layer(model, num_classes)
 
         model = model.to(device)
+        print(model)
+        assert False
         
         # optimizer
         optimizer = optim.Adam(model.parameters(), lr=args.lr)
@@ -278,7 +282,7 @@ if __name__ == "__main__":
     parser.add_argument('--batch_size', type=int, default=64)
     parser.add_argument('--step_size', type=int, default=5, help='몇 번째 epoch 마다 학습률 줄일 지 선택')
     parser.add_argument('--gamma', type=float, default=0.1, help='학습률에 얼마를 곱하여 줄일 지 선택')
-    parser.add_argument('--num_k_fold', type=int, default=5, help='k-fold 수 설정')
+    parser.add_argument('--num_k_fold', type=int, default=1, help='k-fold 수 설정')
 
     args = parser.parse_args()
 
