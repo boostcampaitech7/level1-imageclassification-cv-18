@@ -76,7 +76,7 @@ def train_test():
     # set cuda
     device = set_cuda(args.gpu) 
 
-    #set save dir
+    # set save dir
     weight_dir, log_dir, tensorboard_dir, test_csv_dir = setup_directories(args.save_rootpath)
     logfile = os.path.join(log_dir, "train_log.log")
 
@@ -96,9 +96,6 @@ def train_test():
 
     # 폴드 수 설정
     k_folds = args.num_k_fold
-
-    # k-fold 크로스 밸리데이션 초기화, StratifiedKFold:클래스 불균형을 고려한 k-fold
-    kf = StratifiedKFold(n_splits=k_folds, shuffle=True, random_state=42)
     
     # k-fold 데이터 설정
     train_dataset = CustomDataset(
@@ -106,10 +103,9 @@ def train_test():
         info_df=train_info,
         transform=train_transform
     )
-    # train_dataset에서 타겟 레이블만 추출
-    y = [train_dataset[i][1] for i in range(len(train_dataset))]  # target만 리스트로 추출
+    y = [train_dataset[i][1] for i in range(len(train_dataset))]
 
-    # 각 폴드 마다 루프
+    # 각 폴드마다 루프
     for fold, (train_idx, test_idx) in enumerate(kf.split(train_dataset, y)):
         if (fold+1) != 1:
             continue
@@ -117,19 +113,13 @@ def train_test():
         print(f"Fold {fold + 1}")
         print("-------")
 
-        train_loader = DataLoader(
-            dataset=train_dataset,
-            batch_size=args.batch_size,
-            sampler=torch.utils.data.SubsetRandomSampler(train_idx),
-        )
-
         val_loader = DataLoader(
             dataset=train_dataset,
             batch_size=args.batch_size,
             sampler=torch.utils.data.SubsetRandomSampler(test_idx),
         )
 
-        # set model  
+        # 모델 설정
         model_selector = ModelSelector(
             model_type= args.model_type,
             num_classes = num_classes,
@@ -159,23 +149,24 @@ def train_test():
         # loss
         loss_fn = CrossEntropyLoss() 
         
-        # train
+        # Trainer 인스턴스 생성 및 학습
         trainer = Trainer(
-        model=model,
-        device=device,
-        train_loader=train_loader,
-        val_loader=val_loader,
-        optimizer=optimizer,
-        scheduler=scheduler,
-        loss_fn=loss_fn,
-        epochs=args.epochs,
-        weight_path= weight_dir,
-        log_path= logfile,
-        tensorboard_path= tensorboard_dir,
-        model_name = args.model_name,
-        pretrained = args.pretrained
+            model=model,
+            device=device,
+            train_data=train_dataset,  # train_loader 대신 train_data 전달
+            val_loader=val_loader,
+            optimizer=optimizer,
+            scheduler=scheduler,
+            loss_fn=loss_fn,
+            epochs=args.epochs,
+            weight_path= weight_dir,
+            log_path= logfile,
+            tensorboard_path= tensorboard_dir,
+            model_name=args.model_name,
+            pretrained=args.pretrained,
+            batch_size=args.batch_size
         )
-        
+
         # 학습 시작
         trainer.train(fold)
     #-------------------------------------------------------
@@ -265,7 +256,7 @@ if __name__ == "__main__":
     parser.add_argument('--epochs', type=int, default=20, help='에포크 설정')
     parser.add_argument('--lr', type=float, default=0.0001, help='learning rage')
     parser.add_argument('--batch_size', type=int, default=64)
-    parser.add_argument('--step_size', type=int, default=6, help='몇 번째 epoch 마다 학습률 줄일 지 선택')
+    parser.add_argument('--step_size', type=int, default=8, help='몇 번째 epoch 마다 학습률 줄일 지 선택')
     parser.add_argument('--gamma', type=float, default=0.5, help='학습률에 얼마를 곱하여 줄일 지 선택')
     parser.add_argument('--num_k_fold', type=int, default=5, help='k-fold 수 설정')
 

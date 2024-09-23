@@ -14,7 +14,7 @@ class Trainer:
         self,
         model: nn.Module,
         device: torch.device,
-        train_loader: DataLoader,
+        train_data: CustomDataset,  # train_loader 대신 train_data만 저장
         val_loader: DataLoader,
         optimizer: optim.Optimizer,
         scheduler: optim.lr_scheduler,
@@ -23,25 +23,27 @@ class Trainer:
         weight_path: str,
         log_path: str,
         tensorboard_path: str,
-        model_name : str,
-        pretrained : bool
+        model_name: str,
+        pretrained: bool,
+        batch_size: int  # batch_size만 필요
     ):
-        # 클래스 초기화: 모델, 디바이스, 데이터 로더 등 설정
-        self.model = model  # 훈련할 모델
-        self.device = device  # 연산을 수행할 디바이스 (CPU or GPU)
-        self.train_loader = train_loader  # 훈련 데이터 로더
-        self.val_loader = val_loader  # 검증 데이터 로더
-        self.optimizer = optimizer  # 최적화 알고리즘
-        self.scheduler = scheduler # 학습률 스케줄러
-        self.loss_fn = loss_fn  # 손실 함수
-        self.epochs = epochs  # 총 훈련 에폭 수
-        self.weight_path = weight_path  # 모델 저장 경로
-        self.log_path = log_path # 로그 저장 경로
-        self.tensorboard_path = tensorboard_path # 로그 저장 경로
-        self.best_models = [] # 가장 좋은 상위 3개 모델의 정보를 저장할 리스트
-        self.lowest_loss = float('inf') # 가장 낮은 Loss를 저장할 변수
+        self.model = model
+        self.device = device
+        self.train_data = train_data  # train_loader 대신 train_data만 저장
+        self.val_loader = val_loader
+        self.optimizer = optimizer
+        self.scheduler = scheduler
+        self.loss_fn = loss_fn
+        self.epochs = epochs
+        self.weight_path = weight_path
+        self.log_path = log_path
+        self.tensorboard_path = tensorboard_path
+        self.best_models = []
+        self.lowest_loss = float('inf')
         self.model_name = model_name
         self.pretrained = pretrained
+        self.batch_size = batch_size  # batch_size 필요
+
     def save_model(self, epoch, loss, fold):
         # 모델 저장 경로 설정
         os.makedirs(self.weight_path, exist_ok=True)
@@ -65,14 +67,29 @@ class Trainer:
             torch.save(self.model.state_dict(), best_model_path)
             print(f"Save {epoch}epoch result. Loss = {loss:.4f}")
 
-    def train_epoch(self) -> float:
-        # 한 에폭 동안의 훈련을 진행
-        self.model.train()
+     def adjust_curriculum(self, epoch):
+        """에포크에 따라 증강 강도를 조절하는 함수"""
+        if epoch < 5:
+            transform = AlbumentationsTransform(is_train=True, epoch=epoch)
+        elif epoch >= 5 and epoch < 10:
+            transform = AlbumentationsTransform(is_train=True, epoch=epoch)
+        else:
+            transform = AlbumentationsTransform(is_train=True, epoch=epoch)
 
+        # 새로 데이터로더 정의
+        train_dataset = CustomDataset(data=self.train_data.data, transform=transform)
+        self.train_loader = DataLoader(train_dataset, batch_size=self.batch_size, shuffle=True)
+
+    def train_epoch(self, epoch) -> float:
+        # 에포크마다 데이터로더 재정의
+        self.adjust_curriculum(epoch)
+        # 훈련 시작
+        self.model.train()
+        
         total_loss = 0.0
         correct = 0
         total = 0
-        progress_bar = tqdm(self.train_loader, desc="Training", leave=False)
+        progress_bar = tqdm(self.train_loader, desc=f"Training Epoch {epoch}", leave=False)
 
         for images, targets in progress_bar:
             images, targets = images.to(self.device), targets.to(self.device)
@@ -87,6 +104,7 @@ class Trainer:
             preds = logits.argmax(dim=1)
             total += targets.size(0)
             correct += (preds == targets).sum().item()
+
         self.scheduler.step()
         return total_loss / len(self.train_loader), correct / total * 100
 
