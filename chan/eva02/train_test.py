@@ -111,8 +111,12 @@ def train_test():
 
     # 각 폴드 마다 루프
     for fold, (train_idx, test_idx) in enumerate(kf.split(train_dataset, y)):
+        if (fold+1) != 1:
+            continue
+
         print(f"Fold {fold + 1}")
         print("-------")
+
         train_loader = DataLoader(
             dataset=train_dataset,
             batch_size=args.batch_size,
@@ -199,6 +203,8 @@ def train_test():
     # k-fold ensemble
     k_fold_predictions = []
     for fold in range(k_folds):
+        if (fold+1) != 1:
+            continue
         print(f"Fold {fold + 1} inference")
         print("-------")
         model.load_state_dict(torch.load(os.path.join(weight_dir, f'{fold}_bestmodel.pt')))
@@ -219,7 +225,7 @@ def train_test():
     final_predictions = np.argmax(average_probs, axis=1)
 
     # test_info의 복사본을 사용하여 CSV 저장
-    csv_name = "k-fold_ensemble.csv"
+    csv_name = args.csv_name
     result_info = test_info.copy()
     result_info['target'] = final_predictions 
     result_info = result_info.reset_index().rename(columns={"index": "ID"})
@@ -252,14 +258,15 @@ if __name__ == "__main__":
     parser.add_argument('--train_csv', type=str, default="/data/ephemeral/home/data/train.csv", help='훈련 데이터셋 csv 파일 경로') # "/data/ephemeral/home/data/train.csv"
     parser.add_argument('--test_csv', type=str, default="/data/ephemeral/home/data/test.csv", help='테스트 데이터셋 csv 파일 경로') # "/data/ephemeral/home/data/test.csv"
 
-    parser.add_argument('--save_rootpath', type=str, default="Experiments/debug", help='가중치, log, tensorboard 그래프 저장을 위한 path 실험명으로 디렉토리 구성')
+    parser.add_argument('--save_rootpath', type=str, default="Experiments/1_fold_test", help='가중치, log, tensorboard 그래프 저장을 위한 path 실험명으로 디렉토리 구성')
+    parser.add_argument('--csv_name', type=str, default="1_fold_test", help='')
     
     # 하이퍼파라미터
-    parser.add_argument('--epochs', type=int, default=30, help='에포크 설정')
-    parser.add_argument('--lr', type=float, default=0.001, help='learning rage')
+    parser.add_argument('--epochs', type=int, default=20, help='에포크 설정')
+    parser.add_argument('--lr', type=float, default=0.0001, help='learning rage')
     parser.add_argument('--batch_size', type=int, default=64)
-    parser.add_argument('--step_size', type=int, default=10, help='몇 번째 epoch 마다 학습률 줄일 지 선택')
-    parser.add_argument('--gamma', type=float, default=0.1, help='학습률에 얼마를 곱하여 줄일 지 선택')
+    parser.add_argument('--step_size', type=int, default=6, help='몇 번째 epoch 마다 학습률 줄일 지 선택')
+    parser.add_argument('--gamma', type=float, default=0.5, help='학습률에 얼마를 곱하여 줄일 지 선택')
     parser.add_argument('--num_k_fold', type=int, default=5, help='k-fold 수 설정')
 
     args = parser.parse_args()
