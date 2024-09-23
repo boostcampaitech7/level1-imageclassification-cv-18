@@ -24,8 +24,7 @@ class Trainer:
         log_path: str,
         tensorboard_path: str,
         model_name : str,
-        pretrained : bool,
-        patience: int = 5
+        pretrained : bool
     ):
         # 클래스 초기화: 모델, 디바이스, 데이터 로더 등 설정
         self.model = model  # 훈련할 모델
@@ -43,9 +42,6 @@ class Trainer:
         self.lowest_loss = float('inf') # 가장 낮은 Loss를 저장할 변수
         self.model_name = model_name
         self.pretrained = pretrained
-        self.patience = patience  # patience 설정
-        self.early_stop_counter = 0  # early stopping 카운터
-        self.best_val_loss = float('inf')  # best validation loss
     def save_model(self, epoch, loss, fold):
         # 모델 저장 경로 설정
         os.makedirs(self.weight_path, exist_ok=True)
@@ -57,7 +53,7 @@ class Trainer:
         # 최상위 3개 모델 관리
         self.best_models.append((loss, epoch, current_model_path))
         self.best_models.sort()
-        if len(self.best_models) > 2:
+        if len(self.best_models) > 3:
             _, _, path_to_remove = self.best_models.pop(-1)  # 가장 높은 손실 모델 삭제
             if os.path.exists(path_to_remove):
                 os.remove(path_to_remove)
@@ -130,7 +126,8 @@ class Trainer:
             ]
         )
 
-        writer = SummaryWriter(log_dir=self.tensorboard_path)
+        train_writer = SummaryWriter(log_dir=os.path.join(self.tensorboard_path, f'train_fold{fold+1}'))
+        validation_writer = SummaryWriter(log_dir=os.path.join(self.tensorboard_path, f'validation_fold{fold+1}'))
 
         logger = logging.getLogger()
         for epoch in range(self.epochs):
@@ -142,19 +139,15 @@ class Trainer:
 
             self.save_model(epoch, val_loss, fold)
 
-            writer.add_scalar('Loss/train', train_loss, epoch)  # 훈련 손실 기록
-            writer.add_scalar('Accuracy/train', train_acc, epoch)  # 훈련 손실 기록
-            writer.add_scalar('Loss/validation', val_loss, epoch)  # 검증 손실 기록
-            writer.add_scalar('Accuracy/validation', val_acc, epoch)  # 검증 손실 기록
+            train_writer.add_scalar('train/Loss', train_loss, epoch)  # 훈련 손실 기록
+            train_writer.add_scalar('train/Accuracy', train_acc, epoch)  # 훈련 손실 기록
+            validation_writer.add_scalar('validation/Loss', val_loss, epoch)  # 검증 손실 기록
+            validation_writer.add_scalar('validation/Accuracy', val_acc, epoch)  # 검증 손실 기록
 
-            # Early Stopping 체크
-            if val_loss < self.best_val_loss:
-                self.best_val_loss = val_loss
-                self.early_stop_counter = 0  # 검증 손실이 개선되면 카운터 초기화
-            else:
-                self.early_stop_counter += 1  # 개선되지 않으면 카운터 증가
-
-            if self.early_stop_counter >= self.patience:
-                logger.info(f"Early stopping at epoch {epoch+1}. No improvement in validation loss for {self.patience} consecutive epochs.")
-                break  # patience를 넘으면 훈련 중단
-        writer.close()    
+            train_writer.add_scalar('train_validation/Loss', train_loss, epoch)  # 훈련 손실 기록
+            train_writer.add_scalar('train_validation/Accuracy', train_acc, epoch)
+            validation_writer.add_scalar('train_validation/Loss', val_loss, epoch)  # 검증 손실 기록
+            validation_writer.add_scalar('train_validation/Accuracy', val_acc, epoch)  # 검증 손실 기록
+        
+        train_writer.close()    
+        validation_writer.close()    
