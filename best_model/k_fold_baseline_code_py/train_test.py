@@ -100,29 +100,47 @@ def train_test():
     # k-fold 크로스 밸리데이션 초기화, StratifiedKFold:클래스 불균형을 고려한 k-fold
     kf = StratifiedKFold(n_splits=k_folds, shuffle=True, random_state=42)
     
-    # k-fold 데이터 설정
-    train_dataset = CustomDataset(
-        root_dir=traindata_dir,
-        info_df=train_info,
-        transform=train_transform
-    )
     # train_dataset에서 타겟 레이블만 추출
-    y = [train_dataset[i][1] for i in range(len(train_dataset))]  # target만 리스트로 추출
+    y = train_info.iloc[:,2].tolist() # target만 리스트로 추출
 
     # 각 폴드 마다 루프
-    for fold, (train_idx, test_idx) in enumerate(kf.split(train_dataset, y)):
+    for fold, (train_idx, test_idx) in enumerate(kf.split(train_info, y)):
         print(f"Fold {fold + 1}")
         print("-------")
+
+        train_fold_file = f"train_fold_{fold+1}.csv"
+        val_fold_file = f"val_fold_{fold+1}.csv"
+        
+        # Train과 validation 데이터를 나눔
+        train_fold_data = train_info.iloc[train_idx]
+        val_fold_data = train_info.iloc[test_idx]
+        
+        # CSV로 저장
+        train_fold_data.to_csv(train_fold_file, index=False)
+        val_fold_data.to_csv(val_fold_file, index=False) 
+
+        train_dataset = CustomDataset(
+            root_dir=traindata_dir,
+            info_df=train_fold_data,
+            transform=train_transform
+        )
+
         train_loader = DataLoader(
             dataset=train_dataset,
             batch_size=args.batch_size,
-            sampler=torch.utils.data.SubsetRandomSampler(train_idx),
+            shuffle=True,
+        )
+
+        val_dataset = CustomDataset(
+            root_dir=traindata_dir,
+            info_df=val_fold_data,
+            transform=val_transform
         )
 
         val_loader = DataLoader(
-            dataset=train_dataset,
+            dataset=val_dataset,
             batch_size=args.batch_size,
-            sampler=torch.utils.data.SubsetRandomSampler(test_idx),
+            shuffle=False,
         )
 
         # set model  
