@@ -8,6 +8,7 @@ import torch.nn.functional as F
 from torch.utils.data import DataLoader
 from tqdm import tqdm
 from torch.utils.tensorboard import SummaryWriter
+from dataloader import CustomDataset, TorchvisionTransform, AlbumentationsTransform
 
 class Trainer:
     def __init__(
@@ -67,7 +68,7 @@ class Trainer:
             torch.save(self.model.state_dict(), best_model_path)
             print(f"Save {epoch}epoch result. Loss = {loss:.4f}")
 
-     def adjust_curriculum(self, epoch):
+    def adjust_curriculum(self, epoch):
         """에포크에 따라 증강 강도를 조절하는 함수"""
         if epoch < 5:
             transform = AlbumentationsTransform(is_train=True, epoch=epoch)
