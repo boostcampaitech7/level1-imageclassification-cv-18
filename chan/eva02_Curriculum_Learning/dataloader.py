@@ -88,9 +88,10 @@ class AlbumentationsTransform:
             # 훈련용 변환: 랜덤 수평 뒤집기, 랜덤 회전, 랜덤 밝기 및 대비 조정 추가
             self.transform = A.Compose(
                 [
+                    A.VerticalFlip(p=0.5), # 수직 뒤집기
                     A.HorizontalFlip(p=0.5),  # 50% 확률로 이미지를 수평 뒤집기
-                    A.Rotate(limit=15),  # 최대 15도 회전
-                    A.RandomBrightnessContrast(p=0.2),  # 밝기 및 대비 무작위 조정
+                    A.Rotate(limit=15, p=0.5),  # 최대 15도 회전
+                    # A.RandomBrightnessContrast(p=0.2),  # 밝기 및 대비 무작위 조정
                 ] + common_transforms
             )
         else:
