@@ -4,6 +4,7 @@ import torch.optim as optim
 import os
 import logging
 import torch.nn.functional as F
+import pandas as pd
 
 from torch.utils.data import DataLoader
 from tqdm import tqdm
@@ -15,7 +16,8 @@ class Trainer:
         self,
         model: nn.Module,
         device: torch.device,
-        train_data: CustomDataset,  # train_loader 대신 train_data만 저장
+        train_dir : str,
+        train_data: pd.DataFrame,  # train_loader 대신 train_data만 저장
         val_loader: DataLoader,
         optimizer: optim.Optimizer,
         scheduler: optim.lr_scheduler,
@@ -30,6 +32,7 @@ class Trainer:
     ):
         self.model = model
         self.device = device
+        self.train_dir = train_dir
         self.train_data = train_data  # train_loader 대신 train_data만 저장
         self.val_loader = val_loader
         self.optimizer = optimizer
@@ -78,7 +81,7 @@ class Trainer:
             transform = AlbumentationsTransform(is_train=True, epoch=epoch)
 
         # 새로 데이터로더 정의
-        train_dataset = CustomDataset(data=self.train_data.data, transform=transform)
+        train_dataset = CustomDataset(self.train_dir, info_df=self.train_data, transform=transform)
         self.train_loader = DataLoader(train_dataset, batch_size=self.batch_size, shuffle=True)
 
     def train_epoch(self, epoch) -> float:
@@ -152,7 +155,7 @@ class Trainer:
         for epoch in range(self.epochs):
             logger.info(f"Epoch {epoch+1}/{self.epochs}")
 
-            train_loss, train_acc = self.train_epoch()
+            train_loss, train_acc = self.train_epoch(epoch)
             val_loss, val_acc = self.validate()
             logger.info(f"Epoch {epoch+1}, Train Loss: {train_loss:.4f}, Train Accuracy: {train_acc:.2f}, Validation Loss: {val_loss:.4f}, Validataion Accuracy: {val_acc:.2f}\n")
 
