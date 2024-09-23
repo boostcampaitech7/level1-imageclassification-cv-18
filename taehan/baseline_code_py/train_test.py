@@ -167,7 +167,7 @@ def train_test():
     early_stopping_patience = args.early_stopping_patience
     )
 
-    trainer.train()
+    # trainer.train()
 
     #-------------------------------------------------------
 
