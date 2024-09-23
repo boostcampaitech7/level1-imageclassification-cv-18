@@ -49,3 +49,6 @@ data/
 - **저작자 표시** — 적절한 출처를 제공하고, 라이선스 링크를 명시하며, 변경 여부를 표시해야 합니다.
 
 자세한 내용은 [Creative Commons Attribution 4.0 International License](https://creativecommons.org/licenses/by/4.0/)에서 확인할 수 있습니다.
+
+### 1등의 영광을
+![image](https://github.com/user-attachments/assets/37ab78b4-8af1-4e24-8f9e-b1dec3c30192)

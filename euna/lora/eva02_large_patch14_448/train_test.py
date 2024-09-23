@@ -277,7 +277,7 @@ if __name__ == "__main__":
     # LoRA
     parser.add_argument('--lora_r', type=int, default=8, help='lora_r 설정')
     parser.add_argument('--lora_alpha', type=int, default=128, help='lora_alpha 설정')
-    parser.add_argument('--lora_dropout', type=float, default=0.5, help='lora_dropout 설정')
+    parser.add_argument('--lora_dropout', type=float, default=0.1, help='lora_dropout 설정')
 
     args = parser.parse_args()
 
