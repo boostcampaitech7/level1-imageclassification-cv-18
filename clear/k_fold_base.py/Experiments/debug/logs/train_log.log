@@ -35,3 +35,14 @@
 2024-09-23 19:13:30,896 - INFO - Epoch 12, Train Loss: 0.0238, Train Accuracy: 99.18, Validation Loss: 0.3490, Validataion Accuracy: 92.35
 
 2024-09-23 19:13:40,172 - INFO - Epoch 13/20
+2024-09-24 02:01:54,409 - INFO - Epoch 1/20
+2024-09-24 02:04:19,672 - INFO - Epoch 1, Train Loss: 6.2233, Train Accuracy: 0.51, Validation Loss: 6.0032, Validataion Accuracy: 1.32
+
+2024-09-24 02:04:19,816 - INFO - Epoch 2/20
+2024-09-24 02:06:45,867 - INFO - Epoch 2, Train Loss: 5.9059, Train Accuracy: 1.31, Validation Loss: 5.8456, Validataion Accuracy: 1.72
+
+2024-09-24 02:06:46,308 - INFO - Epoch 3/20
+2024-09-24 02:09:17,555 - INFO - Epoch 3, Train Loss: 5.6563, Train Accuracy: 2.30, Validation Loss: 5.6933, Validataion Accuracy: 2.48
+
+2024-09-24 02:09:17,955 - INFO - Epoch 4/20
+2024-09-24 03:32:37,913 - INFO - Epoch 1/1

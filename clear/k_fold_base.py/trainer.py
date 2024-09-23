@@ -63,7 +63,7 @@ class Trainer:
             self.lowest_loss = loss
             best_model_path = os.path.join(self.weight_path, f'{fold}_bestmodel.pt')
             torch.save(self.model.state_dict(), best_model_path)
-            print(f"Save {epoch}epoch result. Loss = {loss:.4f}")
+            print(f"Save epoch{epoch} result. Loss = {loss:.4f}")
 
     def train_epoch(self) -> float:
         # 한 에폭 동안의 훈련을 진행

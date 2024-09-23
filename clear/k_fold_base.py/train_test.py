@@ -78,7 +78,7 @@ def train_test():
 
     #set save dir
     weight_dir, log_dir, tensorboard_dir, test_csv_dir = setup_directories(args.save_rootpath)
-    fold_dir =  os.path.join(save_rootpath, 'fold')
+    fold_dir =  os.path.join(args.save_rootpath, 'fold')
     os.makedirs(fold_dir, exist_ok=True)
     logfile = os.path.join(log_dir, "train_log.log")
 
@@ -110,8 +110,8 @@ def train_test():
         print(f"Fold {fold + 1}")
         print("-------")
 
-        train_fold_file = f"fold/train_fold_{fold+1}.csv"
-        val_fold_file = f"fold/val_fold_{fold+1}.csv"
+        train_fold_file = os.path.join(fold_dir,f"train_fold_{fold+1}.csv")
+        val_fold_file = os.path.join(fold_dir,f"val_fold_{fold+1}.csv")
         
         # Train과 validation 데이터를 나눔
         train_fold_data = train_info.iloc[train_idx]
@@ -154,6 +154,8 @@ def train_test():
         )
 
         model = model_selector.get_model()
+        print(model)
+        assert False
 
         if args.pretrained == True:
             for param in model.parameters():
@@ -162,8 +164,6 @@ def train_test():
             model = customize_layer(model, num_classes)
 
         model = model.to(device)
-        print(model)
-        assert False
         
         # optimizer
         optimizer = optim.Adam(model.parameters(), lr=args.lr)
@@ -196,7 +196,7 @@ def train_test():
         
         # 학습 시작
         trainer.train(fold)
-    #-------------------------------------------------------
+    # #-------------------------------------------------------
 
     # test
     test_info = pd.read_csv(args.test_csv)
@@ -216,7 +216,6 @@ def train_test():
     )
 
     weights = os.listdir(weight_dir)
-    print(weights)
 
     # k-fold ensemble
     k_fold_predictions = []
@@ -237,6 +236,7 @@ def train_test():
 
     # 확률 평균화
     average_probs = np.mean(k_fold_predictions, axis=0)
+    
     # 최종 예측값 결정
     final_predictions = np.argmax(average_probs, axis=1)
 
@@ -261,8 +261,8 @@ if __name__ == "__main__":
 
     # method
     parser.add_argument('--model_type', type=str, default='timm', help='사용할 모델 이름 : model_selector.py 중 선택')
-    parser.add_argument('--model_name', type=str, default='eva02_large_patch14_448.mim_m38m_ft_in22k_in1k', help='model/timm_model_name.txt 에서 확인, 아키텍처 확인은 "https://github.com/huggingface/pytorch-image-models/tree/main/timm/models"')
-    parser.add_argument('--pretrained', type=bool, default='True', help='전이학습 or 학습된 가중치 가져오기 : True / 전체학습 : False')
+    parser.add_argument('--model_name', type=str, default='convnext_large_mlp.clip_laion2b_augreg_ft_in1k_384	', help='model/timm_model_name.txt 에서 확인, 아키텍처 확인은 "https://github.com/huggingface/pytorch-image-models/tree/main/timm/models"')
+    parser.add_argument('--pretrained', type=bool, default=True, help='전이학습 or 학습된 가중치 가져오기 : True / 전체학습 : False')
     # 전이학습할 거면 꼭! (True) customize_layer.py 가서 레이어 수정, 레이어 수정 안할 거면 가서 레이어 구조 변경 부분만 주석해서 사용 (어떤 레이어 열지는 알아야함)
     # 모델 구조랑 레이어 이름 모르겠으면 위에 모델 정의 부분가서 print(model) , assert False 주석 풀어서 확인하기
 
@@ -282,7 +282,7 @@ if __name__ == "__main__":
     parser.add_argument('--batch_size', type=int, default=64)
     parser.add_argument('--step_size', type=int, default=5, help='몇 번째 epoch 마다 학습률 줄일 지 선택')
     parser.add_argument('--gamma', type=float, default=0.1, help='학습률에 얼마를 곱하여 줄일 지 선택')
-    parser.add_argument('--num_k_fold', type=int, default=1, help='k-fold 수 설정')
+    parser.add_argument('--num_k_fold', type=int, default=3, help='k-fold 수 설정')
 
     args = parser.parse_args()
 
