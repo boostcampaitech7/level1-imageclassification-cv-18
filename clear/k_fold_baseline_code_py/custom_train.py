@@ -171,14 +171,22 @@ class Trainer:
         for epoch in range(self.epochs):
             logger.info(f"Epoch {epoch+1}/{self.epochs}")
 
-            train_loss = self.train_epoch()
-            val_loss = self.validate()
-            logger.info(f"Epoch {epoch+1}, Train Loss: {train_loss:.4f}, Validation Loss: {val_loss:.4f}\n")
+            train_loss, train_acc = self.train_epoch()
+            val_loss, val_acc = self.validate()
+            logger.info(f"Epoch {epoch+1}, Train Loss: {train_loss:.4f}, Train Accuracy: {train_acc:.2f}, Validation Loss: {val_loss:.4f}, Validataion Accuracy: {val_acc:.2f}\n")
 
-            self.save_model(epoch, val_loss)
+            self.save_model(epoch, val_loss, fold)
 
-            writer.add_scalar('Loss/train', train_loss, epoch)  # 훈련 손실 기록
-            writer.add_scalar('Loss/validation', val_loss, epoch)  # 검증 손실 기록
-        writer.close()    
+            train_writer.add_scalar('train/Loss', train_loss, epoch)  # 훈련 손실 기록
+            train_writer.add_scalar('train/Accuracy', train_acc, epoch)  # 훈련 손실 기록
+            validation_writer.add_scalar('validation/Loss', val_loss, epoch)  # 검증 손실 기록
+            validation_writer.add_scalar('validation/Accuracy', val_acc, epoch)  # 검증 손실 기록
 
+            train_writer.add_scalar('train_validation/Loss', train_loss, epoch)  # 훈련 손실 기록
+            train_writer.add_scalar('train_validation/Accuracy', train_acc, epoch)
+            validation_writer.add_scalar('train_validation/Loss', val_loss, epoch)  # 검증 손실 기록
+            validation_writer.add_scalar('train_validation/Accuracy', val_acc, epoch)  # 검증 손실 기록
+        
+        train_writer.close()    
+        validation_writer.close()    
     #-------------------------------------------------------
