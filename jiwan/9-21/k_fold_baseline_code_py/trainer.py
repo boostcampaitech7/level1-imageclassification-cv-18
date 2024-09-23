@@ -57,7 +57,7 @@ class Trainer:
         # 최상위 3개 모델 관리
         self.best_models.append((loss, epoch, current_model_path))
         self.best_models.sort()
-        if len(self.best_models) > 3:
+        if len(self.best_models) > 2:
             _, _, path_to_remove = self.best_models.pop(-1)  # 가장 높은 손실 모델 삭제
             if os.path.exists(path_to_remove):
                 os.remove(path_to_remove)
