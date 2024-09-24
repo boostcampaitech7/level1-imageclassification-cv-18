@@ -233,6 +233,7 @@ def train_test():
 
     # 확률 평균화
     average_probs = np.mean(k_fold_predictions, axis=0)
+    
     # 최종 예측값 결정
     final_predictions = np.argmax(average_probs, axis=1)
 
