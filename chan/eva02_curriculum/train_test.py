@@ -272,11 +272,7 @@ if __name__ == "__main__":
     parser.add_argument('--train_csv', type=str, default="/data/ephemeral/home/data/train.csv", help='훈련 데이터셋 csv 파일 경로') # "/data/ephemeral/home/data/train.csv"
     parser.add_argument('--test_csv', type=str, default="/data/ephemeral/home/data/test.csv", help='테스트 데이터셋 csv 파일 경로') # "/data/ephemeral/home/data/test.csv"
 
-<<<<<<< HEAD:chan/eva02_Curriculum_Learning/train_test.py
     parser.add_argument('--save_rootpath', type=str, default="Experiments/curriculum_relu", help='가중치, log, tensorboard 그래프 저장을 위한 path 실험명으로 디렉토리 구성')
-=======
-    parser.add_argument('--save_rootpath', type=str, default="Experiments/curriculum_fold_1", help='가중치, log, tensorboard 그래프 저장을 위한 path 실험명으로 디렉토리 구성')
->>>>>>> f027e861e7382ee6a0ba89e722eda69b786f1fe1:chan/eva02_curriculum/train_test.py
     parser.add_argument('--csv_name', type=str, default="1_fold_test", help='')
     
     # 하이퍼파라미터
