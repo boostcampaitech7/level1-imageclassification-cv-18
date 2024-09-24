@@ -21,7 +21,7 @@ if __name__ == "__main__":
     train_loader, val_loader = data.set_train_and_val_data(train_info, args.train_dir, transform = args.transform, batch_size = args.batch_size)
 
     # train setting
-    trainer = set_trainer(args, train_loader, val_loader, num_classes,model = model,device = device)
+    trainer = set_trainer(args, train_loader, val_loader, num_classes, model = model, device = device)
 
     # train
     trainer.train()
