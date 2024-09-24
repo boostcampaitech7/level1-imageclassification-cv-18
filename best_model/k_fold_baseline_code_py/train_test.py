@@ -226,7 +226,14 @@ def train_test():
             device=device,
             test_loader=test_loader
         )
-        k_fold_predictions.append(predictions) 
+        k_fold_predictions.append(predictions)
+
+        csv_name_fold = f"k-fold{fold+1}.csv"
+        result_info = test_info.copy()
+        result_info['target'] = final_predictions 
+        result_info = result_info.reset_index().rename(columns={"index": "ID"})
+        save_path = os.path.join(test_csv_dir, csv_name_fold)
+        result_info.to_csv(save_path, index=False)
 
     k_fold_predictions = np.array(k_fold_predictions) # (fold size, test_size, num_classes)
     print(f"K-fold predictions shape: {np.shape(k_fold_predictions)}")
