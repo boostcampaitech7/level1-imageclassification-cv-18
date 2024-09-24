@@ -228,6 +228,8 @@ def train_test():
         )
         k_fold_predictions.append(predictions)
 
+        np.save(os.path.join(test_csv_dir, f"fold{fold+1}_predictions.npy"), predictions)
+        
         csv_name_fold = f"k-fold{fold+1}.csv"
         result_info = test_info.copy()
         result_info['target'] = final_predictions 
@@ -237,6 +239,8 @@ def train_test():
 
     k_fold_predictions = np.array(k_fold_predictions) # (fold size, test_size, num_classes)
     print(f"K-fold predictions shape: {np.shape(k_fold_predictions)}")
+
+    np.save(os.path.join(test_csv_dir, f"all_k_fold_predictions.npy"), k_fold_predictions)
 
     # 확률 평균화
     average_probs = np.mean(k_fold_predictions, axis=0)
