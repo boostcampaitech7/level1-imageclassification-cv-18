@@ -14,7 +14,7 @@ def customize_layer(model, num_classes):
     '''
 
     # 레이어 정의 예시
-    model.model.fc = nn.Sequential(
+    model.model.head = nn.Sequential(
         nn.Linear(model.model.head.in_features, 1024),
         nn.ReLU(),
         nn.Linear(1024, num_classes)
