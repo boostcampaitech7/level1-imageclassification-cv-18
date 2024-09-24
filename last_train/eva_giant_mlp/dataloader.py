@@ -79,7 +79,7 @@ class AlbumentationsTransform:
     def __init__(self, is_train: bool = True):
         # 공통 변환 설정: 이미지 리사이즈, 정규화, 텐서 변환
         common_transforms = [
-            A.Resize(448, 448),  # 이미지를 224x224 크기로 리사이즈
+            A.Resize(336, 336),  # 이미지를 224x224 크기로 리사이즈
             A.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),  # 정규화
             ToTensorV2()  # albumentations에서 제공하는 PyTorch 텐서 변환
         ]
@@ -90,7 +90,8 @@ class AlbumentationsTransform:
                 [
                     A.HorizontalFlip(p=0.5),  # 50% 확률로 이미지를 수평 뒤집기
                     A.Rotate(limit=15),  # 최대 15도 회전
-                    A.RandomBrightnessContrast(p=0.2),  # 밝기 및 대비 무작위 조정
+                    # A.RandomBrightnessContrast(p=0.2),  # 밝기 및 대비 무작위 조정
+                    A.VerticalFlip(p=0.5),    # 50% 확률로 이미지를 상하 반전
                 ] + common_transforms
             )
         else:
@@ -106,5 +107,3 @@ class AlbumentationsTransform:
         transformed = self.transform(image=image)  # 이미지에 설정된 변환을 적용
 
         return transformed['image']  # 변환된 이미지의 텐서를 반환
-
-
