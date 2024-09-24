@@ -85,6 +85,8 @@ def train_test():
     traindata_info_file = args.train_csv
 
     train_info = pd.read_csv(traindata_info_file)
+    y = train_info.iloc[:,2].tolist()
+   
     num_classes = len(train_info['target'].unique()) 
 
     if args.transform == "TorchvisionTransform":
@@ -96,27 +98,47 @@ def train_test():
 
     # 폴드 수 설정
     k_folds = args.num_k_fold
-    
+    kf = StratifiedKFold(n_splits=k_folds, shuffle=True, random_state=42)
+
     # k-fold 데이터 설정
-    train_dataset = CustomDataset(
-        root_dir=traindata_dir,
-        info_df=train_info,
-        transform=train_transform
-    )
-    y = [train_dataset[i][1] for i in range(len(train_dataset))]
+    # train_dataset = CustomDataset(
+    #     root_dir=traindata_dir,
+    #     info_df=train_info,
+    #     transform=train_transform
+    # )
+    # y = [train_dataset[i][1] for i in range(len(train_dataset))]
+    # print(y)
+    # assert False
 
     # 각 폴드마다 루프
-    for fold, (train_idx, test_idx) in enumerate(kf.split(train_dataset, y)):
+    for fold, (train_idx, test_idx) in enumerate(kf.split(train_info, y)):
         if (fold+1) != 1:
             continue
+
+        train_fold_file = f"train_fold_{fold+1}.csv"
+        val_fold_file = f"val_fold_{fold+1}.csv"
+        
+        # Train과 validation 데이터를 나눔
+        train_fold_data = train_info.iloc[train_idx]
+        val_fold_data = train_info.iloc[test_idx]
+        
+        # CSV로 저장
+        train_fold_data.to_csv(train_fold_file, index=False)
+        val_fold_data.to_csv(val_fold_file, index=False)    
 
         print(f"Fold {fold + 1}")
         print("-------")
 
+        val_dataset = CustomDataset(
+        root_dir=traindata_dir,
+        info_df=val_fold_data,
+        transform=val_transform
+        )
+
         val_loader = DataLoader(
-            dataset=train_dataset,
+            val_dataset,
             batch_size=args.batch_size,
-            sampler=torch.utils.data.SubsetRandomSampler(test_idx),
+            shuffle=False
         )
 
         # 모델 설정
@@ -153,7 +175,8 @@ def train_test():
         trainer = Trainer(
             model=model,
             device=device,
-            train_data=train_dataset,  # train_loader 대신 train_data 전달
+            train_dir = args.train_dir,
+            train_data=train_fold_data,  # train_loader 대신 train_data 전달
             val_loader=val_loader,
             optimizer=optimizer,
             scheduler=scheduler,
@@ -249,14 +272,18 @@ if __name__ == "__main__":
     parser.add_argument('--train_csv', type=str, default="/data/ephemeral/home/data/train.csv", help='훈련 데이터셋 csv 파일 경로') # "/data/ephemeral/home/data/train.csv"
     parser.add_argument('--test_csv', type=str, default="/data/ephemeral/home/data/test.csv", help='테스트 데이터셋 csv 파일 경로') # "/data/ephemeral/home/data/test.csv"
 
+<<<<<<< HEAD:chan/eva02_Curriculum_Learning/train_test.py
     parser.add_argument('--save_rootpath', type=str, default="Experiments/curriculum_relu", help='가중치, log, tensorboard 그래프 저장을 위한 path 실험명으로 디렉토리 구성')
+=======
+    parser.add_argument('--save_rootpath', type=str, default="Experiments/curriculum_fold_1", help='가중치, log, tensorboard 그래프 저장을 위한 path 실험명으로 디렉토리 구성')
+>>>>>>> f027e861e7382ee6a0ba89e722eda69b786f1fe1:chan/eva02_curriculum/train_test.py
     parser.add_argument('--csv_name', type=str, default="1_fold_test", help='')
     
     # 하이퍼파라미터
     parser.add_argument('--epochs', type=int, default=20, help='에포크 설정')
-    parser.add_argument('--lr', type=float, default=0.0001, help='learning rage')
+    parser.add_argument('--lr', type=float, default=0.001, help='learning rage')
     parser.add_argument('--batch_size', type=int, default=64)
-    parser.add_argument('--step_size', type=int, default=8, help='몇 번째 epoch 마다 학습률 줄일 지 선택')
+    parser.add_argument('--step_size', type=int, default=5, help='몇 번째 epoch 마다 학습률 줄일 지 선택')
     parser.add_argument('--gamma', type=float, default=0.5, help='학습률에 얼마를 곱하여 줄일 지 선택')
     parser.add_argument('--num_k_fold', type=int, default=5, help='k-fold 수 설정')
 
