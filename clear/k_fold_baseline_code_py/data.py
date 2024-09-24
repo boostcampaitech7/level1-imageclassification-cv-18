@@ -89,8 +89,10 @@ class AlbumentationsTransform:
             self.transform = A.Compose(
                 [
                     A.HorizontalFlip(p=0.5),  # 50% 확률로 이미지를 수평 뒤집기
+                    A.VerticalFlip(p=0.2), # 20% 확률로 이미지를 수직 뒤집기
                     A.Rotate(limit=15),  # 최대 15도 회전
-                    A.RandomBrightnessContrast(p=0.2),  # 밝기 및 대비 무작위 조정
+                    # A.InvertImg(p=0.1), # 10% 확률로 이미지 밝기 반전
+                    # A.RandomBrightnessContrast(p=0.2),  # 밝기 및 대비 무작위 조정
                 ] + common_transforms
             )
         else:
@@ -215,3 +217,4 @@ def set_test_loader(test_info, test_dir, transform='torchvision', batch_size = 6
         drop_last=False
     )
     return test_loader
+    
