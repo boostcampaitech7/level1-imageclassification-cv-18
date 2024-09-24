@@ -47,7 +47,6 @@ class Trainer:
         loss_fn: torch.nn.modules.loss._Loss,
         epochs: int,
         root_log: str,
-        early_stopping_patience : int = 5 
     ):
         # 클래스 초기화: 모델, 디바이스, 데이터 로더 등 설정
 
