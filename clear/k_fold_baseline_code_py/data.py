@@ -150,16 +150,17 @@ def set_up_test_directories(save_root_path):
     os.makedirs(save_csv_dir, exist_ok=True)
     return save_csv_dir
 
-def return_data_frames_and_num_classes(train_csv,test_csv):
+def return_train_info(train_csv):
     
     # 데이터 준비
-
     train_info = pd.read_csv(train_csv)
-    test_info = pd.read_csv(test_csv)
-
     num_classes = len(train_info['target'].unique()) 
 
-    return train_info, test_info, num_classes
+    return train_info, num_classes
+
+def return_test_info(test_csv):
+    test_info = pd.read_csv(test_csv)
+    return test_info
 
 
 def set_train_and_val_data(train_info, train_dir, transform = 'torchvision', batch_size = 16):

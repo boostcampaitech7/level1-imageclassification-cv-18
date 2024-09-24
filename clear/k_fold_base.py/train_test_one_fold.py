@@ -41,6 +41,7 @@ def setup_directories(save_rootpath):
 
     return weight_dir, log_dir, tensorboard_dir, save_csv_dir
 
+
 def inference(
     model: nn.Module,
     device: torch.device,
@@ -190,7 +191,7 @@ def train_test():
     weights = os.listdir(weight_dir)
 
     for weight_file in weights:
-        model.load_state_dict(torch.load(os.path.join(weight_dir, weight_file)))
+        model.load_state_dict(torch.load(os.path.join(weight_dir, f'{fold}_bestmodel.pt')))
 
         csv_name = os.path.basename(weight_file).replace(".pt", "") + ".csv"
 
@@ -214,16 +215,10 @@ if __name__ == "__main__":
     torch.multiprocessing.set_start_method('spawn')
     parser = argparse.ArgumentParser()
     parser.add_argument('--gpu', type=int, default=0, help='cuda:(gpu)')
-    
-    # default 부분 수정해서 사용!
-    # default 부분 수정해서 사용!
-    # default 부분 수정해서 사용!
-    # default 부분 수정해서 사용!
-    # default 부분 수정해서 사용!
 
     # method
     parser.add_argument('--model_type', type=str, default='timm', help='사용할 모델 이름 : model_selector.py 중 선택')
-    parser.add_argument('--model_name', type=str, default='convnext_large_mlp.clip_laion2b_augreg_ft_in1k_384', help='model/timm_model_name.txt 에서 확인, 아키텍처 확인은 "https://github.com/huggingface/pytorch-image-models/tree/main/timm/models"')
+    parser.add_argument('--model_name', type=str, default='convnext_xxlarge.clip_laion2b_soup_ft_in1k', help='model/timm_model_name.txt 에서 확인, 아키텍처 확인은 "https://github.com/huggingface/pytorch-image-models/tree/main/timm/models"')
     parser.add_argument('--pretrained', type=bool, default='True', help='전이학습 or 학습된 가중치 가져오기 : True / 전체학습 : False')
     # 전이학습할 거면 꼭! (True) customize_layer.py 가서 레이어 수정, 레이어 수정 안할 거면 가서 레이어 구조 변경 부분만 주석해서 사용 (어떤 레이어 열지는 알아야함)
     # 모델 구조랑 레이어 이름 모르겠으면 위에 모델 정의 부분가서 print(model) , assert False 주석 풀어서 확인하기

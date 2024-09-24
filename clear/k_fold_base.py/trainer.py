@@ -42,6 +42,7 @@ class Trainer:
         self.lowest_loss = float('inf') # 가장 낮은 Loss를 저장할 변수
         self.model_name = model_name
         self.pretrained = pretrained
+        
     def save_model(self, epoch, loss, fold):
         # 모델 저장 경로 설정
         os.makedirs(self.weight_path, exist_ok=True)
