@@ -116,11 +116,12 @@ class Trainer:
 
 
     def train_epoch(self) -> float:
-
         # 한 에폭 동안의 훈련을 진행
         self.model.train()
 
         total_loss = 0.0
+        correct = 0
+        total = 0
         progress_bar = tqdm(self.train_loader, desc="Training", leave=False)
 
         for images, targets in progress_bar:
@@ -132,8 +133,14 @@ class Trainer:
             self.optimizer.step()
             total_loss += loss.item()
             progress_bar.set_postfix(loss=loss.item())
+            logits = F.softmax(outputs, dim=1)
+            preds = logits.argmax(dim=1)
+            total += targets.size(0)
+            correct += (preds == targets).sum().item()
+
         self.scheduler.step()
-        return total_loss / len(self.train_loader)
+        
+        return total_loss / len(self.train_loader), correct / total * 100
 
     def validate(self) -> float:
 

@@ -26,7 +26,6 @@ if __name__ == "__main__":
     # train
     trainer.train()
 
-
     test_info = data.return_test_info(args.test_csv)
     test_loader = data.set_test_loader(test_info, args.test_dir, transform = args.transform)
 
