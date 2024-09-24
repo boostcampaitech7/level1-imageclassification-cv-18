@@ -100,29 +100,50 @@ def train_test():
     # k-fold 크로스 밸리데이션 초기화, StratifiedKFold:클래스 불균형을 고려한 k-fold
     kf = StratifiedKFold(n_splits=k_folds, shuffle=True, random_state=42)
     
-    # k-fold 데이터 설정
-    train_dataset = CustomDataset(
-        root_dir=traindata_dir,
-        info_df=train_info,
-        transform=train_transform
-    )
     # train_dataset에서 타겟 레이블만 추출
-    y = [train_dataset[i][1] for i in range(len(train_dataset))]  # target만 리스트로 추출
+    y = train_info.iloc[:,2].tolist() # target만 리스트로 추출
 
     # 각 폴드 마다 루프
-    for fold, (train_idx, test_idx) in enumerate(kf.split(train_dataset, y)):
+    for fold, (train_idx, test_idx) in enumerate(kf.split(train_info, y)):
+        if (fold+1) != 1:
+            continue
+
         print(f"Fold {fold + 1}")
         print("-------")
+
+        train_fold_file = f"train_fold_{fold+1}.csv"
+        val_fold_file = f"val_fold_{fold+1}.csv"
+
+        # Train과 validation 데이터를 나눔
+        train_fold_data = train_info.iloc[train_idx]
+        val_fold_data = train_info.iloc[test_idx]
+        
+        # CSV로 저장
+        train_fold_data.to_csv(train_fold_file, index=False)
+        val_fold_data.to_csv(val_fold_file, index=False) 
+
+        train_dataset = CustomDataset(
+            root_dir=traindata_dir,
+            info_df=train_fold_data,
+            transform=train_transform
+        )
+
         train_loader = DataLoader(
             dataset=train_dataset,
             batch_size=args.batch_size,
-            sampler=torch.utils.data.SubsetRandomSampler(train_idx),
+            shuffle=True,
+        )
+
+        val_dataset = CustomDataset(
+            root_dir=traindata_dir,
+            info_df=val_fold_data,
+            transform=val_transform
         )
 
         val_loader = DataLoader(
-            dataset=train_dataset,
+            dataset=val_dataset,
             batch_size=args.batch_size,
-            sampler=torch.utils.data.SubsetRandomSampler(test_idx),
+            shuffle=False,
         )
 
         # set model  
@@ -199,6 +220,8 @@ def train_test():
     # k-fold ensemble
     k_fold_predictions = []
     for fold in range(k_folds):
+        if (fold+1) != 1:
+            continue
         print(f"Fold {fold + 1} inference")
         print("-------")
         model.load_state_dict(torch.load(os.path.join(weight_dir, f'{fold}_bestmodel.pt')))
@@ -247,18 +270,18 @@ if __name__ == "__main__":
     parser.add_argument('--transform', type=str, default='AlbumentationsTransform', help='transform class 선택 torchvision or albumentation / dataloader.py code 참고')
     
     # 데이터 경로
-    parser.add_argument('--train_dir', type=str, default="/data/ephemeral/home/data/train", help='훈련 데이터셋 루트 디렉토리 경로') # "/data/ephemeral/home/data/train"
-    parser.add_argument('--test_dir', type=str, default="/data/ephemeral/home/data/test", help='테스트 데이터셋 루트 디렉토리 경로') # "/data/ephemeral/home/data/test"
-    parser.add_argument('--train_csv', type=str, default="/data/ephemeral/home/data/train.csv", help='훈련 데이터셋 csv 파일 경로') # "/data/ephemeral/home/data/train.csv"
-    parser.add_argument('--test_csv', type=str, default="/data/ephemeral/home/data/test.csv", help='테스트 데이터셋 csv 파일 경로') # "/data/ephemeral/home/data/test.csv"
+    parser.add_argument('--train_dir', type=str, default="./../../data/train", help='훈련 데이터셋 루트 디렉토리 경로') # "/data/ephemeral/home/data/train"
+    parser.add_argument('--test_dir', type=str, default="./../../data/test", help='테스트 데이터셋 루트 디렉토리 경로') # "/data/ephemeral/home/data/test"
+    parser.add_argument('--train_csv', type=str, default="./../../data/train.csv", help='훈련 데이터셋 csv 파일 경로') # "/data/ephemeral/home/data/train.csv"
+    parser.add_argument('--test_csv', type=str, default="./../../data/test.csv", help='테스트 데이터셋 csv 파일 경로') # "/data/ephemeral/home/data/test.csv"
 
     parser.add_argument('--save_rootpath', type=str, default="Experiments/debug", help='가중치, log, tensorboard 그래프 저장을 위한 path 실험명으로 디렉토리 구성')
     
     # 하이퍼파라미터
     parser.add_argument('--epochs', type=int, default=30, help='에포크 설정')
-    parser.add_argument('--lr', type=float, default=0.0001, help='learning rage')
-    parser.add_argument('--batch_size', type=int, default=16)
-    parser.add_argument('--step_size', type=int, default=5, help='몇 번째 epoch 마다 학습률 줄일 지 선택')
+    parser.add_argument('--lr', type=float, default=0.001, help='learning rage')
+    parser.add_argument('--batch_size', type=int, default=64)
+    parser.add_argument('--step_size', type=int, default=30, help='몇 번째 epoch 마다 학습률 줄일 지 선택')
     parser.add_argument('--gamma', type=float, default=0.1, help='학습률에 얼마를 곱하여 줄일 지 선택')
     parser.add_argument('--num_k_fold', type=int, default=5, help='k-fold 수 설정')
 
