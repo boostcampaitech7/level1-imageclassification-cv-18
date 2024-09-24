@@ -76,23 +76,37 @@ class TorchvisionTransform: # 단순한 전처리, 간편한 사용, 증강이 �
         return transformed  # 변환된 이미지 반환
     
 class AlbumentationsTransform:
-    def __init__(self, is_train: bool = True):
+    def __init__(self, is_train: bool = True, epoch: int = 0):
         # 공통 변환 설정: 이미지 리사이즈, 정규화, 텐서 변환
         common_transforms = [
-            A.Resize(448, 448),  # 이미지를 224x224 크기로 리사이즈
+            A.Resize(448, 448),  # 이미지를 448x448 크기로 리사이즈
             A.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),  # 정규화
             ToTensorV2()  # albumentations에서 제공하는 PyTorch 텐서 변환
         ]
 
         if is_train:
-            # 훈련용 변환: 랜덤 수평 뒤집기, 랜덤 회전, 랜덤 밝기 및 대비 조정 추가
-            self.transform = A.Compose(
-                [
-                    A.HorizontalFlip(p=0.5),  # 50% 확률로 이미지를 수평 뒤집기
-                    A.Rotate(limit=15),  # 최대 15도 회전
-                    A.RandomBrightnessContrast(p=0.2),  # 밝기 및 대비 무작위 조정
-                ] + common_transforms
-            )
+            if epoch < 5:  # 초반 0-5 에포크에서는 기본 변환만 적용
+                self.transform = A.Compose(
+                    common_transforms
+                )
+            elif epoch >= 5 and epoch < 10:  # 중간 5-10 에포크에서는 간단한 변환 적용
+                self.transform = A.Compose(
+                    [
+                        A.HorizontalFlip(p=0.5),  # 수평 뒤집기
+                        A.VerticalFlip(p=0.5),  # 수직 뒤집기
+                        A.Rotate(limit=10, p=0.5),  # 10도 회전
+                    ] + common_transforms
+                )
+            else:  # 후반 10-15 에포크에서는 복잡한 변환 적용
+                self.transform = A.Compose(
+                    [
+                        A.HorizontalFlip(p=0.5),
+                        A.VerticalFlip(p=0.5),
+                        A.Rotate(limit=15, p=0.5),
+                        A.ElasticTransform(alpha=30, sigma=4, p=0.5),  # Elastic 변형
+                        A.GridDistortion(num_steps=4, distort_limit=0.2, p=0.5)  # Grid 왜곡
+                    ] + common_transforms
+                )
         else:
             # 검증/테스트용 변환: 공통 변환만 적용
             self.transform = A.Compose(common_transforms)
