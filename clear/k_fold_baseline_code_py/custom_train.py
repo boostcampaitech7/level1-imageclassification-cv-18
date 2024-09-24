@@ -171,7 +171,8 @@ class Trainer:
             ]
         )
 
-        writer = SummaryWriter(log_dir=self.tensorboards)
+        train_writer = SummaryWriter(log_dir=os.path.join(self.tensorboard_path, f'train_fold{fold+1}'))
+        validation_writer = SummaryWriter(log_dir=os.path.join(self.tensorboard_path, f'validation_fold{fold+1}'))
 
         logger = logging.getLogger()
         for epoch in range(self.epochs):
@@ -195,4 +196,3 @@ class Trainer:
         
         train_writer.close()    
         validation_writer.close()    
-    #-------------------------------------------------------
