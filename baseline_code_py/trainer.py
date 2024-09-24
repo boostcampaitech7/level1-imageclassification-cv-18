@@ -60,7 +60,7 @@ class Trainer:
         # 가장 낮은 손실의 모델 저장
         if loss < self.lowest_loss:
             self.lowest_loss = loss
-            best_model_path = os.path.join(self.weight_path, f'best_{self.model_name}_{self.pretrained}_epoch_{epoch}_loss_{loss:.4f}.pt')
+            best_model_path = os.path.join(self.weight_path, f'best.pt')
             torch.save(self.model.state_dict(), best_model_path)
             print(f"Save {epoch}epoch result. Loss = {loss:.4f}")
 
@@ -124,6 +124,9 @@ class Trainer:
 
             self.save_model(epoch, val_loss)
 
-            writer.add_scalar('Loss/train', train_loss, epoch)  # 훈련 손실 기록
-            writer.add_scalar('Loss/validation', val_loss, epoch)  # 검증 손실 기록
+            writer.add_scalars('Loss', {
+                'Train': train_loss,
+                'Validation': val_loss
+            }, epoch)
+            
         writer.close()    

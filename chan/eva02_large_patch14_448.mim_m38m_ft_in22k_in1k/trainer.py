@@ -124,6 +124,9 @@ class Trainer:
 
             self.save_model(epoch, val_loss)
 
-            writer.add_scalar('Loss/train', train_loss, epoch)  # 훈련 손실 기록
-            writer.add_scalar('Loss/validation', val_loss, epoch)  # 검증 손실 기록
+            writer.add_scalars('Loss', {
+                'Train': train_loss,
+                'Validation': val_loss
+            }, epoch)
+            
         writer.close()    

@@ -127,7 +127,3 @@ predictions = inference(
 # 최종 예측값 결정
 predictions = np.array(predictions)
 final_predictions = np.argmax(predictions, axis=1)
-
-# Confusion matrix 생성 및 저장
-true_labels = test_info['target'].values
-plot_misclassified_matrix(true_labels, final_predictions, num_classes=500, top_k=10)

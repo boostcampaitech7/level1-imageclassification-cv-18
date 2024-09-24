@@ -129,28 +129,33 @@ def train_test():
 
     model = model_selector.get_model()
 
-    # model 구조 모르겠으면 주석 풀고 확인
-    # for name, module in model.named_modules():
-    #     print(name)
+    # # model 구조 모르겠으면 주석 풀고 확인
+    # print(model)
     # assert False
 
     lora_config = LoraConfig(
         r=args.lora_r,  # LoRA의 rank
         lora_alpha=args.lora_alpha,
-        target_modules = ["attn.q_proj", "attn.k_proj", "attn.v_proj", "attn.proj"],
-        lora_dropout=0.1,
+        target_modules = ["mlp.fc2"],
+        lora_dropout=args.lora_dropout,
         bias="none",
         modules_to_save=["head"],
     )
 
-    try:
-        peft_model = get_peft_model(model, lora_config)
-        print("LoRA가 성공적으로 적용되었습니다.")
-    except ValueError as e:
-        print(f"오류 발생: {e}")
-        print("모델 구조를 다시 확인하고 target_modules를 조정해주세요.")
+    # try:
+    #     peft_model = get_peft_model(model, lora_config)
+    #     print("LoRA가 성공적으로 적용되었습니다.")
+    # except ValueError as e:
+    #     print(f"오류 발생: {e}")
+    #     print("모델 구조를 다시 확인하고 target_modules를 조정해주세요.")
 
     model = get_peft_model(model, lora_config)
+
+    # print(model)
+    # assert False
+
+    # model = customize_layer(model, num_classes)
+
     print(f"학습 가능한 파라미터: {count_parameters(model)}")
 
     # if args.pretrained == True:
@@ -270,9 +275,9 @@ if __name__ == "__main__":
     parser.add_argument('--gamma', type=float, default=0.1, help='학습률에 얼마를 곱하여 줄일 지 선택')
 
     # LoRA
-    parser.add_argument('--lora_r', type=int, default=2, help='lora_r 설정')
-    parser.add_argument('--lora_alpha', type=int, default=2, help='lora_alpha 설정')
-    parser.add_argument('--lora_dropout', type=float, default=0.1, help='lora_dropout 설정')
+    parser.add_argument('--lora_r', type=int, default=8, help='lora_r 설정')
+    parser.add_argument('--lora_alpha', type=int, default=128, help='lora_alpha 설정')
+    parser.add_argument('--lora_dropout', type=float, default=0.5, help='lora_dropout 설정')
 
     args = parser.parse_args()
 
