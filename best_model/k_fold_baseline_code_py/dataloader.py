@@ -90,8 +90,7 @@ class AlbumentationsTransform:
                 [
                     A.HorizontalFlip(p=0.5),  # 50% 확률로 이미지를 수평 뒤집기
                     A.Rotate(limit=15),  # 최대 15도 회전
-                    # A.RandomBrightnessContrast(p=0.2),  # 밝기 및 대비 무작위 조정
-                    A.VerticalFlip(p=0.5),    # 50% 확률로 이미지를 상하 반전
+                    A.RandomBrightnessContrast(p=0.2),  # 밝기 및 대비 무작위 조정
                 ] + common_transforms
             )
         else:
@@ -107,3 +106,5 @@ class AlbumentationsTransform:
         transformed = self.transform(image=image)  # 이미지에 설정된 변환을 적용
 
         return transformed['image']  # 변환된 이미지의 텐서를 반환
+
+
