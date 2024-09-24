@@ -3,6 +3,7 @@ import torch
 import torch.optim as optim
 import os
 import logging
+import torch.nn.functional as F
 
 from torch.utils.data import DataLoader
 from tqdm import tqdm
@@ -41,7 +42,7 @@ class Trainer:
         self.lowest_loss = float('inf') # 가장 낮은 Loss를 저장할 변수
         self.model_name = model_name
         self.pretrained = pretrained
-    def save_model(self, epoch, loss):
+    def save_model(self, epoch, loss, fold):
         # 모델 저장 경로 설정
         os.makedirs(self.weight_path, exist_ok=True)
 
@@ -60,7 +61,7 @@ class Trainer:
         # 가장 낮은 손실의 모델 저장
         if loss < self.lowest_loss:
             self.lowest_loss = loss
-            best_model_path = os.path.join(self.weight_path, f'best_{self.model_name}_{self.pretrained}_epoch_{epoch}_loss_{loss:.4f}.pt')
+            best_model_path = os.path.join(self.weight_path, f'{fold}_bestmodel.pt')
             torch.save(self.model.state_dict(), best_model_path)
             print(f"Save {epoch}epoch result. Loss = {loss:.4f}")
 
@@ -69,6 +70,8 @@ class Trainer:
         self.model.train()
 
         total_loss = 0.0
+        correct = 0
+        total = 0
         progress_bar = tqdm(self.train_loader, desc="Training", leave=False)
 
         for images, targets in progress_bar:
@@ -80,14 +83,21 @@ class Trainer:
             self.optimizer.step()
             total_loss += loss.item()
             progress_bar.set_postfix(loss=loss.item())
+            logits = F.softmax(outputs, dim=1)
+            preds = logits.argmax(dim=1)
+            total += targets.size(0)
+            correct += (preds == targets).sum().item()
         self.scheduler.step()
-        return total_loss / len(self.train_loader)
+        return total_loss / len(self.train_loader), correct / total * 100
 
     def validate(self) -> float:
         # 모델의 검증을 진행
         self.model.eval()
 
         total_loss = 0.0
+        total_loss = 0.0
+        correct = 0
+        total = 0
         progress_bar = tqdm(self.val_loader, desc="Validating", leave=False)
 
         with torch.no_grad():
@@ -97,10 +107,14 @@ class Trainer:
                 loss = self.loss_fn(outputs, targets)
                 total_loss += loss.item()
                 progress_bar.set_postfix(loss=loss.item())
+                logits = F.softmax(outputs, dim=1)
+                preds = logits.argmax(dim=1)
+                total += targets.size(0)
+                correct += (preds == targets).sum().item()
 
-        return total_loss / len(self.val_loader)
+        return total_loss / len(self.val_loader), correct / total * 100
 
-    def train(self) -> None:
+    def train(self, fold) -> None:
 
         # 전체 훈련 과정을 관리
         logging.basicConfig(
@@ -118,12 +132,14 @@ class Trainer:
         for epoch in range(self.epochs):
             logger.info(f"Epoch {epoch+1}/{self.epochs}")
 
-            train_loss = self.train_epoch()
-            val_loss = self.validate()
-            logger.info(f"Epoch {epoch+1}, Train Loss: {train_loss:.4f}, Validation Loss: {val_loss:.4f}\n")
+            train_loss, train_acc = self.train_epoch()
+            val_loss, val_acc = self.validate()
+            logger.info(f"Epoch {epoch+1}, Train Loss: {train_loss:.4f}, Train Accuracy: {train_acc:.2f}, Validation Loss: {val_loss:.4f}, Validation Accuracy: {val_acc:.2f}\n")
 
-            self.save_model(epoch, val_loss)
+            self.save_model(epoch, val_loss, fold)
 
             writer.add_scalar('Loss/train', train_loss, epoch)  # 훈련 손실 기록
+            writer.add_scalar('Accuracy/train', train_acc, epoch)  # 훈련 손실 기록
             writer.add_scalar('Loss/validation', val_loss, epoch)  # 검증 손실 기록
+            writer.add_scalar('Accuracy/validation', val_acc, epoch)  # 검증 손실 기록
         writer.close()    
