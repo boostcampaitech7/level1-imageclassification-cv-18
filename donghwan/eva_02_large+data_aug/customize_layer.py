@@ -25,9 +25,8 @@ def customize_layer(model, num_classes):
     nn.PReLU(),
 
     nn.Linear(in_features=512, out_features=500, bias=True)  # 출력 레이어 (BatchNorm과 Dropout 불필요)
-)
+    )
     
-
 # 추가한 FC 레이어의 파라미터만 학습 가능하도록 설정
     for name, param in model.model.head.named_parameters():
         param.requires_grad = True

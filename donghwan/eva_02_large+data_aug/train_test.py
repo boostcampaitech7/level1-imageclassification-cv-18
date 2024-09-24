@@ -8,7 +8,7 @@ import logging
 import time
 import torch.nn.functional as F 
 import numpy as np
-from torch_optimizer import Lookahead
+# from torch_optimizer import Lookahead
 
 from tqdm import tqdm
 from torch.utils.data import DataLoader
@@ -22,6 +22,8 @@ from model_selector import ModelSelector
 from dataloader import CustomDataset, TorchvisionTransform, AlbumentationsTransform
 from customize_layer import customize_layer
 from trainer import Trainer
+
+import inspect
 
 def set_cuda(gpu):
     torch.cuda.set_device(gpu)
@@ -163,8 +165,8 @@ def train_test():
         model = model.to(device)
         
         # optimizer
-        base_optimizer = optim.Adam(model.parameters(), lr=0.001)
-        optimizer = Lookahead(base_optimizer, alpha=0.5, k=5)  # k: 내부 업데이트 횟수, alpha: 보정 계수
+        optimizer = optim.Adam(model.parameters(), lr=0.001)
+        # optimizer = Lookahead(base_optimizer, alpha=0.5, k=5)  # k: 내부 업데이트 횟수, alpha: 보정 계수
         
         scheduler = optim.lr_scheduler.StepLR(
         optimizer,
