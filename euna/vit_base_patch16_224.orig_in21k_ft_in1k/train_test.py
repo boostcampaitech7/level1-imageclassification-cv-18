@@ -139,8 +139,6 @@ def train_test():
     print(f"학습 가능한 파라미터 수: {count_trainable_parameters(model)}")
 
     model = model.to(device)
-    
-    
 
     # optimizer
     optimizer = optim.Adam(model.parameters(), lr=args.lr)
@@ -244,10 +242,10 @@ if __name__ == "__main__":
     parser.add_argument('--save_rootpath', type=str, default="Experiments/debug", help='가중치, log, tensorboard 그래프 저장을 위한 path 실험명으로 디렉토리 구성')
     
     # 하이퍼파라미터
-    parser.add_argument('--epochs', type=int, default=10, help='에포크 설정')
+    parser.add_argument('--epochs', type=int, default=20, help='에포크 설정')
     parser.add_argument('--lr', type=float, default=0.001, help='learning rage')
     parser.add_argument('--batch_size', type=int, default=64)
-    parser.add_argument('--step_size', type=int, default=15, help='몇 번째 epoch 마다 학습률 줄일 지 선택')
+    parser.add_argument('--step_size', type=int, default=5, help='몇 번째 epoch 마다 학습률 줄일 지 선택')
     parser.add_argument('--gamma', type=float, default=0.1, help='학습률에 얼마를 곱하여 줄일 지 선택')
 
     args = parser.parse_args()
