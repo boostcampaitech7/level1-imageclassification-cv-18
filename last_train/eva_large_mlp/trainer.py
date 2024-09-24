@@ -40,23 +40,24 @@ class Trainer:
         self.tensorboard_path = tensorboard_path # 로그 저장 경로
         self.best_models = [] # 가장 좋은 상위 3개 모델의 정보를 저장할 리스트
         self.lowest_loss = float('inf') # 가장 낮은 Loss를 저장할 변수
+        self.highest_accu = 0.0
         self.model_name = model_name
         self.pretrained = pretrained
-    def save_model(self, epoch, loss, fold):
+    def save_model(self, epoch, loss, accu, fold):
         # 모델 저장 경로 설정
         os.makedirs(self.weight_path, exist_ok=True)
 
-        # 현재 에폭 모델 저장
-        current_model_path = os.path.join(self.weight_path, f'{self.model_name}_{self.pretrained}_epoch_{epoch}_loss_{loss:.4f}.pt')
-        torch.save(self.model.state_dict(), current_model_path)
+        # # 현재 에폭 모델 저장
+        # current_model_path = os.path.join(self.weight_path, f'{self.model_name}_{self.pretrained}_epoch_{epoch}_loss_{loss:.4f}.pt')
+        # torch.save(self.model.state_dict(), current_model_path)
 
-        # 최상위 3개 모델 관리
-        self.best_models.append((loss, epoch, current_model_path))
-        self.best_models.sort()
-        if len(self.best_models) > 3:
-            _, _, path_to_remove = self.best_models.pop(-1)  # 가장 높은 손실 모델 삭제
-            if os.path.exists(path_to_remove):
-                os.remove(path_to_remove)
+        # # 최상위 3개 모델 관리
+        # self.best_models.append((loss, epoch, current_model_path))
+        # self.best_models.sort()
+        # if len(self.best_models) > 3:
+        #     _, _, path_to_remove = self.best_models.pop(-1)  # 가장 높은 손실 모델 삭제
+        #     if os.path.exists(path_to_remove):
+        #         os.remove(path_to_remove)
 
         # 가장 낮은 손실의 모델 저장
         if loss < self.lowest_loss:
@@ -64,6 +65,12 @@ class Trainer:
             best_model_path = os.path.join(self.weight_path, f'{fold}_bestmodel.pt')
             torch.save(self.model.state_dict(), best_model_path)
             print(f"Save {epoch}epoch result. Loss = {loss:.4f}")
+
+        if accu > self.highest_accu:
+            self.highest_accu = accu
+            best_model_path = os.path.join(self.weight_path, f'{fold}_bestmodel_accu.pt')
+            torch.save(self.model.state_dict(), best_model_path)
+            print(f"Save {epoch}epoch result. accu = {accu:.4f}")
 
     def train_epoch(self) -> float:
         # 한 에폭 동안의 훈련을 진행
@@ -137,7 +144,7 @@ class Trainer:
             val_loss, val_acc = self.validate()
             logger.info(f"Epoch {epoch+1}, Train Loss: {train_loss:.4f}, Train Accuracy: {train_acc:.2f}, Validation Loss: {val_loss:.4f}, Validataion Accuracy: {val_acc:.2f}\n")
 
-            self.save_model(epoch, val_loss, fold)
+            self.save_model(epoch, val_loss, val_acc, fold)
 
             train_writer.add_scalar('train/Loss', train_loss, epoch)  # 훈련 손실 기록
             train_writer.add_scalar('train/Accuracy', train_acc, epoch)  # 훈련 손실 기록
