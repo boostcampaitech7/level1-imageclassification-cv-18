@@ -191,7 +191,7 @@ def train_test():
         )
         
         # 학습 시작
-        trainer.train(fold)
+        # trainer.train(fold)
     #-------------------------------------------------------
 
     # test
@@ -211,8 +211,11 @@ def train_test():
         drop_last=False
     )
 
+    weight_dir = '/data/ephemeral/home/jiwan/level1-imageclassification-cv-18/jiwan/9-23/k_fold_test/Experiments/debug/weights'
     weights = os.listdir(weight_dir)
     print(weights)
+
+    test_csv_dir = '/data/ephemeral/home/jiwan/level1-imageclassification-cv-18/jiwan/9-23/k_fold_test/Experiments/eva_giant/test_csv'
 
     # k-fold ensemble
     k_fold_predictions = []
@@ -226,15 +229,28 @@ def train_test():
             device=device,
             test_loader=test_loader
         )
-        k_fold_predictions.append(predictions) 
+        k_fold_predictions.append(predictions)
+
+        np.save(os.path.join(test_csv_dir, f"fold{fold+1}_predictions.npy"), predictions)
+        
+        csv_name_fold = f"k-fold{fold+1}.csv"
+        result_info = test_info.copy()
+        result_info['target'] = predictions 
+        result_info = result_info.reset_index().rename(columns={"index": "ID"})
+        save_path = os.path.join(test_csv_dir, csv_name_fold)
+        result_info.to_csv(save_path, index=False)
 
     k_fold_predictions = np.array(k_fold_predictions) # (fold size, test_size, num_classes)
     print(f"K-fold predictions shape: {np.shape(k_fold_predictions)}")
+
+    np.save(os.path.join(test_csv_dir, f"all_fold_predictions.npy"), k_fold_predictions)
 
     # 확률 평균화
     average_probs = np.mean(k_fold_predictions, axis=0)
     # 최종 예측값 결정
     final_predictions = np.argmax(average_probs, axis=1)
+
+    np.save(os.path.join(test_csv_dir, f"softvoting_all_fold_predictions.npy"), final_predictions)
 
     # test_info의 복사본을 사용하여 CSV 저장
     csv_name = "k-fold_ensemble.csv"
@@ -257,7 +273,7 @@ if __name__ == "__main__":
 
     # method
     parser.add_argument('--model_type', type=str, default='timm', help='사용할 모델 이름 : model_selector.py 중 선택')
-    parser.add_argument('--model_name', type=str, default='eva02_large_patch14_448.mim_m38m_ft_in22k_in1k', help='model/timm_model_name.txt 에서 확인, 아키텍처 확인은 "https://github.com/huggingface/pytorch-image-models/tree/main/timm/models"')
+    parser.add_argument('--model_name', type=str, default='eva_giant_patch14_336.clip_ft_in1k', help='model/timm_model_name.txt 에서 확인, 아키텍처 확인은 "https://github.com/huggingface/pytorch-image-models/tree/main/timm/models"')
     parser.add_argument('--pretrained', type=bool, default='True', help='전이학습 or 학습된 가중치 가져오기 : True / 전체학습 : False')
     # 전이학습할 거면 꼭! (True) customize_layer.py 가서 레이어 수정, 레이어 수정 안할 거면 가서 레이어 구조 변경 부분만 주석해서 사용 (어떤 레이어 열지는 알아야함)
     # 모델 구조랑 레이어 이름 모르겠으면 위에 모델 정의 부분가서 print(model) , assert False 주석 풀어서 확인하기
@@ -270,7 +286,7 @@ if __name__ == "__main__":
     parser.add_argument('--train_csv', type=str, default="/data/ephemeral/home/data/train.csv", help='훈련 데이터셋 csv 파일 경로') # "/data/ephemeral/home/data/train.csv"
     parser.add_argument('--test_csv', type=str, default="/data/ephemeral/home/data/test.csv", help='테스트 데이터셋 csv 파일 경로') # "/data/ephemeral/home/data/test.csv"
 
-    parser.add_argument('--save_rootpath', type=str, default="Experiments/debug", help='가중치, log, tensorboard 그래프 저장을 위한 path 실험명으로 디렉토리 구성')
+    parser.add_argument('--save_rootpath', type=str, default="Experiments/eva_giant", help='가중치, log, tensorboard 그래프 저장을 위한 path 실험명으로 디렉토리 구성')
     
     # 하이퍼파라미터
     parser.add_argument('--epochs', type=int, default=30, help='에포크 설정')
