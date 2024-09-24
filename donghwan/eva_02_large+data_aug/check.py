@@ -28,24 +28,26 @@ from dataloader import CustomDataset, TorchvisionTransform, AlbumentationsTransf
 from customize_layer import customize_layer
 from trainer import Trainer
 
-def plot_confusion_matrix(y_true, y_pred, num_classes, top_k=10):
+def plot_misclassified_matrix(y_true, y_pred, num_classes, top_k=10):
     cm = confusion_matrix(y_true, y_pred, labels=list(range(num_classes)))
     
-    # 상위 k개의 클래스를 선택
-    top_k_indices = np.argsort(np.sum(cm, axis=1))[-top_k:]
-    cm_reduced = cm[np.ix_(top_k_indices, top_k_indices)]
+    # 잘못 예측한 상위 k개의 클래스 선택
+    misclassified_counts = np.sum(cm, axis=1) - np.diag(cm)  # 각 클래스에서 틀린 예측 수 계산
+    top_k_misclassified = np.argsort(misclassified_counts)[-top_k:]  # 잘못 예측한 상위 k개의 클래스
+    
+    cm_misclassified = cm[np.ix_(top_k_misclassified, top_k_misclassified)]
     
     plt.figure(figsize=(10, 10))
-    sns.heatmap(cm_reduced, annot=True, fmt='d', cmap='Blues', cbar=False, xticklabels=top_k_indices, yticklabels=top_k_indices)
-    plt.title(f'Confusion Matrix (Top {top_k} Classes)')
+    sns.heatmap(cm_misclassified, annot=True, fmt='d', cmap='Blues', cbar=False, xticklabels=top_k_misclassified, yticklabels=top_k_misclassified)
+    plt.title(f'Misclassified Matrix (Top {top_k} Misclassified Classes)')
     plt.xlabel('Predicted Labels')
     plt.ylabel('True Labels')
     
-    save_path = f'confusion_matrix_top_{top_k}.png'
+    save_path = f'misclassified_matrix_top_{top_k}.png'
     plt.savefig(save_path)
     plt.close()
     
-    print(f'Confusion matrix (Top {top_k} Classes) saved to {save_path}')
+    print(f'Misclassified matrix (Top {top_k} Classes) saved to {save_path}')
 
 def inference(
     model: nn.Module,
@@ -125,7 +127,3 @@ predictions = inference(
 # 최종 예측값 결정
 predictions = np.array(predictions)
 final_predictions = np.argmax(predictions, axis=1)
-
-# Confusion matrix 생성 및 저장
-true_labels = test_info['target'].values
-plot_confusion_matrix(true_labels, final_predictions, num_classes=500, top_k=10)

@@ -15,26 +15,18 @@ def customize_layer(model, num_classes):
 
     # 레이어 정의 예시
     
-    model.model.head = nn.Sequential( # MLP HEAD
-    nn.Linear(model.model.head.in_features, 2048, bias=True),  # 첫 번째 FC 레이어
-    nn.GELU(approximate='none'),
-    nn.Dropout(p=0.3, inplace=False),
-    
-    nn.Linear(in_features=2048, out_features=1024, bias=True),  # 두 번째 FC 레이어
-    nn.GELU(approximate='none'),
-    nn.Dropout(p=0.3, inplace=False),
-    
-    nn.Linear(in_features=1024, out_features=512, bias=True),  # 세 번째 FC 레이어
-    nn.GELU(approximate='none'),
-    nn.Dropout(p=0.3, inplace=False),
-    
-    nn.Linear(in_features=512, out_features=500, bias=True)  # 출력 레이어
-)
-    
-    # 파라미터 학습 가능하게 수정
-    for n,p in model.model.named_parameters():
-        p.requires_grad=False
+    model.model.head = nn.Sequential(
+    nn.Linear(model.model.head.in_features, 1024, bias=True),  # 첫 번째 FC 레이어
+    nn.BatchNorm1d(1024),  # Batch Normalization
+    nn.PReLU(),
 
+    nn.Linear(1024, 512, bias=True),  # 첫 번째 FC 레이어
+    nn.BatchNorm1d(512),  # Batch Normalization
+    nn.PReLU(),
+
+    nn.Linear(in_features=512, out_features=500, bias=True)  # 출력 레이어 (BatchNorm과 Dropout 불필요)
+    )
+    
 # 추가한 FC 레이어의 파라미터만 학습 가능하도록 설정
     for name, param in model.model.head.named_parameters():
         param.requires_grad = True
