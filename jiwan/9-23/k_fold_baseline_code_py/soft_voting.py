@@ -12,7 +12,7 @@ from train_test import inference
 from dataloader import CustomDataset, AlbumentationsTransform
 from model_selector import ModelSelector
 
-def train_kfold(test_csv, test_dir, weight_dir, k_folds, test_csv_dir):
+def test_kfold(test_csv, test_dir, weight_dir, k_folds, test_csv_dir):
     # k-fold 모델 앙상블을 위한 코드
     test_info = pd.read_csv(test_csv)
     device = 'cuda'
@@ -96,8 +96,8 @@ model_num = 1  # ----------------------------------------------------------
 
 # K-fold 추론 및 소프트 보팅
 arr = []
-average_probs, test_info = train_kfold(test_csv, test_dir, weight_dir1, k_folds, test_csv_dir)
-arr.append(average_probs)
+average_probs, test_info = test_kfold(test_csv, test_dir, weight_dir1, k_folds, test_csv_dir)
+# arr.append(average_probs)
 
-final_average_probs = soft_voting(arr)  # 최종 평균 확률 계산
-save_csv(final_average_probs, test_info, test_csv_dir)  # CSV 저장
+# final_average_probs = soft_voting(arr)  # 최종 평균 확률 계산
+save_csv(average_probs, test_info, test_csv_dir)  # CSV 저장
