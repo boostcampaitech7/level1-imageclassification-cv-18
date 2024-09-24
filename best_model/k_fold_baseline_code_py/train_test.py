@@ -226,7 +226,16 @@ def train_test():
             device=device,
             test_loader=test_loader
         )
-        k_fold_predictions.append(predictions) 
+        k_fold_predictions.append(predictions)
+
+        np.save(os.path.join(test_csv_dir, f"fold{fold+1}_predictions.npy"), predictions)
+        
+        csv_name_fold = f"k-fold{fold+1}.csv"
+        result_info = test_info.copy()
+        result_info['target'] = predictions 
+        result_info = result_info.reset_index().rename(columns={"index": "ID"})
+        save_path = os.path.join(test_csv_dir, csv_name_fold)
+        result_info.to_csv(save_path, index=False)
 
         csv_name_fold = f"k-fold{fold+1}.csv"
         result_info = test_info.copy()
@@ -239,10 +248,14 @@ def train_test():
     k_fold_predictions = np.array(k_fold_predictions) # (fold size, test_size, num_classes)
     print(f"K-fold predictions shape: {np.shape(k_fold_predictions)}")
 
+    np.save(os.path.join(test_csv_dir, f"all_fold_predictions.npy"), k_fold_predictions)
+
     # 확률 평균화
     average_probs = np.mean(k_fold_predictions, axis=0)
     # 최종 예측값 결정
     final_predictions = np.argmax(average_probs, axis=1)
+
+    np.save(os.path.join(test_csv_dir, f"softvoting_all_fold_predictions.npy"), final_predictions)
 
     # test_info의 복사본을 사용하여 CSV 저장
     csv_name = "k-fold_ensemble.csv"

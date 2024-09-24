@@ -97,6 +97,8 @@ class Trainer:
         current_model_path = os.path.join(self.weights, f'{self.model_name}_{self.pretrained}_epoch_{epoch}_loss_{loss:.4f}.pt')
         torch.save(self.model.state_dict(), current_model_path)
 
+
+        # 수정 필요
         # 최상위 3개 모델 관리
         self.best_models.append((loss, epoch, current_model_path))
         self.best_models.sort()
@@ -114,11 +116,12 @@ class Trainer:
 
 
     def train_epoch(self) -> float:
-
         # 한 에폭 동안의 훈련을 진행
         self.model.train()
 
         total_loss = 0.0
+        correct = 0
+        total = 0
         progress_bar = tqdm(self.train_loader, desc="Training", leave=False)
 
         for images, targets in progress_bar:
@@ -130,8 +133,14 @@ class Trainer:
             self.optimizer.step()
             total_loss += loss.item()
             progress_bar.set_postfix(loss=loss.item())
+            logits = F.softmax(outputs, dim=1)
+            preds = logits.argmax(dim=1)
+            total += targets.size(0)
+            correct += (preds == targets).sum().item()
+
         self.scheduler.step()
-        return total_loss / len(self.train_loader)
+        
+        return total_loss / len(self.train_loader), correct / total * 100
 
     def validate(self) -> float:
 
@@ -169,14 +178,22 @@ class Trainer:
         for epoch in range(self.epochs):
             logger.info(f"Epoch {epoch+1}/{self.epochs}")
 
-            train_loss = self.train_epoch()
-            val_loss = self.validate()
-            logger.info(f"Epoch {epoch+1}, Train Loss: {train_loss:.4f}, Validation Loss: {val_loss:.4f}\n")
+            train_loss, train_acc = self.train_epoch()
+            val_loss, val_acc = self.validate()
+            logger.info(f"Epoch {epoch+1}, Train Loss: {train_loss:.4f}, Train Accuracy: {train_acc:.2f}, Validation Loss: {val_loss:.4f}, Validataion Accuracy: {val_acc:.2f}\n")
 
-            self.save_model(epoch, val_loss)
+            self.save_model(epoch, val_loss, fold)
 
-            writer.add_scalar('Loss/train', train_loss, epoch)  # 훈련 손실 기록
-            writer.add_scalar('Loss/validation', val_loss, epoch)  # 검증 손실 기록
-        writer.close()    
+            train_writer.add_scalar('train/Loss', train_loss, epoch)  # 훈련 손실 기록
+            train_writer.add_scalar('train/Accuracy', train_acc, epoch)  # 훈련 손실 기록
+            validation_writer.add_scalar('validation/Loss', val_loss, epoch)  # 검증 손실 기록
+            validation_writer.add_scalar('validation/Accuracy', val_acc, epoch)  # 검증 손실 기록
 
+            train_writer.add_scalar('train_validation/Loss', train_loss, epoch)  # 훈련 손실 기록
+            train_writer.add_scalar('train_validation/Accuracy', train_acc, epoch)
+            validation_writer.add_scalar('train_validation/Loss', val_loss, epoch)  # 검증 손실 기록
+            validation_writer.add_scalar('train_validation/Accuracy', val_acc, epoch)  # 검증 손실 기록
+        
+        train_writer.close()    
+        validation_writer.close()    
     #-------------------------------------------------------

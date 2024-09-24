@@ -66,8 +66,8 @@ def set_cuda(gpu):
     print(f"current use : cuda({torch.cuda.current_device()})\n")
     return device
 
-def set_trainer(args, train_loader, val_loader, num_classes, device):
 
+def set_model(args, device, num_classes):
     # set model       
     model_selector = custom_model.ModelSelector(
         model_type= args.model_type,
@@ -79,10 +79,12 @@ def set_trainer(args, train_loader, val_loader, num_classes, device):
     model = model_selector.get_model()
     model = custom_model.customize_transfer_layer(model, num_classes)
     model.to(device)
+    return model
 
+def set_trainer(args, train_loader, val_loader, num_classes, model, device):
 
     # set optimizer
-    optimizer = optim.AdamW(model.parameters(), lr=args.lr)
+    optimizer = optim.Adam(model.parameters(), lr=args.lr)
     
     scheduler = optim.lr_scheduler.StepLR(
     optimizer,
@@ -110,8 +112,14 @@ def set_trainer(args, train_loader, val_loader, num_classes, device):
 
     return trainer
 
-def set_tester(args, test_info, test_loader, model, save_file_name = 'test.csv', device='cpu'):
+def set_tester(args, test_info, test_loader, weight_dir, model=None, num_classes = 500, save_file_name = 'test.csv', device='cpu'):
 
+    weights = os.listdir(weight_dir)
+    if model == None:
+        model = set_model(args, device, num_classes)
+    for weight_file in weights:
+        model.load_state_dict(torch.load(os.path.join(weight_dir, weight_file)))
+        
     # 모델로 추론 실행
     predictions = custom_test.inference(
         model=model,
