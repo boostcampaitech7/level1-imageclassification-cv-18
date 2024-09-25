@@ -19,7 +19,7 @@ if __name__ == "__main__":
         # 라벨 예측
         final_predictions = np.argmax(predictions, axis=1)
 
-        csv_name_fold = f"hard_fold{fold+1}_eva_large_curriculum_mlp_gelu.csv"
+        csv_name_fold = f"hard_fold{fold+1}_eva_large_curriculum_mlp_gelu.csv" # 변경 필요 : 자신이 원하는 csv파일명으로 변경 해야함
         result_info = test_info.copy()
         result_info['target'] = final_predictions 
         result_info = result_info.reset_index().rename(columns={"index": "ID"})
