@@ -13,7 +13,7 @@ import data
 
 def set_arg_parser_default():
     config = configparser.ConfigParser()
-    config.read('./config.ini')
+    config.read('D:\\clear\\level1-imageclassification-cv-18\\clear\\k_fold_baseline_code_py\\config.ini')
     defaults = config['default']
 
     parser = argparse.ArgumentParser()
@@ -30,10 +30,10 @@ def set_arg_parser_default():
     parser.add_argument('--transform', type=str, help='transform class 선택 torchvision or albumentation / dataloader.py code 참고')
     
     # 데이터 경로
-    parser.add_argument('--train_dir', type=str, default="/data/ephemeral/home/data/train", help='훈련 데이터셋 루트 디렉토리 경로') # "/data/ephemeral/home/data/train"
-    parser.add_argument('--test_dir', type=str, default="/data/ephemeral/home/data/test", help='테스트 데이터셋 루트 디렉토리 경로') # "/data/ephemeral/home/data/test"
-    parser.add_argument('--train_csv', type=str, default="/data/ephemeral/home/data/train.csv", help='훈련 데이터셋 csv 파일 경로') # "/data/ephemeral/home/data/train.csv"
-    parser.add_argument('--test_csv', type=str, default="/data/ephemeral/home/data/test.csv", help='테스트 데이터셋 csv 파일 경로') # "/data/ephemeral/home/data/test.csv"
+    parser.add_argument('--train_dir', type=str, help='훈련 데이터셋 루트 디렉토리 경로') # "/data/ephemeral/home/data/train"
+    parser.add_argument('--test_dir', type=str, help='테스트 데이터셋 루트 디렉토리 경로') # "/data/ephemeral/home/data/test"
+    parser.add_argument('--train_csv', type=str, help='훈련 데이터셋 csv 파일 경로') # "/data/ephemeral/home/data/train.csv"
+    parser.add_argument('--test_csv', type=str, help='테스트 데이터셋 csv 파일 경로') # "/data/ephemeral/home/data/test.csv"
 
     parser.add_argument('--save_rootpath', type=str, default="Experiments/debug", help='가중치, log, tensorboard 그래프 저장을 위한 path 실험명으로 디렉토리 구성')
     

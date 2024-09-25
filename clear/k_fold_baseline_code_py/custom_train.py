@@ -15,10 +15,6 @@ from sklearn.model_selection import StratifiedKFold
 from sklearn.ensemble import VotingClassifier
 from torch.utils.tensorboard import SummaryWriter
 
-# from loss import CrossEntropyLoss
-# from custom_model import ModelSelector, customize_transfer_layer
-# from data import CustomDataset, TorchvisionTransform, AlbumentationsTransform
-
 # 하나의 함수는 하나의 기능만 하도록
 # 클래스가 클래스의 기능을 할 수 있도록
 # data는 data_loader 단에 묶을 수 있도록
@@ -171,8 +167,8 @@ class Trainer:
             ]
         )
 
-        train_writer = SummaryWriter(log_dir=os.path.join(self.tensorboard_path, f'train_fold{fold+1}'))
-        validation_writer = SummaryWriter(log_dir=os.path.join(self.tensorboard_path, f'validation_fold{fold+1}'))
+        train_writer = SummaryWriter(log_dir=os.path.join(self.tensorboards, f'train'))
+        validation_writer = SummaryWriter(log_dir=os.path.join(self.tensorboards, f'validation'))
 
         logger = logging.getLogger()
         for epoch in range(self.epochs):
@@ -182,7 +178,7 @@ class Trainer:
             val_loss, val_acc = self.validate()
             logger.info(f"Epoch {epoch+1}, Train Loss: {train_loss:.4f}, Train Accuracy: {train_acc:.2f}, Validation Loss: {val_loss:.4f}, Validataion Accuracy: {val_acc:.2f}\n")
 
-            self.save_model(epoch, val_loss, fold)
+            self.save_model(epoch, val_loss)
 
             train_writer.add_scalar('train/Loss', train_loss, epoch)  # 훈련 손실 기록
             train_writer.add_scalar('train/Accuracy', train_acc, epoch)  # 훈련 손실 기록

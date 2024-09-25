@@ -9,9 +9,9 @@ if __name__ == "__main__":
     torch.cuda.empty_cache()
     torch.multiprocessing.set_start_method('spawn')
     args = set_arg_parser_default()
-
+    print(args)
     start_time = time.time()
-
+    
     # Device setting
     device = set_cuda(args.gpu)
 
