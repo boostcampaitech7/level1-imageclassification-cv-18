@@ -179,7 +179,7 @@ def train_test():
         )
 
         # 학습 시작
-        trainer.train(fold)
+        # trainer.train(fold)
     #-------------------------------------------------------
 
     # test
@@ -266,10 +266,10 @@ if __name__ == "__main__":
     parser.add_argument('--transform', type=str, default='AlbumentationsTransform', help='transform class 선택 torchvision or albumentation / dataloader.py code 참고')
     
     # 데이터 경로
-    parser.add_argument('--train_dir', type=str, default="/data/ephemeral/home/data/train", help='훈련 데이터셋 루트 디렉토리 경로') # "/data/ephemeral/home/data/train"
-    parser.add_argument('--test_dir', type=str, default="/data/ephemeral/home/data/test", help='테스트 데이터셋 루트 디렉토리 경로') # "/data/ephemeral/home/data/test"
-    parser.add_argument('--train_csv', type=str, default="/data/ephemeral/home/data/train.csv", help='훈련 데이터셋 csv 파일 경로') # "/data/ephemeral/home/data/train.csv"
-    parser.add_argument('--test_csv', type=str, default="/data/ephemeral/home/data/test.csv", help='테스트 데이터셋 csv 파일 경로') # "/data/ephemeral/home/data/test.csv"
+    parser.add_argument('--train_dir', type=str, default="./../../data/train", help='훈련 데이터셋 루트 디렉토리 경로') # "/data/ephemeral/home/data/train"
+    parser.add_argument('--test_dir', type=str, default="./../../data/test", help='테스트 데이터셋 루트 디렉토리 경로') # "/data/ephemeral/home/data/test"
+    parser.add_argument('--train_csv', type=str, default="./../../data/train.csv", help='훈련 데이터셋 csv 파일 경로') # "/data/ephemeral/home/data/train.csv"
+    parser.add_argument('--test_csv', type=str, default="./../../data/test.csv", help='테스트 데이터셋 csv 파일 경로') # "/data/ephemeral/home/data/test.csv"
 
     parser.add_argument('--save_rootpath', type=str, default="Experiments/eva_large_curriculum_mlp_gelu", help='가중치, log, tensorboard 그래프 저장을 위한 path 실험명으로 디렉토리 구성')
     parser.add_argument('--csv_name', type=str, default="curriculum_fold1.csv", help='')

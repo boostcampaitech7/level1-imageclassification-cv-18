@@ -47,7 +47,6 @@ class Trainer:
         loss_fn: torch.nn.modules.loss._Loss,
         epochs: int,
         root_log: str,
-        early_stopping_patience : int = 5 
     ):
         # 클래스 초기화: 모델, 디바이스, 데이터 로더 등 설정
 
@@ -172,7 +171,8 @@ class Trainer:
             ]
         )
 
-        writer = SummaryWriter(log_dir=self.tensorboards)
+        train_writer = SummaryWriter(log_dir=os.path.join(self.tensorboard_path, f'train_fold{fold+1}'))
+        validation_writer = SummaryWriter(log_dir=os.path.join(self.tensorboard_path, f'validation_fold{fold+1}'))
 
         logger = logging.getLogger()
         for epoch in range(self.epochs):
@@ -196,4 +196,3 @@ class Trainer:
         
         train_writer.close()    
         validation_writer.close()    
-    #-------------------------------------------------------
