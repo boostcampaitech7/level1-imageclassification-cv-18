@@ -191,7 +191,7 @@ def train_test():
         )
         
         # 학습 시작
-        trainer.train(fold)
+        # trainer.train(fold)
     #-------------------------------------------------------
 
     # test
@@ -219,7 +219,7 @@ def train_test():
     for fold in range(k_folds):
         print(f"Fold {fold + 1} inference")
         print("-------")
-        model.load_state_dict(torch.load(os.path.join(weight_dir, f'{fold}_bestmodel.pt')))
+        model.load_state_dict(torch.load(os.path.join(weight_dir, f'{fold}_bestmodel_accu.pt')))
         # 모델로 추론 실행
         predictions = inference(
             model=model,
