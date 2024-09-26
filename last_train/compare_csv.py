@@ -14,8 +14,11 @@ def load_csv_results(file_paths):
 
 # csv 파일 리스트로 csv 파일 경로 넣어 주면 됩니다!
 csv_files = [
-    "/data/ephemeral/home/chan/level1-imageclassification-cv-18/last_train/soft15_giantmlp_curr12.csv", # kfold 5 eva02 large
-    "/data/ephemeral/home/chan/level1-imageclassification-cv-18/last_train/hard15_voting_curr12_giantmlp.csv" # 동환님 kfold 5 test3
+    # "/data/ephemeral/home/chan/level1-imageclassification-cv-18/last_train/hardvoting_one_piece.csv", 
+    # "/data/ephemeral/home/chan/level1-imageclassification-cv-18/last_train/softvoting_one_piece.csv",
+    "/data/ephemeral/home/chan/level1-imageclassification-cv-18/last_train/softvoting_one_piece_weighted_rank_01.csv",
+    # "/data/ephemeral/home/chan/level1-imageclassification-cv-18/last_train/softvoting_one_piece_weighted_rank.csv",
+    "/data/ephemeral/home/chan/level1-imageclassification-cv-18/last_train/softvoting_one_piece_weighted_accu.csv"
 ]
 
 # csv 파일 읽어오기

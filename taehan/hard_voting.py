@@ -14,9 +14,15 @@ def load_csv_results(file_paths):
 def main():
     # csv 파일 리스트로 csv 파일 경로 넣어 주면 됩니다! 
     csv_files = [
-        "train 결과/cosine_annealing_LR/Experiments_15_1e-6/debug/test_csv/best_eva02_large_patch14_448.mim_m38m_ft_in22k_in1k_True_epoch_0_loss_0.5640.csv",
-        "train 결과/cosine_annealing_LR/Experiments_15_1e-6/debug/test_csv/best_eva02_large_patch14_448.mim_m38m_ft_in22k_in1k_True_epoch_1_loss_0.4665.csv",
-        "train 결과/cosine_annealing_LR/Experiments_15_1e-6/debug/test_csv/best_eva02_large_patch14_448.mim_m38m_ft_in22k_in1k_True_epoch_2_loss_0.4073.csv"
+        "/data/ephemeral/home/chan/level1-imageclassification-cv-18/last_train/softvoting_one_piece.csv",
+        "/data/ephemeral/home/chan/level1-imageclassification-cv-18/last_train/softvoting_curr12.csv",
+        "/data/ephemeral/home/chan/level1-imageclassification-cv-18/last_train/hardvoting_one_piece.csv",
+        "/data/ephemeral/home/chan/level1-imageclassification-cv-18/last_train/eva_large_curriculum_head/Experiments/eva_large_curriculum_head/test_csv/softvoting_5_eva_large_curriculum_head.csv",
+        "/data/ephemeral/home/chan/level1-imageclassification-cv-18/last_train/eva_large_curriculum_mlp/Experiments/eva_large_curriculum_mlp_gelu/test_csv/softvoting_5_eva_large_curriculum_mlp_gelu.csv",
+        "/data/ephemeral/home/chan/level1-imageclassification-cv-18/last_train/eva_large_curriculum_mlp/Experiments/eva_large_curriculum_mlp_gelu/test_csv/output.csv",
+        "/data/ephemeral/home/chan/level1-imageclassification-cv-18/last_train/eva_large_curriculum_mlp/Experiments/eva_large_curriculum_mlp_gelu/test_csv/output_1.csv",
+        "/data/ephemeral/home/chan/level1-imageclassification-cv-18/last_train/eva_large_curriculum_mlp/Experiments/eva_large_curriculum_mlp_gelu/test_csv/output_2.csv",
+        "/data/ephemeral/home/chan/level1-imageclassification-cv-18/last_train/eva_large_curriculum_mlp/Experiments/eva_large_curriculum_mlp_gelu/test_csv/output_3.csv"
     ]
 
     model_results = load_csv_results(csv_files)
@@ -38,7 +44,7 @@ def main():
     final_result["target"] = final_preds.numpy()
 
     # 결과 파일 이름 or 경로 지정
-    final_result.to_csv("hard_voting_final_result.csv", index=False)
+    final_result.to_csv("one_piece.csv", index=False)
 
 # 동일하게 python hard_voting.py로 실행!
 if __name__ == "__main__":
