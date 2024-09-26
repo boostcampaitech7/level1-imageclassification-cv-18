@@ -44,10 +44,6 @@ def setup_directories(save_rootpath):
 
     return weight_dir, log_dir, tensorboard_dir, save_csv_dir
 
-def return_weighted_blending(predictions_list, weights):
-    
-    return np.average(predictions_list, axis = 0, weights)
-
 
 def inference(
     model: nn.Module,

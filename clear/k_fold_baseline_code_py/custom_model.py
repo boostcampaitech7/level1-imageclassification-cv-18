@@ -33,7 +33,7 @@ def customize_transfer_layer(model, num_classes):
         param.requires_grad = False
 
     # 레이어 정의 예시
-    model.model.fc = nn.Sequential(
+    model.model.head = nn.Sequential(
         nn.Linear(model.model.head.in_features, 1024),
         nn.GELU(),
         nn.Linear(1024, num_classes)
