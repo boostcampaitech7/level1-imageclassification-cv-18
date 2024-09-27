@@ -77,7 +77,7 @@ data/
 - Slack
 - Google Sheets
 
-## Project Outline
+## Project Timeline
 ![image](https://github.com/user-attachments/assets/cc032034-b269-48a0-adee-b3232ad2dd30)
 
 ## Models
