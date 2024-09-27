@@ -35,6 +35,35 @@ Computer Vision에서는 다양한 형태의 이미지 데이터가 활용되고
 - **학습 데이터**: 15,021개
 - **Private & Public 평가 데이터**: 10,014개
 
+```bash
+data/
+│
+├── sample_submission.csv
+├── test.csv
+├── train.csv
+│
+├── test/
+│   ├── 0.JPEG
+│   ├── 1.JPEG
+│   ├── 2.JPEG
+│   ├── ...
+│
+├── train/
+│   ├── n01443537/
+│   │   ├── sketch_0.JPEG
+│   │   ├── sketch_1.JPEG
+│   │   ├── sketch_2.JPEG    
+│   │   ├── ...
+│   │
+│   ├── n01484850/
+│   │   ├── sketch_0.JPEG
+│   │   ├── sketch_1.JPEG
+│   │   ├── sketch_2.JPEG    
+│   │   ├── ...
+│   │   
+│   ├── ... 
+```
+
 ### 라이선스
 
 이 데이터셋은 [Creative Commons Attribution 4.0 International License (CC BY 4.0)](https://creativecommons.org/licenses/by/4.0/)에 따라 사용됩니다. 자세한 내용은 [라이선스 링크](https://creativecommons.org/licenses/by/4.0/)에서 확인할 수 있습니다.
