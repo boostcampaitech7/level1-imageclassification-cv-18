@@ -64,10 +64,6 @@ data/
 │   ├── ... 
 ```
 
-### 라이선스
-
-이 데이터셋은 [Creative Commons Attribution 4.0 International License (CC BY 4.0)](https://creativecommons.org/licenses/by/4.0/)에 따라 사용됩니다. 자세한 내용은 [라이선스 링크](https://creativecommons.org/licenses/by/4.0/)에서 확인할 수 있습니다.
-
 ## Leaderboard
 ![image](https://github.com/user-attachments/assets/0257a5fa-8e05-4fca-b54a-6a06d676d2e6)
 
@@ -76,3 +72,20 @@ data/
 ![image](https://github.com/user-attachments/assets/b45dc7b1-17a8-41ce-9cc3-fea810b89cb9)
 
 ## Tools
+- Github
+- Notion
+- Slack
+- Google Sheets
+
+## Project Outline
+![image](https://github.com/user-attachments/assets/cc032034-b269-48a0-adee-b3232ad2dd30)
+
+## Models
+- ResNet50
+- eva02_large
+- eva_giant
+
+## Augmentations
+- HorizontalFlip
+- VerticalFlip
+- Rotate
