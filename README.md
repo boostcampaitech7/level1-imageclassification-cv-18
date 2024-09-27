@@ -19,11 +19,13 @@ data/
 │   │   ├── sketch_1.JPEG
 │   │   ├── sketch_2.JPEG    
 │   │   ├── ...
+│   │
 │   ├── n01484850/
 │   │   ├── sketch_0.JPEG
 │   │   ├── sketch_1.JPEG
 │   │   ├── sketch_2.JPEG    
 │   │   ├── ...
+│   │   
 │   ├── ... 
 ```
 
