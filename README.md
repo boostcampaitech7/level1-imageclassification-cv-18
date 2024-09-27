@@ -65,10 +65,6 @@ data/
 ```
 
 ## Leaderboard
-![image](https://github.com/user-attachments/assets/0257a5fa-8e05-4fca-b54a-6a06d676d2e6)
-
-둘 중 하나 선택 
-
 ![image](https://github.com/user-attachments/assets/b45dc7b1-17a8-41ce-9cc3-fea810b89cb9)
 
 ## Tools
@@ -89,3 +85,7 @@ data/
 - HorizontalFlip
 - VerticalFlip
 - Rotate
+
+## Voting
+- Soft Voting
+- Hard Voting
