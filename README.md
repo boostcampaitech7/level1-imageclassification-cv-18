@@ -71,7 +71,7 @@ data/
 - Github
 - Notion
 - Slack
-- Google Sheets
+- Google Sheets, Presentation
 
 ## Project Timeline
 ![image](https://github.com/user-attachments/assets/cc032034-b269-48a0-adee-b3232ad2dd30)
@@ -86,6 +86,12 @@ data/
 - VerticalFlip
 - Rotate
 
+![image](https://github.com/user-attachments/assets/c528607a-a0c7-4d76-a449-d4f8d178f7b9)
+
 ## Voting
 - Soft Voting
 - Hard Voting
+- Weighted Voting
+  
+![image](https://github.com/user-attachments/assets/d3119d69-d627-42fc-adbd-4d1cb8ec68b9)
+
