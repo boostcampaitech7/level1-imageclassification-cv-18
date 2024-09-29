@@ -86,12 +86,9 @@ data/
 - VerticalFlip
 - Rotate
 
-![image](https://github.com/user-attachments/assets/c528607a-a0c7-4d76-a449-d4f8d178f7b9)
 
 ## Voting
 - Soft Voting
 - Hard Voting
-- Weighted Voting
-  
-![image](https://github.com/user-attachments/assets/d3119d69-d627-42fc-adbd-4d1cb8ec68b9)
+
 
