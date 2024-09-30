@@ -85,6 +85,9 @@ data/
 - eva02_large
 - eva_giant
 
+![image](https://github.com/user-attachments/assets/0302c586-42ae-492f-be48-292009b86f77)
+
+
 ## Augmentations
 - HorizontalFlip
 - VerticalFlip
