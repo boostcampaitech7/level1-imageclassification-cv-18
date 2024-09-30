@@ -1,3 +1,7 @@
+<div align="right">
+  <a href="https://hits.seeyoufarm.com"><img src="https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https://github.com/boostcampaitech7/level1-imageclassification-cv-18&count_bg=%23C6D2FF&title_bg=%23555555&icon=&icon_color=%23FFFFFF&title=hits&edge_flat=false"/></a>
+</div>
+
 # 딥하조
 ![image](https://github.com/user-attachments/assets/e05c3769-17ff-4d36-8cec-55be088530ca)
 - 2024.09.11 ~ 2024.09.26
