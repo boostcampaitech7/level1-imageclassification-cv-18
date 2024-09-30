@@ -90,9 +90,13 @@ data/
 - VerticalFlip
 - Rotate
 
+![image](https://github.com/user-attachments/assets/4f66aaaf-e1ca-4800-98a1-6efdb86561e1)
+
 
 ## Voting
 - Soft Voting
 - Hard Voting
+  
+![image](https://github.com/user-attachments/assets/34e6350e-a600-451f-a148-ab25359eb4bc)
 
 
