@@ -4,10 +4,6 @@ import numpy as np
 import pandas as pd
 
 if __name__ == "__main__":
-
-    def return_weighted_blending(predictions_list, weights): 
-        normalized_weights = weights / np.sum(weights) 
-        return np.average(predictions_list, axis = 0, weights = normalized_weights)
     
     test_csv_path = "/data/ephemeral/home/data/test.csv" # 변경 필요 : "/data/ephemeral/home/data/train"으로 변경해야함 
     
@@ -21,38 +17,6 @@ if __name__ == "__main__":
         "/data/ephemeral/home/chan/level1-imageclassification-cv-18/last_train/prediction/all_fold_eva_large_head.npy"
     ]
 
-    weights = [
-        1.2,
-        1.2,
-        1.2,
-        1.2,
-        1.2,
-
-        1.3,
-        1.3,
-        1.3,
-        1.3,
-        1.3,
-
-        1.4,
-        1.4,
-        1.4,
-        1.4,
-        1.4,
-
-        1.2,
-        1.2,
-        1.2,
-        1.2,
-        1.2,
-
-        1.1,
-        1.1,
-        1.1,
-        1.1,
-        1.1
-    ]
-
     predictions = []
     for pred in prediction_list:
         prediction = np.load(pred)
@@ -62,8 +26,7 @@ if __name__ == "__main__":
     all_pred = np.concatenate(tuple(predictions),axis=0)
     print(all_pred.shape)
     
-    # all_pred = np.mean(all_pred, axis=0)
-    all_pred = return_weighted_blending(all_pred, weights)
+    all_pred = np.mean(all_pred, axis=0)
     print(all_pred.shape)
     final_predictions = np.argmax(all_pred, axis=1)
     print(final_predictions.shape)
