@@ -1,1 +1,1 @@
-![model accuracy timeline](experiments/images/accu_timeline.png)
+![model accuracy timeline](./images/accu_timeline.png)
