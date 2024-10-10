@@ -1,0 +1,252 @@
+2024-09-22 19:53:52,926 - INFO - Epoch 1/16
+2024-09-22 20:10:55,942 - INFO - Epoch 1, Train Loss: 2.1299, Train Accuracy: 76.25, Validation Loss: 1.4066, Validation Accuracy: 87.75
+
+2024-09-22 20:10:59,230 - INFO - Epoch 2/16
+2024-09-22 20:28:00,466 - INFO - Epoch 2, Train Loss: 1.2777, Train Accuracy: 90.98, Validation Loss: 1.3729, Validation Accuracy: 88.65
+
+2024-09-22 20:28:09,770 - INFO - Epoch 3/16
+2024-09-22 20:45:11,859 - INFO - Epoch 3, Train Loss: 1.1929, Train Accuracy: 93.38, Validation Loss: 1.3570, Validation Accuracy: 89.22
+
+2024-09-22 20:45:20,702 - INFO - Epoch 4/16
+2024-09-22 21:02:23,734 - INFO - Epoch 4, Train Loss: 1.1423, Train Accuracy: 95.03, Validation Loss: 1.3448, Validation Accuracy: 89.38
+
+2024-09-22 21:02:32,089 - INFO - Epoch 5/16
+2024-09-22 21:19:35,115 - INFO - Epoch 5, Train Loss: 1.0738, Train Accuracy: 97.48, Validation Loss: 1.2741, Validation Accuracy: 91.78
+
+2024-09-22 21:19:44,102 - INFO - Epoch 6/16
+2024-09-22 21:36:45,780 - INFO - Epoch 6, Train Loss: 1.0427, Train Accuracy: 98.33, Validation Loss: 1.2652, Validation Accuracy: 91.91
+
+2024-09-22 21:36:54,630 - INFO - Epoch 7/16
+2024-09-22 21:53:57,866 - INFO - Epoch 7, Train Loss: 1.0340, Train Accuracy: 98.46, Validation Loss: 1.2597, Validation Accuracy: 92.15
+
+2024-09-22 21:54:07,200 - INFO - Epoch 8/16
+2024-09-22 22:11:09,432 - INFO - Epoch 8, Train Loss: 1.0272, Train Accuracy: 98.60, Validation Loss: 1.2620, Validation Accuracy: 92.21
+
+2024-09-22 22:11:11,245 - INFO - Epoch 9/16
+2024-09-22 22:28:12,547 - INFO - Epoch 9, Train Loss: 1.0194, Train Accuracy: 98.95, Validation Loss: 1.2659, Validation Accuracy: 92.28
+
+2024-09-22 22:28:14,330 - INFO - Epoch 10/16
+2024-09-22 22:45:16,928 - INFO - Epoch 10, Train Loss: 1.0184, Train Accuracy: 99.05, Validation Loss: 1.2625, Validation Accuracy: 92.28
+
+2024-09-22 22:45:18,707 - INFO - Epoch 11/16
+2024-09-22 23:02:22,411 - INFO - Epoch 11, Train Loss: 1.0177, Train Accuracy: 98.98, Validation Loss: 1.2617, Validation Accuracy: 92.35
+
+2024-09-22 23:02:24,181 - INFO - Epoch 12/16
+2024-09-22 23:19:27,377 - INFO - Epoch 12, Train Loss: 1.0168, Train Accuracy: 99.02, Validation Loss: 1.2623, Validation Accuracy: 92.25
+
+2024-09-22 23:19:29,201 - INFO - Epoch 13/16
+2024-09-22 23:36:31,471 - INFO - Epoch 13, Train Loss: 1.0164, Train Accuracy: 99.08, Validation Loss: 1.2604, Validation Accuracy: 92.05
+
+2024-09-22 23:36:33,232 - INFO - Epoch 14/16
+2024-09-22 23:53:36,918 - INFO - Epoch 14, Train Loss: 1.0159, Train Accuracy: 99.05, Validation Loss: 1.2590, Validation Accuracy: 92.18
+
+2024-09-22 23:53:46,111 - INFO - Epoch 15/16
+2024-09-23 00:10:51,028 - INFO - Epoch 15, Train Loss: 1.0160, Train Accuracy: 99.07, Validation Loss: 1.2602, Validation Accuracy: 91.95
+
+2024-09-23 00:10:52,790 - INFO - Epoch 16/16
+2024-09-23 00:27:55,195 - INFO - Epoch 16, Train Loss: 1.0156, Train Accuracy: 99.02, Validation Loss: 1.2603, Validation Accuracy: 92.25
+
+2024-09-23 00:28:01,913 - INFO - Loading pretrained weights from Hugging Face hub (timm/eva02_large_patch14_448.mim_m38m_ft_in22k_in1k)
+2024-09-23 00:28:02,298 - INFO - [timm/eva02_large_patch14_448.mim_m38m_ft_in22k_in1k] Safe alternative available for 'pytorch_model.bin' (as 'model.safetensors'). Loading weights using safetensors.
+2024-09-23 00:28:02,379 - INFO - Missing keys (head.weight, head.bias) discovered while loading pretrained weights. This is expected if model is being adapted.
+2024-09-23 00:28:02,668 - INFO - Epoch 1/16
+2024-09-23 00:45:01,952 - INFO - Epoch 1, Train Loss: 2.1341, Train Accuracy: 76.13, Validation Loss: 1.4465, Validation Accuracy: 86.78
+
+2024-09-23 00:45:05,318 - INFO - Epoch 2/16
+2024-09-23 01:02:03,698 - INFO - Epoch 2, Train Loss: 1.2698, Train Accuracy: 91.16, Validation Loss: 1.3789, Validation Accuracy: 89.11
+
+2024-09-23 01:02:14,226 - INFO - Epoch 3/16
+2024-09-23 01:19:13,270 - INFO - Epoch 3, Train Loss: 1.1893, Train Accuracy: 93.72, Validation Loss: 1.3678, Validation Accuracy: 88.91
+
+2024-09-23 01:19:23,396 - INFO - Epoch 4/16
+2024-09-23 01:36:22,221 - INFO - Epoch 4, Train Loss: 1.1474, Train Accuracy: 94.99, Validation Loss: 1.3377, Validation Accuracy: 89.91
+
+2024-09-23 01:36:32,107 - INFO - Epoch 5/16
+2024-09-23 01:53:32,894 - INFO - Epoch 5, Train Loss: 1.0694, Train Accuracy: 97.64, Validation Loss: 1.2729, Validation Accuracy: 90.98
+
+2024-09-23 01:53:42,124 - INFO - Epoch 6/16
+2024-09-23 02:10:41,038 - INFO - Epoch 6, Train Loss: 1.0432, Train Accuracy: 98.29, Validation Loss: 1.2703, Validation Accuracy: 91.41
+
+2024-09-23 02:10:50,142 - INFO - Epoch 7/16
+2024-09-23 02:27:44,904 - INFO - Epoch 7, Train Loss: 1.0348, Train Accuracy: 98.60, Validation Loss: 1.2643, Validation Accuracy: 91.38
+
+2024-09-23 02:27:55,326 - INFO - Epoch 8/16
+2024-09-23 02:44:52,405 - INFO - Epoch 8, Train Loss: 1.0267, Train Accuracy: 98.69, Validation Loss: 1.2668, Validation Accuracy: 91.71
+
+2024-09-23 02:44:54,210 - INFO - Epoch 9/16
+2024-09-23 03:01:51,542 - INFO - Epoch 9, Train Loss: 1.0194, Train Accuracy: 98.96, Validation Loss: 1.2660, Validation Accuracy: 91.61
+
+2024-09-23 03:01:53,383 - INFO - Epoch 10/16
+2024-09-23 03:18:50,120 - INFO - Epoch 10, Train Loss: 1.0198, Train Accuracy: 99.01, Validation Loss: 1.2643, Validation Accuracy: 91.38
+
+2024-09-23 03:19:00,459 - INFO - Epoch 11/16
+2024-09-23 03:35:57,997 - INFO - Epoch 11, Train Loss: 1.0176, Train Accuracy: 99.02, Validation Loss: 1.2608, Validation Accuracy: 91.68
+
+2024-09-23 03:36:08,399 - INFO - Epoch 12/16
+2024-09-23 03:53:07,480 - INFO - Epoch 12, Train Loss: 1.0176, Train Accuracy: 99.04, Validation Loss: 1.2577, Validation Accuracy: 91.91
+
+2024-09-23 03:53:18,043 - INFO - Epoch 13/16
+2024-09-23 04:10:16,480 - INFO - Epoch 13, Train Loss: 1.0163, Train Accuracy: 99.08, Validation Loss: 1.2587, Validation Accuracy: 92.28
+
+2024-09-23 04:10:18,289 - INFO - Epoch 14/16
+2024-09-23 04:27:16,100 - INFO - Epoch 14, Train Loss: 1.0164, Train Accuracy: 99.07, Validation Loss: 1.2651, Validation Accuracy: 92.01
+
+2024-09-23 04:27:17,936 - INFO - Epoch 15/16
+2024-09-23 04:44:13,970 - INFO - Epoch 15, Train Loss: 1.0163, Train Accuracy: 99.08, Validation Loss: 1.2669, Validation Accuracy: 91.64
+
+2024-09-23 04:44:15,806 - INFO - Epoch 16/16
+2024-09-23 05:01:12,701 - INFO - Epoch 16, Train Loss: 1.0153, Train Accuracy: 99.17, Validation Loss: 1.2628, Validation Accuracy: 91.74
+
+2024-09-23 05:01:19,201 - INFO - Loading pretrained weights from Hugging Face hub (timm/eva02_large_patch14_448.mim_m38m_ft_in22k_in1k)
+2024-09-23 05:01:19,899 - INFO - [timm/eva02_large_patch14_448.mim_m38m_ft_in22k_in1k] Safe alternative available for 'pytorch_model.bin' (as 'model.safetensors'). Loading weights using safetensors.
+2024-09-23 05:01:20,015 - INFO - Missing keys (head.weight, head.bias) discovered while loading pretrained weights. This is expected if model is being adapted.
+2024-09-23 05:01:20,301 - INFO - Epoch 1/16
+2024-09-23 05:18:18,195 - INFO - Epoch 1, Train Loss: 2.1467, Train Accuracy: 75.99, Validation Loss: 1.4478, Validation Accuracy: 87.02
+
+2024-09-23 05:18:21,444 - INFO - Epoch 2/16
+2024-09-23 05:35:20,287 - INFO - Epoch 2, Train Loss: 1.2695, Train Accuracy: 90.90, Validation Loss: 1.3730, Validation Accuracy: 88.38
+
+2024-09-23 05:35:29,661 - INFO - Epoch 3/16
+2024-09-23 05:52:27,743 - INFO - Epoch 3, Train Loss: 1.1875, Train Accuracy: 93.83, Validation Loss: 1.3634, Validation Accuracy: 88.78
+
+2024-09-23 05:52:37,014 - INFO - Epoch 4/16
+2024-09-23 06:09:34,041 - INFO - Epoch 4, Train Loss: 1.1356, Train Accuracy: 95.30, Validation Loss: 1.3448, Validation Accuracy: 89.48
+
+2024-09-23 06:09:43,624 - INFO - Epoch 5/16
+2024-09-23 06:26:42,838 - INFO - Epoch 5, Train Loss: 1.0708, Train Accuracy: 97.40, Validation Loss: 1.2706, Validation Accuracy: 91.51
+
+2024-09-23 06:26:53,407 - INFO - Epoch 6/16
+2024-09-23 06:43:50,387 - INFO - Epoch 6, Train Loss: 1.0412, Train Accuracy: 98.25, Validation Loss: 1.2708, Validation Accuracy: 91.78
+
+2024-09-23 06:43:52,142 - INFO - Epoch 7/16
+2024-09-23 07:00:50,636 - INFO - Epoch 7, Train Loss: 1.0324, Train Accuracy: 98.55, Validation Loss: 1.2673, Validation Accuracy: 91.74
+
+2024-09-23 07:00:59,966 - INFO - Epoch 8/16
+2024-09-23 07:17:58,381 - INFO - Epoch 8, Train Loss: 1.0266, Train Accuracy: 98.62, Validation Loss: 1.2739, Validation Accuracy: 91.81
+
+2024-09-23 07:18:00,233 - INFO - Epoch 9/16
+2024-09-23 07:34:58,498 - INFO - Epoch 9, Train Loss: 1.0194, Train Accuracy: 98.83, Validation Loss: 1.2694, Validation Accuracy: 91.64
+
+2024-09-23 07:35:00,322 - INFO - Epoch 10/16
+2024-09-23 07:51:57,906 - INFO - Epoch 10, Train Loss: 1.0188, Train Accuracy: 98.92, Validation Loss: 1.2602, Validation Accuracy: 92.21
+
+2024-09-23 07:52:07,331 - INFO - Epoch 11/16
+2024-09-23 08:09:02,802 - INFO - Epoch 11, Train Loss: 1.0182, Train Accuracy: 98.98, Validation Loss: 1.2709, Validation Accuracy: 91.64
+
+2024-09-23 08:09:04,630 - INFO - Epoch 12/16
+2024-09-23 08:26:04,402 - INFO - Epoch 12, Train Loss: 1.0165, Train Accuracy: 98.93, Validation Loss: 1.2681, Validation Accuracy: 91.81
+
+2024-09-23 08:26:06,167 - INFO - Epoch 13/16
+2024-09-23 08:43:06,487 - INFO - Epoch 13, Train Loss: 1.0166, Train Accuracy: 98.97, Validation Loss: 1.2725, Validation Accuracy: 91.81
+
+2024-09-23 08:43:08,303 - INFO - Epoch 14/16
+2024-09-23 09:00:05,647 - INFO - Epoch 14, Train Loss: 1.0162, Train Accuracy: 98.95, Validation Loss: 1.2689, Validation Accuracy: 91.98
+
+2024-09-23 09:00:07,460 - INFO - Epoch 15/16
+2024-09-23 09:17:05,115 - INFO - Epoch 15, Train Loss: 1.0160, Train Accuracy: 98.94, Validation Loss: 1.2703, Validation Accuracy: 91.78
+
+2024-09-23 09:17:06,934 - INFO - Epoch 16/16
+2024-09-23 09:34:04,975 - INFO - Epoch 16, Train Loss: 1.0157, Train Accuracy: 98.94, Validation Loss: 1.2673, Validation Accuracy: 91.94
+
+2024-09-23 09:34:11,222 - INFO - Loading pretrained weights from Hugging Face hub (timm/eva02_large_patch14_448.mim_m38m_ft_in22k_in1k)
+2024-09-23 09:34:11,683 - INFO - [timm/eva02_large_patch14_448.mim_m38m_ft_in22k_in1k] Safe alternative available for 'pytorch_model.bin' (as 'model.safetensors'). Loading weights using safetensors.
+2024-09-23 09:34:11,768 - INFO - Missing keys (head.weight, head.bias) discovered while loading pretrained weights. This is expected if model is being adapted.
+2024-09-23 09:34:12,053 - INFO - Epoch 1/16
+2024-09-23 09:51:13,251 - INFO - Epoch 1, Train Loss: 2.1408, Train Accuracy: 76.39, Validation Loss: 1.4411, Validation Accuracy: 85.85
+
+2024-09-23 09:51:16,516 - INFO - Epoch 2/16
+2024-09-23 10:08:15,468 - INFO - Epoch 2, Train Loss: 1.2669, Train Accuracy: 91.06, Validation Loss: 1.4235, Validation Accuracy: 87.68
+
+2024-09-23 10:08:25,918 - INFO - Epoch 3/16
+2024-09-23 10:25:25,083 - INFO - Epoch 3, Train Loss: 1.1858, Train Accuracy: 93.73, Validation Loss: 1.3660, Validation Accuracy: 89.08
+
+2024-09-23 10:25:34,721 - INFO - Epoch 4/16
+2024-09-23 10:42:33,519 - INFO - Epoch 4, Train Loss: 1.1467, Train Accuracy: 95.00, Validation Loss: 1.3480, Validation Accuracy: 89.95
+
+2024-09-23 10:42:42,294 - INFO - Epoch 5/16
+2024-09-23 10:59:40,895 - INFO - Epoch 5, Train Loss: 1.0694, Train Accuracy: 97.61, Validation Loss: 1.2830, Validation Accuracy: 91.78
+
+2024-09-23 10:59:49,709 - INFO - Epoch 6/16
+2024-09-23 11:16:45,571 - INFO - Epoch 6, Train Loss: 1.0435, Train Accuracy: 98.33, Validation Loss: 1.2802, Validation Accuracy: 91.98
+
+2024-09-23 11:16:55,900 - INFO - Epoch 7/16
+2024-09-23 11:33:54,211 - INFO - Epoch 7, Train Loss: 1.0339, Train Accuracy: 98.48, Validation Loss: 1.2840, Validation Accuracy: 91.68
+
+2024-09-23 11:33:56,003 - INFO - Epoch 8/16
+2024-09-23 11:50:55,420 - INFO - Epoch 8, Train Loss: 1.0279, Train Accuracy: 98.58, Validation Loss: 1.2845, Validation Accuracy: 91.44
+
+2024-09-23 11:50:57,188 - INFO - Epoch 9/16
+2024-09-23 12:07:57,101 - INFO - Epoch 9, Train Loss: 1.0203, Train Accuracy: 98.98, Validation Loss: 1.2808, Validation Accuracy: 91.68
+
+2024-09-23 12:07:58,867 - INFO - Epoch 10/16
+2024-09-23 12:24:58,352 - INFO - Epoch 10, Train Loss: 1.0191, Train Accuracy: 98.98, Validation Loss: 1.2855, Validation Accuracy: 91.74
+
+2024-09-23 12:25:00,168 - INFO - Epoch 11/16
+2024-09-23 12:42:00,123 - INFO - Epoch 11, Train Loss: 1.0196, Train Accuracy: 98.98, Validation Loss: 1.2772, Validation Accuracy: 91.88
+
+2024-09-23 12:42:08,941 - INFO - Epoch 12/16
+2024-09-23 12:59:05,839 - INFO - Epoch 12, Train Loss: 1.0183, Train Accuracy: 98.93, Validation Loss: 1.2826, Validation Accuracy: 91.84
+
+2024-09-23 12:59:07,605 - INFO - Epoch 13/16
+2024-09-23 13:16:06,609 - INFO - Epoch 13, Train Loss: 1.0161, Train Accuracy: 99.08, Validation Loss: 1.2794, Validation Accuracy: 91.81
+
+2024-09-23 13:16:08,384 - INFO - Epoch 14/16
+2024-09-23 13:33:07,490 - INFO - Epoch 14, Train Loss: 1.0165, Train Accuracy: 99.06, Validation Loss: 1.2777, Validation Accuracy: 91.98
+
+2024-09-23 13:33:09,261 - INFO - Epoch 15/16
+2024-09-23 13:50:05,059 - INFO - Epoch 15, Train Loss: 1.0168, Train Accuracy: 98.97, Validation Loss: 1.2826, Validation Accuracy: 91.78
+
+2024-09-23 13:50:06,817 - INFO - Epoch 16/16
+2024-09-23 14:07:05,071 - INFO - Epoch 16, Train Loss: 1.0158, Train Accuracy: 99.13, Validation Loss: 1.2762, Validation Accuracy: 91.78
+
+2024-09-23 14:07:18,753 - INFO - Loading pretrained weights from Hugging Face hub (timm/eva02_large_patch14_448.mim_m38m_ft_in22k_in1k)
+2024-09-23 14:07:19,073 - INFO - [timm/eva02_large_patch14_448.mim_m38m_ft_in22k_in1k] Safe alternative available for 'pytorch_model.bin' (as 'model.safetensors'). Loading weights using safetensors.
+2024-09-23 14:07:19,154 - INFO - Missing keys (head.weight, head.bias) discovered while loading pretrained weights. This is expected if model is being adapted.
+2024-09-23 14:07:19,435 - INFO - Epoch 1/16
+2024-09-23 14:24:18,777 - INFO - Epoch 1, Train Loss: 2.1414, Train Accuracy: 76.15, Validation Loss: 1.4690, Validation Accuracy: 85.65
+
+2024-09-23 14:24:22,118 - INFO - Epoch 2/16
+2024-09-23 14:41:22,766 - INFO - Epoch 2, Train Loss: 1.2723, Train Accuracy: 91.24, Validation Loss: 1.3751, Validation Accuracy: 88.32
+
+2024-09-23 14:41:31,865 - INFO - Epoch 3/16
+2024-09-23 14:58:30,224 - INFO - Epoch 3, Train Loss: 1.1901, Train Accuracy: 93.78, Validation Loss: 1.3667, Validation Accuracy: 88.91
+
+2024-09-23 14:58:39,908 - INFO - Epoch 4/16
+2024-09-23 15:15:36,861 - INFO - Epoch 4, Train Loss: 1.1403, Train Accuracy: 95.22, Validation Loss: 1.3656, Validation Accuracy: 88.85
+
+2024-09-23 15:15:46,187 - INFO - Epoch 5/16
+2024-09-23 15:32:44,629 - INFO - Epoch 5, Train Loss: 1.0736, Train Accuracy: 97.70, Validation Loss: 1.2821, Validation Accuracy: 90.71
+
+2024-09-23 15:32:54,774 - INFO - Epoch 6/16
+2024-09-23 15:49:54,214 - INFO - Epoch 6, Train Loss: 1.0413, Train Accuracy: 98.42, Validation Loss: 1.2740, Validation Accuracy: 90.88
+
+2024-09-23 15:50:03,610 - INFO - Epoch 7/16
+2024-09-23 16:07:00,287 - INFO - Epoch 7, Train Loss: 1.0328, Train Accuracy: 98.63, Validation Loss: 1.2691, Validation Accuracy: 91.31
+
+2024-09-23 16:07:10,371 - INFO - Epoch 8/16
+2024-09-23 16:24:08,543 - INFO - Epoch 8, Train Loss: 1.0251, Train Accuracy: 98.82, Validation Loss: 1.2719, Validation Accuracy: 90.85
+
+2024-09-23 16:24:10,270 - INFO - Epoch 9/16
+2024-09-23 16:41:07,674 - INFO - Epoch 9, Train Loss: 1.0196, Train Accuracy: 98.99, Validation Loss: 1.2695, Validation Accuracy: 91.18
+
+2024-09-23 16:41:09,466 - INFO - Epoch 10/16
+2024-09-23 16:58:08,010 - INFO - Epoch 10, Train Loss: 1.0165, Train Accuracy: 99.07, Validation Loss: 1.2733, Validation Accuracy: 91.21
+
+2024-09-23 16:58:09,844 - INFO - Epoch 11/16
+2024-09-23 17:15:09,063 - INFO - Epoch 11, Train Loss: 1.0165, Train Accuracy: 99.08, Validation Loss: 1.2714, Validation Accuracy: 91.15
+
+2024-09-23 17:15:10,806 - INFO - Epoch 12/16
+2024-09-23 17:32:06,953 - INFO - Epoch 12, Train Loss: 1.0153, Train Accuracy: 99.10, Validation Loss: 1.2756, Validation Accuracy: 91.28
+
+2024-09-23 17:32:08,711 - INFO - Epoch 13/16
+2024-09-23 17:49:05,547 - INFO - Epoch 13, Train Loss: 1.0142, Train Accuracy: 99.14, Validation Loss: 1.2736, Validation Accuracy: 90.95
+
+2024-09-23 17:49:07,562 - INFO - Epoch 14/16
+2024-09-23 18:06:06,618 - INFO - Epoch 14, Train Loss: 1.0133, Train Accuracy: 99.18, Validation Loss: 1.2727, Validation Accuracy: 91.01
+
+2024-09-23 18:06:08,376 - INFO - Epoch 15/16
+2024-09-23 18:23:08,337 - INFO - Epoch 15, Train Loss: 1.0141, Train Accuracy: 99.17, Validation Loss: 1.2753, Validation Accuracy: 91.08
+
+2024-09-23 18:23:10,115 - INFO - Epoch 16/16
+2024-09-23 18:40:10,158 - INFO - Epoch 16, Train Loss: 1.0143, Train Accuracy: 99.12, Validation Loss: 1.2675, Validation Accuracy: 91.61
+

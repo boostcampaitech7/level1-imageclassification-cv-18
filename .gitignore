@@ -1,0 +1,9 @@
+.DS_Store
+data/
+data.tar.gz
+.ipynb_checkpoints
+*.pt
+*.cpython*.pyc
+Experiments/weights
+__pycache__
+
