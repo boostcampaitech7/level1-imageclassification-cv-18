@@ -17,7 +17,7 @@ from sklearn.ensemble import VotingClassifier
 from torch.utils.tensorboard import SummaryWriter
 
 from loss import CrossEntropyLoss
-from base.model_selector import ModelSelector
+from model.model_selector import ModelSelector
 from base.dataloader import CustomDataset, TorchvisionTransform, AlbumentationsTransform
 from base.customize_layer import customize_layer
 from base.trainer import Trainer
