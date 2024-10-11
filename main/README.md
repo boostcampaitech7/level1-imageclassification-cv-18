@@ -60,8 +60,9 @@ python curriculum_train_test.py --model_name='eva02_large_patch14_448.mim_m38m_f
 
 ### 4. Ensemble
 
-- ensemble.py를 실행하기 전에 ensemble.py 내부의 csv_files list와 prediction_list를 결과를 저장한 경로에 맞게 수정해주세요.
-- soft_soft(), soft_hard(), hard_hard() 중 원하는 앙상블 Method를 선택해주세요.
+- ensemble.py를 실행하기 전에 ensemble.py 내부의 soft_soft(), soft_hard(), hard_hard() 함수를 일부 수정해주세요.
+- 함수 내부의 csv_files list와 prediction_list에 원하는 경로를 넣어주세요 (.csv file or .npy file)
+- soft_soft(), soft_hard(), hard_hard() 중 원하는 앙상블 Method를 선택하여 주석을 풀어주세요.
 
 ```bash
 python ensemble.py
