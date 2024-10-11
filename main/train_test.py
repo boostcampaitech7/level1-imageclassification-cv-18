@@ -17,10 +17,10 @@ from sklearn.ensemble import VotingClassifier
 from torch.utils.tensorboard import SummaryWriter
 
 from loss import CrossEntropyLoss
-from model_selector import ModelSelector
-from dataloader import CustomDataset, TorchvisionTransform, AlbumentationsTransform
-from customize_layer import customize_layer
-from trainer import Trainer
+from model.model_selector import ModelSelector
+from base.dataloader import CustomDataset, TorchvisionTransform, AlbumentationsTransform
+from base.customize_layer import customize_layer
+from base.trainer import Trainer
 
 def set_cuda(gpu):
     torch.cuda.set_device(gpu)

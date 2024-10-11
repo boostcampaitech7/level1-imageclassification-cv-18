@@ -9,7 +9,7 @@ import pandas as pd
 from torch.utils.data import DataLoader
 from tqdm import tqdm
 from torch.utils.tensorboard import SummaryWriter
-from dataloader import CustomDataset, TorchvisionTransform, AlbumentationsTransform
+from curriculum.curriculum_dataloader import CustomDataset, AlbumentationsTransform
 
 class Trainer:
     def __init__(
