@@ -1,10 +1,17 @@
 ## 학습 및 테스트
 
 0. **옵션 및 하이퍼파라미터 설정**
-1. **EVA02-large** : EVA02-large 모델을 학습하고 결과를 저장합니다.
-2. **EVA-giant** : EVA-giant 모델을 학습하고 결과를 저장합니다.
-3. **Curriculum learning** : EVA-02-large Curriculum learning 모델을 학습하고 결과를 저장합니다.
-4. **Ensemble** : 모델 앙상블을 통해 최종 결과를 저장합니다.
+
+2. **EVA02-large** : EVA02-large 모델을 학습하고 결과를 저장합니다.
+
+   
+4. **EVA-giant** : EVA-giant 모델을 학습하고 결과를 저장합니다.
+
+   
+6. **Curriculum learning** : EVA-02-large Curriculum learning 모델을 학습하고 결과를 저장합니다.
+
+   
+8. **Ensemble** : 모델 앙상블을 통해 최종 결과를 저장합니다.
 
 ---
 
