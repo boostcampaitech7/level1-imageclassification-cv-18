@@ -9,6 +9,7 @@
 - ImageNet Sketch 이미지 데이터 분류
 - 1st Prize 🏆
 - Naver Connect & Upstage 주관 대회
+- [main code](./main)
 - [프로젝트 리포트 (README)](./Sketch%20Data%20Multi-Classification%20Project%20Report.pdf)
 
 ## Leaderboard
@@ -86,29 +87,99 @@ data/
 자세한 내용은 [Creative Commons Attribution 4.0 International License](https://creativecommons.org/licenses/by/4.0/)에서 확인할 수 있습니다.
 
 ## Project Timeline
+- 프로젝트 타임라인
 ![프로젝트 타임라인](https://github.com/user-attachments/assets/82d524f8-79c1-4bbb-ab78-44b9220b8d8b)
 
+- 단계별 성능 변화 [Experiment Details](./experiments)
+![accu_timeline](https://github.com/user-attachments/assets/e2109364-d711-40a8-b5e0-2ffb7330e616)
 
-## Models
-- ResNet50
-- eva02_large
-- eva_giant
-
+- 자세한 내용은 [프로젝트 리포트 (README)](./Sketch%20Data%20Multi-Classification%20Project%20Report.pdf) 를 참고해주세요.
+  
+## Model select
+- backbone 모델 탐색
+  
 ![image](https://github.com/user-attachments/assets/0302c586-42ae-492f-be48-292009b86f77)
+
+- Fine-tuning layers
+  - MLP-3 : Linear(1024, 1024)-ReLU()-Linear(1024, 500)
+  - Linear :(1024, 500)
+
+- Presiction method
+  - train-validation split : train set을 한 번 나누어 성능을 평가하고 테스트 합니다.
+  - 5-fold CV : 5-fold cross validation 방법을 통해 모델을 다섯 번 학습하고 voting 하여 테스트 합니다.
+
+- 모델 선정
+  - **EVA02-large**
+  - **EVA-giant**
+ 
+- 하이퍼파라미터 튜닝
+  
+<img width="715" alt="하이퍼파라미터튜닝" src="https://github.com/user-attachments/assets/b6e1b279-b541-434e-abba-5267f93bba9b">
+
+## 문제 정의
+- 문제 1 : 수직으로 뒤집힌 Sketch 이미지 예측에 대한 취약점을 발견했습니다.
+  
+  -> 해결 1 : Augmentations
+- 문제 2 : Sketch 이미지 데이터의 특성에 따른 취약점을 발견했습니다.
+  - 단순한 정보를 가지고 있지만, 같은 클래스라도 다양한 변형 발생해서 모델이 쉽게 혼란스러워집니다.
+  - 초기 학습 단계에서 복잡한 변형이 포함된 데이터를 학습 시, 모델이 패턴을 제대로 학습하지 못합니다.
+  - 데이터의 불규칙성과 디테일 부족으로 인해, 모델이 과적합 되거나, 다양한 변형에 잘 대응하지 못합니다.
+    
+    -> 해결 2 : Curriculum learning
 
 
 ## Augmentations
+<img width="578" alt="증강 성능" src="https://github.com/user-attachments/assets/15b09b70-0a0d-4df0-a064-f6b4e20a6126">
+
 - HorizontalFlip
 - VerticalFlip
 - Rotate
+  
+**- VerticalFlip (수직 뒤집기) 증강을 추가했을 때 성능이 좋아짐을 확인했습니다.**
 
-![image](https://github.com/user-attachments/assets/4f66aaaf-e1ca-4800-98a1-6efdb86561e1)
+## Curriculum learning 
+- 데이터 증강 관점에서 Curriculum learning 수행합니다.
+  
+| Epoch Range | 적용 변환                              |
+|-------------|--------------------------------------|
+| 0 - 5       | 없음                                  |
+| 5 - 10      | 수평/수직 뒤집기, 회전                    |
+| 10 - 15     | 수평/수직 뒤집기, 회전, Elastic 변형, Grid 왜곡 |
+
+<img width="676" alt="curri" src="https://github.com/user-attachments/assets/527da330-fef8-42fc-8e55-366356908769">
+
+- (orange : train)   (blue : test)
+- 증강이 복잡해질 때마다, 정확도가 떨어지고 다시 올라가는 과정에서 모델이 보다 복잡한 패턴 학습합니다.
+- 증강이 바뀌는 5 epoch 마다 Learning rate를 감소시켜 갑작스러운 변화로부터 학습을 안정화합니다.
+- **최종적으로 단일 모델 최고 성능을 달성했습니다. (Accuracy : 0.9370)**
 
 
-## Voting
-- Soft Voting
-- Hard Voting
+
+## Voting & Ensemble
+- Soft Voting & Hard Voting
   
 ![image](https://github.com/user-attachments/assets/34e6350e-a600-451f-a148-ab25359eb4bc)
+
+- Ensemble
+  - Soft-Soft
+  <img width="847" alt="Snipaste_2024-10-11_21-01-08" src="https://github.com/user-attachments/assets/12143ac2-88a5-4a29-bb42-0ca47834625f">
+
+  - Soft-Hard
+  <img width="804" alt="Snipaste_2024-10-11_21-01-19" src="https://github.com/user-attachments/assets/3923ba34-a779-40ee-b178-16ce783c5fb6">
+
+  - Hard-Hard
+  <img width="553" alt="Snipaste_2024-10-11_21-01-27" src="https://github.com/user-attachments/assets/395f99f5-2339-49b9-87e2-d245b9f2f3b3">
+
+- Ensemble 성능 측정
+<img width="803" alt="Snipaste_2024-10-11_21-02-35" src="https://github.com/user-attachments/assets/10d75c04-f6c0-44c0-8228-f9133998e50e">
+
+**- EVA02-large-Linear, EVA-giant-Linear, EVA02-large-curriculum-mlp-3 를 Hard-Hard 앙상블한 모델이 가장 좋은 성능을 보입니다.**
+
+**- (Accuracy : 0.94)**
+
+**- Soft-Soft, Hard-Hard 앙상블 Method 모두 비슷하게 좋은 성능을 보입니다. (Accuracy : 0.939)**
+
+
+
 
 
