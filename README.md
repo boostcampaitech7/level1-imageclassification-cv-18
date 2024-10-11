@@ -8,7 +8,7 @@
 - ImageNet Sketch 이미지 데이터 분류
 - 1st Prize 🏆
 - Naver Connect & Upstage 주관 대회
-- [프로젝트 리포트](./Sketch Data Multi-Classification Project Report.pdf)
+- [프로젝트 리포트](./Sketch%20Data%20Multi-Classification%20Project%20Report.pdf)
 
 ## 💡 팀원 소개
 
