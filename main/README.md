@@ -52,17 +52,17 @@ parser.add_argument('--num_k_fold', type=int, default=5, help='k-fold 수 설정
 
 ### 1. EVA02-large
 ```bash
-python train_test.py --model_name='eva02_large_patch14_448.mim_m38m_ft_in22k_in1k'
+python train_test.py --model_name 'eva02_large_patch14_448.mim_m38m_ft_in22k_in1k'
 ```
 
 ### 2. EVA-giant
 ```bash
-python train_test.py --model_name='timm/eva_giant_patch14_336.clip_ft_in1k'
+python train_test.py --model_name 'timm/eva_giant_patch14_336.clip_ft_in1k'
 ```
 
 ### 3. Curriculum learning
 ```bash
-python curriculum_train_test.py --model_name='eva02_large_patch14_448.mim_m38m_ft_in22k_in1k'
+python curriculum_train_test.py --model_name 'eva02_large_patch14_448.mim_m38m_ft_in22k_in1k'
 ```
 
 ### 4. Ensemble
