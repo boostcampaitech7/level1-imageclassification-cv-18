@@ -55,7 +55,8 @@
     ┣ install_zsh.sh
     ┣ download_sketch_data.sh
     ┣ zsh_setting_1.sh
-    ┗ zsh_setting_2.sh 
+    ┗ zsh_setting_2.sh
+
     ```
 
 - bash shell 에서 시작합니다.
@@ -135,7 +136,8 @@
     ```
 
 - 가상환경 설정
-    
+
+    enviroment.yml 파일을 다운로드 합니다.
     만약 가상환경이 없다면 만들어 줍니다.
     ```bash
     conda create -n [가상환경 이름] --clone base
