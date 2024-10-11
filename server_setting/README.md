@@ -118,7 +118,7 @@
 
     git clone [레포지토리 주소]
     ```
-    아이디, 비밀번호를 요구하면 다음을 참고해주세요. [***git token 사용***](https://watery-monkey-d20.notion.site/AI-Stages-fc11af229b504cffbde024a394500b48)  
+    아이디, 비밀번호를 요구하면 다음을 참고해주세요. [***git token 사용***](https://watery-monkey-d20.notion.site/github-clone-11c1326a129980a3a6c2d0e73443716e)  
 
 
 
