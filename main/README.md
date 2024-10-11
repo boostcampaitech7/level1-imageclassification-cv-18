@@ -6,6 +6,7 @@
 3. **Curriculum learning** : EVA-02-large Curriculum learning 모델을 학습하고 결과를 저장합니다.
 4. **Ensemble** : 모델 앙상블을 통해 최종 결과를 저장합니다.
 
+---
 
 ### 0. 옵션 및 하이퍼파라미터 설정
 
@@ -39,6 +40,8 @@ parser.add_argument('--step_size', type=int, default=5, help='몇 번째 epoch �
 parser.add_argument('--gamma', type=float, default=0.1, help='학습률에 얼마를 곱하여 줄일 지 선택')
 parser.add_argument('--num_k_fold', type=int, default=5, help='k-fold 수 설정')
 ```
+
+---
 
 ### 1. EVA02-large
 ```bash
