@@ -1,6 +1,6 @@
 import torch.nn as nn
-from simpleCNN import SimpleCNN
-from timm import TimmModel
+from .simpleCNN import SimpleCNN
+from .timm import TimmModel
 
 class ModelSelector:
     """
