@@ -138,8 +138,10 @@
     
     만약 가상환경이 없다면 만들어 줍니다.
     ```bash
-    conda create -n [] --clone base
-    conda activate []
+    conda create -n [가상환경 이름] --clone base
+    conda activate [가상환경 이름]
+
+    conda env update --name [가상환경 이름] -f environment.yml
     ```
 
     ***(주의)라이브러리를 설치할 때 가상환경을 항상 확인해주세요.***
