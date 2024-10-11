@@ -25,7 +25,7 @@ python train_test.py --epochs 20
 여러 옵션을 다음과 같이 사용할 수 있습니다:
 
 ```console
-python train_test.py --lr 0.001 --epochs 20
+python train.py --train_dir "/data/ephemeral/home/data/train" --test_dir "/data/ephemeral/home/data/test" --transform "torchvision" 
 ```
 
 ## 모델 수정
