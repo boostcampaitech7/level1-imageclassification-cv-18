@@ -175,9 +175,13 @@ data/
 - Ensemble 성능 측정
 <img width="803" alt="Snipaste_2024-10-11_21-02-35" src="https://github.com/user-attachments/assets/10d75c04-f6c0-44c0-8228-f9133998e50e">
 
-**- EVA02-large-Linear, EVA-giant-Linear, EVA02-large-curriculum-mlp-3 를 Hard-Hard 앙상블한 모델이 가장 좋은 성능을 보입니다. (Accuracy : 0.94)**
 
-**- Soft-Soft, Hard-Hard 앙상블 Method 모두 비슷하게 좋은 성능을 보입니다. (Accuracy : 0.939)**
+- **Soft-Soft, Hard-Hard 앙상블 Method 모두 비슷하게 좋은 성능을 보입니다. (Accuracy : 0.939)**
+
+- **다음 모델들을 Hard-Hard 앙상블한 모델이 가장 좋은 성능을 보입니다. (Accuracy : 0.94)**
+  -  **EVA02-large-Linear**
+  -  **EVA-giant-Linear**
+  -  **EVA02-large-curriculum-mlp-3**
 
 
 
