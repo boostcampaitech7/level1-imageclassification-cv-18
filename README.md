@@ -90,7 +90,7 @@ data/
 - 프로젝트 타임라인
 ![프로젝트 타임라인](https://github.com/user-attachments/assets/82d524f8-79c1-4bbb-ab78-44b9220b8d8b)
 
-- 단계별 성능 변화 [Experiment Details](./experiments)
+- 단계별 성능 변화 
 ![accu_timeline](https://github.com/user-attachments/assets/e2109364-d711-40a8-b5e0-2ffb7330e616)
 
 - 자세한 내용은 [프로젝트 리포트 (README)](./Sketch%20Data%20Multi-Classification%20Project%20Report.pdf) 를 참고해주세요.
